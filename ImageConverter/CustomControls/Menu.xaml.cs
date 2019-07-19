@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -28,6 +27,18 @@ namespace ImageConverter
             InitializeComponent();
             MenuSP.Background = ThemeManager.SelectedThemeType();
             ImpostazioniLabel.Foreground = ThemeManager.SelectedThemeColor(); //applica il tema quando il menu viene inizializzato 
+            if (Settings.Default.Language == "it")
+            {
+                ImpostazioniLabel.Content = "Impostazioni";
+                ThemeColorLabel.Content = "Colore Tema:";
+                ThemeLabel.Content = "Tema:";
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                ImpostazioniLabel.Content = "Settings";
+                ThemeColorLabel.Content = "Theme Color:";
+                ThemeLabel.Content = "Theme:";
+            }
         }
 
         public void OpenMenu(FrameworkElement nameOfMenuRect)

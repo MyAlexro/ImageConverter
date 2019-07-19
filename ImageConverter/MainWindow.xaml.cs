@@ -2,6 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Globalization;
+using System.Media;
+using ImageConverter.Properties;
+
 
 namespace ImageConverter
 {
@@ -13,12 +17,43 @@ namespace ImageConverter
         string[] droppedImage;
         ImageSourceConverter stringToImgSrcConverter;
         string pathofImgToConvert;
+        ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
 
         public MainWindow()
         {
             InitializeComponent();
             MainWindowGrid.Background = ThemeManager.SelectedThemeType();
             TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
+            if (Settings.Default.Language == "it")
+            {          
+                ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
+                ChooseFormatLabel.Content = "Scegliere il formato in cui \nconvertire l'immagine:";
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png") as ImageSource;
+                ChooseFormatLabel.Content = "Choose the format in which \nto convert the image:";
+            }
+        }
+
+        private void MainWindow1_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(Settings.Default.FirstRun == true)
+            {
+                if (CultureInfo.CurrentCulture.ToString().Contains("it")) //imposta la lingua dell'applicazione dalla lingua di sistema
+                {
+                    Settings.Default.Language = "it";
+                }
+                else if (CultureInfo.CurrentCulture.ToString().Contains("en"))
+                {
+                    Settings.Default.Language = "en";
+                }
+                Settings.Default.FirstRun = false;
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                Application.Current.Shutdown();
+            }
         }
 
         private void ImgViewer_DragOver(object sender, DragEventArgs e)
@@ -39,7 +74,14 @@ namespace ImageConverter
                 if (!ImageToConvertHandler.IsImage(pathofImgToConvert)) //se il file non è un'immagine
                 {
                     pathofImgToConvert = string.Empty;
-                    MessageBox.Show("Non è possibile convertire questo file", "Errore",MessageBoxButton.OK,MessageBoxImage.Error);
+                    if (Settings.Default.Language == "it")
+                    {
+                        MessageBox.Show("Non è possibile convertire questo file", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (Settings.Default.Language == "en")
+                    {
+                        MessageBox.Show("Non è possibile convertire questo file", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                     return;
                 }
                 //se invece è un immagine
@@ -59,7 +101,16 @@ namespace ImageConverter
         private async void ConvertBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (FormatComboBox.SelectedItem == null) //se nessun formato in cui convertire l'immagine è stato scelto
-                MessageBox.Show("Selezionare il formato in cui convertire l'immagine", "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+            {
+                if (Settings.Default.Language == "it")
+                {
+                    MessageBox.Show("Selezionare il formato in cui convertire l'immagine", "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (Settings.Default.Language == "en")
+                {
+                    MessageBox.Show("Selezionare il formato in cui convertire l'immagine", "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
             else //se è stato scelto
             {
                 string chosenFormat = (FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string;

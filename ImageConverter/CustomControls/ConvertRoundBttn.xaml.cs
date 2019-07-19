@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using ImageConverter.Properties;
 
 
 namespace ImageConverter
@@ -14,6 +14,14 @@ namespace ImageConverter
         {
             InitializeComponent();
             Background.Fill = ThemeManager.SelectedThemeColor(); //applica il tema quando il bttn viene inizializzato
+            if (Settings.Default.Language == "it")
+            {
+                label.Content = "Converti immagine";
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                label.Content = "Convert image";
+            }
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
