@@ -23,7 +23,11 @@ namespace ImageConverter
         {
             InitializeComponent();
             MainWindowGrid.Background = ThemeManager.SelectedThemeType();
-            TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
+            TitleTextBox.Foreground = ThemeManager.SelectedFontColor();
+            foreach(System.Windows.Controls.Label element in FormatComboBox.Items)
+            {
+                element.Background = ThemeManager.SelectedFontColor();
+            }
             if (Settings.Default.Language == "it")
             {          
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;

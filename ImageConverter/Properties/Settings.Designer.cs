@@ -26,12 +26,12 @@ namespace ImageConverter.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("DefaultTheme")]
-        public string ThemeCol {
+        public string FontCol {
             get {
-                return ((string)(this["ThemeCol"]));
+                return ((string)(this["FontCol"]));
             }
             set {
-                this["ThemeCol"] = value;
+                this["FontCol"] = value;
             }
         }
         
