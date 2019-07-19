@@ -1,0 +1,52 @@
+﻿<Window x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageConverter"
+        mc:Ignorable="d"
+        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize">
+
+    <Grid x:Name="MainWindowGrid">
+
+        <!-- Titolo della finestra-->
+        <TextBlock x:Name="TitleTextBox" Margin="282,0,0,0" TextWrapping="Wrap" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" Height="60" VerticalAlignment="Top" HorizontalAlignment="Left" Width="388" Grid.Row="1">
+            <TextBlock.Effect>
+                <DropShadowEffect RenderingBias="Quality" Opacity="0.215"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+
+        <!-- Bottone per cominciare a convertire l'immagine-->
+        <local:ConvertRoundBttn x:Name="ConvertBttn" HorizontalAlignment="Left" Height="54" Margin="463,401,0,0" VerticalAlignment="Top" Width="174" MouseDown="ConvertBttn_MouseDown"/>
+
+        <Label Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
+
+        <!-- ComboBox per scegliere in che formato convertire l'immagine-->
+        <ComboBox x:Name="FormatComboBox" Text="Sel " HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True">
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG" MouseDown="Label_MouseDown"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPG" MouseDown="Label_MouseDown"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPEG" MouseDown="Label_MouseDown"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="ICO" MouseDown="Label_MouseDown"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="GIF" MouseDown="Label_MouseDown"/>
+        </ComboBox>
+
+        <!--Contenitore dell'immagine da convertire-->
+        <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
+            <Image Width="363" Height="328" x:Name="ImgViewer" Margin="1,1,1,1" AllowDrop="True" Source="Resources/ImageConverterDragAndDrop.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver"/>
+        </Border>
+
+        <!-- Label che appare solo se l'utente sta per droppare 2 file-->
+        <Label x:Name="WarningLabel" Content="⚠ Solo la prima immagine verrà convertita" HorizontalAlignment="Left" Margin="131,73,0,0" VerticalAlignment="Top" Width="290" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden"/>
+
+        <!--Bottone per aprire il Menu-->
+        <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>
+
+        <!--Menu-->
+        <local:Menu x:Name="Menu" HorizontalAlignment="Left" Height="511" VerticalAlignment="Top" Width="250" Margin="-260,0,0,0">
+            <local:Menu.Effect>
+                <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
+            </local:Menu.Effect>
+        </local:Menu>
+    </Grid>
+</Window>
