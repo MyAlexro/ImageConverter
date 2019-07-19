@@ -154,9 +154,9 @@ namespace ImageConverter
         {
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
             Settings.Default.ThemeType = ((Rectangle)sender).Name; ////modifica l'opzione del tipo di tema con il nome del rect
-            if (((Rectangle)sender).Name == "LightTheme")
+            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //se il tema che si seleziona è quello bianco e il colore del font è bianco
             {
-                Settings.Default.FontCol = "DefaultFontCol";
+                Settings.Default.FontCol = "DefaultFontCol"; //mette il colore del font a default così si riesce a leggere
             }
             Settings.Default.Save();
             Settings.Default.Reload();
