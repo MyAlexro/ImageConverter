@@ -4,15 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ImageConverter"
-             mc:Ignorable="d" Height="68.666" Width="247.5">
+             mc:Ignorable="d" Height="44.666" Width="180.5">
 
-    <Viewbox Margin="0,0,40,26">
+    <Viewbox>
         <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
-            <Rectangle x:Name="Background" Fill="#FFDAA619" Width="104" Height="23" RadiusY="3.667" RadiusX="3.667">
+            <Rectangle x:Name="BttnBackground" Fill="#FFDAA619" Width="104" Height="23" RadiusY="3.667" RadiusX="3.667">
             </Rectangle>
-            <Label Content="Converti immagine" FontFamily="Segoa UI" x:Name="label">
+            <Label Content="Converti immagine" FontFamily="Segoa UI" x:Name="ConvertLabel">
             </Label>
         </Grid>
     </Viewbox>
-    
+
 </UserControl>

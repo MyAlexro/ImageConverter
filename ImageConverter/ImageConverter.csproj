@@ -106,12 +106,13 @@
     <Compile Include="CustomControls\MenuButton.xaml.cs">
       <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImageToConvertHandler.cs" />
+    <Compile Include="ImageConversionHandler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="LanguageManager.cs" />
     <Compile Include="ThemeManager.cs" />
     <Page Include="CustomControls\ConvertRoundBttn.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImageConverter
 {
-    class ImageToConvertHandler
+    class ImageConversionHandler
     {
         static ImageFormatConverter imageConverter;
         private static Image ImgToConvert;

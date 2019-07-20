@@ -26,20 +26,20 @@ namespace ImageConverter
         {
             InitializeComponent();
             MenuSP.Background = ThemeManager.SelectedThemeType();//applica il tema quando il menu viene inizializzato
-            ImpostazioniLabel.Foreground = ThemeManager.SelectedFontColor();
+            SettingsLabel.Foreground = ThemeManager.SelectedFontColor();
             if (Settings.Default.Language == "it")
             {
-                ImpostazioniLabel.Content = "Impostazioni";
-                FontColorLabel.Content = "Colore Font:";
-                ThemeLabel.Content = "Tema:";
-                CreditsLabel.Content = "Creatore: Alessandro Dinardo (MyAlexro)";
+                SettingsLabel.Content = LanguageManager.IT_SettingsLabelTxt;
+                FontColorLabel.Content = LanguageManager.IT_FontColorLabelTxT;
+                ThemeLabel.Content = LanguageManager.IT_ThemeLabelTxt;
+                CreditsLabel.Content = LanguageManager.IT_CreditsLabelTxt;
             }
             else if (Settings.Default.Language == "en")
             {
-                ImpostazioniLabel.Content = "Settings";
-                FontColorLabel.Content = "Font Color:";
-                ThemeLabel.Content = "Theme:";
-                CreditsLabel.Content = "Creator: Alessandro Dinardo (MyAlexro)";
+                SettingsLabel.Content = LanguageManager.EN_SettingsLabelTxt;
+                FontColorLabel.Content = LanguageManager.EN_FontColorLabelTxT;
+                ThemeLabel.Content = LanguageManager.EN_ThemeLabelTxt;
+                CreditsLabel.Content = LanguageManager.EN_CreditsLabelTxt;
             }
         }
 

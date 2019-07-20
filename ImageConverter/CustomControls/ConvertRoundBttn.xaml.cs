@@ -13,25 +13,25 @@ namespace ImageConverter
         public ConvertRoundBttn()
         {
             InitializeComponent();
-            Background.Fill = ThemeManager.SelectedFontColor(); //applica il tema quando il bttn viene inizializzato
+            BttnBackground.Fill = ThemeManager.SelectedFontColor(); //applica il tema quando il bttn viene inizializzato
             if (Settings.Default.Language == "it")
             {
-                label.Content = "Converti immagine";
+                ConvertLabel.Content = LanguageManager.IT_ConvertLabelTxt;
             }
             else if (Settings.Default.Language == "en")
             {
-                label.Content = "Convert image";
+                ConvertLabel.Content = LanguageManager.EN_ConvertLabelTxt;
             }
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            Background.Fill = ThemeManager.SelectedFontHoveringColor(); //se la freccetta del mouse va sopra al bttn lo scurisce
+            BttnBackground.Fill = ThemeManager.SelectedFontHoveringColor(); //se la freccetta del mouse va sopra al bttn lo scurisce
         }
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e) //se invece se ne va gli mette il colore normale
         {
-            Background.Fill = ThemeManager.SelectedFontColor();
+            BttnBackground.Fill = ThemeManager.SelectedFontColor();
         }
     }
 }

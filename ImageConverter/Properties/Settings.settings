@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="FontCol" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DefaultTheme</Value>
+      <Value Profile="(Default)">DefaultFontCol</Value>
     </Setting>
     <Setting Name="ThemeType" Type="System.String" Scope="User">
       <Value Profile="(Default)">LightTheme</Value>

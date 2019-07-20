@@ -30,7 +30,7 @@
         <!--Close menu button label-->
         <Label x:Name="CloseMenuBttn"  Content="×" FontSize="25" Margin="225,-12,0,0" MouseEnter="CloseMenuBttn_MouseEnter" MouseDown="CloseMenuBttn_MouseDown" MouseLeave="CloseMenuBttn_MouseLeave" Foreground="#FFCACCCF" Height="37"/>
         <!--Impostazioni label-->
-        <Label x:Name="ImpostazioniLabel" FontFamily="Arial Rounded MT Bold" FontSize="22" Foreground="#FFDAA619">Impostazioni</Label>
+        <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="22" Foreground="#FFDAA619">Impostazioni</Label>
 
         <!-- Choose theme Stackpanels -->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,20,0,0">

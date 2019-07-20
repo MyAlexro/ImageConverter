@@ -31,12 +31,14 @@ namespace ImageConverter
             if (Settings.Default.Language == "it")
             {          
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
-                ChooseFormatLabel.Content = "Scegliere il formato in cui \nconvertire l'immagine:";
-            }
+                ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
+                WarningLabel.Content = LanguageManager.IT_WarningLabelTxt;
+            }                                             
             else if (Settings.Default.Language == "en")
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png") as ImageSource;
-                ChooseFormatLabel.Content = "Choose the format in which \nto convert the image:";
+                ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
+                WarningLabel.Content = LanguageManager.EN_WarningLabelTxt;
             }
         }
 
@@ -75,16 +77,16 @@ namespace ImageConverter
                 droppedImage = e.Data.GetData(DataFormats.FileDrop) as string[]; //prende il file droppato dall'utente
                 pathofImgToConvert = droppedImage[0]; //prende la path del file dall'array e la mette in una stringa
 
-                if (!ImageToConvertHandler.IsImage(pathofImgToConvert)) //se il file non è un'immagine
+                if (!ImageConversionHandler.IsImage(pathofImgToConvert)) //se il file non è un'immagine
                 {
                     pathofImgToConvert = string.Empty;
                     if (Settings.Default.Language == "it")
                     {
-                        MessageBox.Show("Non è possibile convertire questo file", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(LanguageManager.IT_CantConvertThisFile, "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else if (Settings.Default.Language == "en")
                     {
-                        MessageBox.Show("Non è possibile convertire questo file", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(LanguageManager.EN_CantConvertThisFile, "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     return;
                 }
@@ -93,40 +95,32 @@ namespace ImageConverter
                 ImgViewer.Opacity = 1.0f; //rimette l'opacità delle immagini nell'ImgViewer a 1
                 ImgViewer.Source = stringToImgSrcConverter.ConvertFromInvariantString(pathofImgToConvert) as ImageSource; //converte la path in ImageSource e la mostra nell'ImgViewer
                 WarningLabel.Visibility = Visibility.Hidden; //nasconde il warningLabel in caso fosse stato messo visibile
-
-
+                ConvertImgBttn.IsEnabled = true;
             }
         }
 
-        private void Label_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void ConvertRoundBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-        }
-
-        private async void ConvertBttn_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (FormatComboBox.SelectedItem == null) //se nessun formato in cui convertire l'immagine è stato scelto
+            if (FormatComboBox.SelectedItem == null)
             {
                 if (Settings.Default.Language == "it")
                 {
-                    MessageBox.Show("Selezionare il formato in cui convertire l'immagine", "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(LanguageManager.IT_SelectFormatMsgBox, "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    MessageBox.Show("Selezionare il formato in cui convertire l'immagine", "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                return;
             }
-            else //se è stato scelto
-            {
-                string chosenFormat = (FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string;
-                System.Diagnostics.Debug.WriteLine(chosenFormat);
-                Image convertedImage = await ImageToConvertHandler.ConvertTo(chosenFormat.ToLower(), pathofImgToConvert);
-            }
-   
+            string selectedFormat = (((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower());
+            await ImageConversionHandler.ConvertTo(selectedFormat, pathofImgToConvert);
         }
 
         private void MenuBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Menu.OpenMenu(Menu);
         }
+
     }
 }
