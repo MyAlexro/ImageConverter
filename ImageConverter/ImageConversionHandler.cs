@@ -39,7 +39,7 @@ namespace ImageConverter
             directoryOfImageToConvert = Path.GetDirectoryName(imageToConvertPath);
             #endregion
 
-            if (Path.GetExtension(imageToConvertPath) == format)
+            if (Path.GetExtension(imageToConvertPath) == ("."+format))
             {
                 if (Settings.Default.Language == "it")
                 {
@@ -49,7 +49,7 @@ namespace ImageConverter
                 {
                     MessageBox.Show(LanguageManager.EN_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
+                return false;
             }
             if (format == "ico") //se il formato in cui convertire l'immagine è ico. L'ho messo separato dagli altri formati perchè non ci sono Encoder con MimeType ico
             {
@@ -70,7 +70,6 @@ namespace ImageConverter
 
             if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.{format}")) //se la conversione è riuscita e quindi c'è l'immagine convertita
             {
-                Thread.Sleep(5000);
                 return true;
             }
             else
