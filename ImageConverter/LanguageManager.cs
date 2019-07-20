@@ -1,5 +1,4 @@
-﻿using ImageConverter.Properties;
-
+﻿
 namespace ImageConverter
 {
     class LanguageManager
