@@ -15,6 +15,9 @@ namespace ImageConverter
         public static readonly string IT_SelectFormatMsgBox = "Selezionare un formato in cui convertire l'immagine";
         public static readonly string IT_DropImageMsgBox = "Selezionare un formato in cui convertire l'immagine";
         public static readonly string IT_CantConvertThisFile = "Non è possibile convertire questo file";
+        public static readonly string IT_ConversionResultLabelRunningTxt = "Conversione in corso";
+        public static readonly string IT_ConversionResultLabelFinishedTxt = "Immagine convertita e salvata";
+        public static readonly string IT_CantConvertImageToSameFormat = "Non si può convertire un'immagine in un'altra immagine con lo stesso formato";
 
         //english
         public static readonly string EN_SettingsLabelTxt = "Settings";
@@ -27,5 +30,8 @@ namespace ImageConverter
         public static readonly string EN_SelectFormatMsgBox = "Select a format in which to convert the image";
         public static readonly string EN_DropImageMsgBox = "Drop an image";
         public static readonly string EN_CantConvertThisFile = "This file can't be converted";
+        public static readonly string EN_ConversionResultLabelRunningTxt = "Converting image";
+        public static readonly string EN_ConversionResultLabelFinishedTxt = "Image converted and saved";
+        public static readonly string EN_CantConvertImageToSameFormat = "You can't convert an image to another image with the same format";
     }
 }
