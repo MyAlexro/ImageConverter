@@ -107,12 +107,12 @@
       <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageConversionHandler.cs" />
+    <Compile Include="LanguageManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="LanguageManager.cs" />
     <Compile Include="ThemeManager.cs" />
     <Page Include="CustomControls\ConvertRoundBttn.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -163,9 +163,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ImageConverterIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\ImageConverterDragAndDropIT.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +179,15 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ImageConverterWindowIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ImageConverterIcona.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ImageConverterICO.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
