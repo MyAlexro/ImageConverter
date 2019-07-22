@@ -20,8 +20,9 @@ namespace ImageConverter
         private static string imageName; //nome dell'immagine da convertire
         private static string directoryOfImageToConvert; //path dell'immagine da convertire in cui salvare l'immagine convertita
 
-        public static bool IsImage(string filePath)
+        public static bool IsImage(string pathOfFile)
         {
+            string filePath = pathOfFile.ToLower();
             if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif"))
             {
                 return true;
@@ -37,11 +38,11 @@ namespace ImageConverter
             directoryOfImageToConvert = Path.GetDirectoryName(imageToConvertPath);
             #endregion
 
-            if (Path.GetExtension(imageToConvertPath) == ("."+format))
+            if (Path.GetExtension(imageToConvertPath).ToLower() == ("."+format))
             {
                 if (Settings.Default.Language == "it")
                 {
-                    MessageBox.Show(LanguageManager.EN_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(LanguageManager.IT_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else if (Settings.Default.Language == "en")
                 {

@@ -43,7 +43,7 @@
         <Label x:Name="WarningLabel" Content="⚠ Solo la prima immagine verrà convertita" HorizontalAlignment="Left" Margin="131,73,0,0" VerticalAlignment="Top" Width="290" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden"/>
 
         <!-- Label che appare quando si sta convertendo un'immagine e quando la conversione è finita-->
-        <Label x:Name="ConversionResultLabel" Content="Conversione in corso" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="312"/>
+        <Label x:Name="ConversionResultLabel" x:FieldModifier="public" Content="Conversione in corso" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="312"/>
 
         <!--Bottone per aprire il Menu-->
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>
@@ -54,6 +54,7 @@
                 <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
             </local:Menu.Effect>
         </local:Menu>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="573,285,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.493,0.4" MouseDown="Button_MouseDown"/>
 
     </Grid>
 </Window>
