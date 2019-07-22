@@ -141,8 +141,9 @@ namespace ImageConverter
             //se invece è stato selezionato
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //prende il selected format
             ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
-            
-            conversionFinished = await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, pathofImgToConvert));
+            ConvertImgBttn.IsEnabled = false;
+            Task.Run(() => ConversionLabelLoading());
+            conversionFinished = await Task.Run(()=>ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, pathofImgToConvert));
             if (conversionFinished == true)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush();
@@ -171,11 +172,12 @@ namespace ImageConverter
 
         private async Task ConversionLabelLoading()
         {
-            ConversionResultLabel.Content += ".";
-            Thread.Sleep(500);
+;
             while (conversionFinished == false)
             {
                 System.Diagnostics.Debug.WriteLine("running");
+                ConversionResultLabel.Content += ".";
+                Thread.Sleep(100);
                /* if (!(ConversionResultLabel.Content as string).Contains("..."))
                 {
 
