@@ -8,8 +8,8 @@ namespace ImageConverter
         static Color LightTheme = Color.FromArgb(255, 255, 255, 255);
         static Color DarkTheme = Color.FromArgb(255, 29, 29, 29);
 
-        static Color defaultFontColor = Color.FromArgb(255, 218, 166, 25); //colore quando il mouse NON è sopra il pulsante
-        static Color defaultFontHoveringColor = Color.FromArgb(255, 162, 123, 17); //colore quando il mouse è sopra il pulsante
+        static Color defaultFontColor = Color.FromArgb(255, 218, 166, 25); //the color of the font  when the mouse ISN'T over the mouse
+        static Color defaultFontHoveringColor = Color.FromArgb(255, 162, 123, 17); //the color of the font when the mouse IS over the mouse
 
         static Color GreenFontColor = Color.FromArgb(255, 119, 227, 57);
         static Color GreenFontHoveringColor = Color.FromArgb(255, 107, 201, 52);
@@ -24,14 +24,15 @@ namespace ImageConverter
         static Color WhiteFontHoveringColor = Color.FromArgb(255, 214, 214, 214);
 
 
-        //colori del label nella MainWindow che dice se la conversione dell'immagine è in corso o è finita
+        //colors of the label, in MainWindow, which tells if the conversion is ongoing, ended successfully or ended with errors 
         public static Color RunningConversionLabelColor = Color.FromArgb(255, 0, 0, 0);
         public static Color CompletedConversionLabelColor = Color.FromArgb(255, 53, 181, 87);
+        public static Color CompletedWithErrorsConversionLabelColor = Color.FromArgb(255, 235, 64, 52);
 
         public static SolidColorBrush solidColorBrush;
 
 
-        public static SolidColorBrush SelectedThemeType() //TEMA DELL'APPLICAZIONE (LIGHT,DARK)
+        public static SolidColorBrush SelectedThemeType() //THEME OF THE APPLICATION (LIGHT,DARK)
         {
             solidColorBrush = new SolidColorBrush();
 
@@ -68,12 +69,12 @@ namespace ImageConverter
             {
                 solidColorBrush.Color = VioletFontColor;
             }
-            else if (Settings.Default.FontCol == "WhiteFontCol") //se il Font type è dark le scritte saranno bianche perchè se no non si legge
+            else if (Settings.Default.FontCol == "WhiteFontCol") //if the Theme is dark the fontCol will be white
             {
                 solidColorBrush.Color = WhiteFontColor;
             }
             return solidColorBrush;
-        } //COLORE DEL FONT (DEFAULT, ROSSO, VERDE, LILLA)
+        } //COLORS OF THE FONT: DEFAULT, RED, GREEN, VIOLET, WHITE(for the dark theme)
 
         public static SolidColorBrush SelectedFontHoveringColor()
         {
@@ -95,11 +96,11 @@ namespace ImageConverter
             {
                 solidColorBrush.Color = VioletFontHoveringColor;
             }
-            else if (Settings.Default.FontCol == "WhiteFontCol") //se il Font type è dark le scritte saranno bianche perchè se no non si legge
+            else if (Settings.Default.FontCol == "WhiteFontCol") //if the Theme is dark the fontCol will be white
             {
                 solidColorBrush.Color = WhiteFontHoveringColor;
             }
             return solidColorBrush;
-        }//COLORE DEL FONT QUANDO C'E' SOPRA LA FRECCETTA DEL MOUSE
+        }//COLORs OF THE FONT WHEN THE MOUSE IS OVER IT
     }
 }
