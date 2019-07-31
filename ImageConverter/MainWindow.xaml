@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImageConverter"
         xmlns:CustomControls="clr-namespace:ImageConverter" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
-        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" Icon="pack://application:,,,/Resources/ImageConverterWindowIcon.png">
+        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded">
 
     <Grid x:Name="MainWindowGrid">
 
@@ -39,15 +39,15 @@
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
             <Image Width="365" Height="330" x:Name="ImgViewer" Margin="0,0,0,0" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave"/>
         </Border>
-        
+
         <!-- Textblock that shows the name of the image to convert-->
         <TextBlock x:Name="ImageNameLabel" HorizontalAlignment="Left" Margin="93,430,0,0" VerticalAlignment="Top" Width="365" Height="71" TextWrapping="Wrap"/>
-        
+
         <!-- Label that appears only if the users is trying to drop files which can't be converted-->
         <Label x:Name="WarningLabel" Content="" HorizontalAlignment="Left" Margin="93,76,0,0" VerticalAlignment="Top" Width="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden" FontSize="10"/>
 
         <!-- Textblock that appears whena a conversion is ongoing or a conversion has finished-->
-        <TextBlock x:Name="ConversionResultLabel" x:FieldModifier="public" Visibility="Hidden" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
+        <TextBlock x:Name="ConversionResultLabel" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
 
         <!--Button to open the Menu-->
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>

@@ -4,7 +4,6 @@ using System.Windows.Media;
 using System.Globalization;
 using ImageConverter.Properties;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
 
