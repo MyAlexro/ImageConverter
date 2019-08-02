@@ -2,10 +2,12 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ImageConverter
 {
@@ -15,6 +17,8 @@ namespace ImageConverter
         private static Encoder imageEncoder;
         private static EncoderParameter qualityParameter;
         private static EncoderParameters encoderParametersArr;
+
+        private static GifBitmapEncoder gifEncoder;
 
         private static Image imageToConvert; //image to convert
         private static string imageName; //name of the image to convert
@@ -35,8 +39,6 @@ namespace ImageConverter
         {
             try
             {
-
-
                 System.Diagnostics.Debug.WriteLine($"Converting: {imageToConvertPath}");
                 #region  set up image to convert etc.
                 pathOfImageToConvert = imageToConvertPath;
@@ -60,14 +62,15 @@ namespace ImageConverter
 
                 if (format == "ico" || format == "cur")
                 {
-                    Icon icon = IconOrCurFromImage(imageToConvert, format);
+                    Icon icon = await Task.Run(() => IconOrCurFromImage(imageToConvert, format));
                     if (icon == null) { return false; }
                     using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.{format}"))
                     {
                         icon.Save(st);
                         st.Close();
                     }
-                }
+                } //ico or cur
+
                 else
                 {
                     #region set up encoder etc. to convert image
@@ -90,7 +93,7 @@ namespace ImageConverter
                     return false;
                 } //otherwise: return false
             }
-            catch(Exception)
+            catch (Exception)//catch an eventual GDI+ generic error
             {
                 return false;
             }
@@ -109,7 +112,63 @@ namespace ImageConverter
             return null;
         }
 
-        public static Icon IconOrCurFromImage(Image imgToConvert, string format)
+        public static async Task<bool> GifFromImages(string[] imagesPaths, bool inLoop)
+        {
+            #region  set up image infos to convert etc.
+            imageName = Path.GetFileNameWithoutExtension(imagesPaths[0]);
+            directoryOfImageToConvert = Path.GetDirectoryName(imagesPaths[0]);
+            Uri imageUri;
+            gifEncoder = new GifBitmapEncoder();
+            #endregion
+
+            try
+            {
+                foreach (var image in imagesPaths)
+                {
+                    imageUri = new Uri(image);
+                    gifEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+                }
+                if (inLoop == true)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        gifEncoder.Save(ms);
+                        var fileBytes = ms.ToArray();
+                        // This is the NETSCAPE2.0 Application Extension.
+                        var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+                        var newBytes = new List<byte>();
+                        newBytes.AddRange(fileBytes.Take(13));
+                        newBytes.AddRange(applicationExtension);
+                        newBytes.AddRange(fileBytes.Skip(13));
+                        File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_Gif.gif", newBytes.ToArray());
+                        ms.Close();
+                    }//add the bytes to put the gif in loop and saves it
+                }
+                else
+                {
+                    using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_Gif.gif"))
+                    {
+                        gifEncoder.Save(st);
+                        st.Close();
+                    }
+                }//saves the gif using the Save() method of GifBitmapEncoder
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}_Gif.gif"))
+            {
+                return true;
+            } //if the conversion was successful and the file of the converted image exists: return true
+            else
+            {
+                return false;
+            } //otherwise: return false
+        }
+
+        private static async Task<Icon> IconOrCurFromImage(Image imgToConvert, string format)
         {
             var ext = Path.GetExtension(pathOfImageToConvert).ToLower();
             #region if the image to convert isn't a png or bmp image it can't be converterd: return null
@@ -160,14 +219,22 @@ namespace ImageConverter
             binWriter.Write(start);
             #endregion
 
-            if (ext == ".png") { imgToConvert.Save(memStream, ImageFormat.Png); }
-            else { imgToConvert.Save(memStream, ImageFormat.Bmp); }
-            var imageSize = (int)memStream.Position - start;
-            memStream.Seek(size, SeekOrigin.Begin);
-            binWriter.Write(imageSize);
-            memStream.Seek(0, SeekOrigin.Begin);
+            try
+            {
+                if (ext == ".png") { imgToConvert.Save(memStream, ImageFormat.Png); }
+                else { imgToConvert.Save(memStream, ImageFormat.Bmp); }
+                var imageSize = (int)memStream.Position - start;
+                memStream.Seek(size, SeekOrigin.Begin);
+                binWriter.Write(imageSize);
+                memStream.Seek(0, SeekOrigin.Begin);
 
-            return new Icon(memStream);
+                return new Icon(memStream);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
     }
 }

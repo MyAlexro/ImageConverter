@@ -6,6 +6,7 @@ using ImageConverter.Properties;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace ImageConverter
 {
@@ -20,6 +21,7 @@ namespace ImageConverter
         ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
         List<bool> finishedConversions;
         List<string> unsuccessfulConversions;
+        bool GifInLoopOpt = true;
 
         public MainWindow()
         {
@@ -28,7 +30,7 @@ namespace ImageConverter
             TitleTextBox.Foreground = ThemeManager.SelectedFontColor();
             ThemeManager.solidColorBrush = new SolidColorBrush();
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
-            ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
+            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             foreach (System.Windows.Controls.Label element in FormatComboBox.Items)
             {
                 element.Background = ThemeManager.SelectedFontColor();
@@ -38,14 +40,16 @@ namespace ImageConverter
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.IT_WarningLabelTxt;
-                ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelRunningTxt;
+                ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
+                GifLoopOptionCB.Content = LanguageManager.IT_GifLoopOptionCheckBoxText;
             }
             else if (Settings.Default.Language == "en")
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.EN_WarningLabelTxt;
-                ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelRunningTxt;
+                ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
+                GifLoopOptionCB.Content = LanguageManager.EN_GifLoopOptionCheckBoxText;
             }
         }
 
@@ -92,8 +96,8 @@ namespace ImageConverter
             #region resets controls
             ThemeManager.solidColorBrush = new SolidColorBrush();
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
-            ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
-            ConversionResultLabel.Visibility = Visibility.Hidden;
+            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
+            ConversionResultTextBlock.Visibility = Visibility.Hidden;
             ImageNameLabel.Text = string.Empty;
             #endregion
 
@@ -116,8 +120,8 @@ namespace ImageConverter
                         ImageNameLabel.Text += Path.GetFileName(imagePath + ", ");
                     }
                 }
-                if (Settings.Default.Language == "it") ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelRunningTxt;
-                if (Settings.Default.Language == "en") ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelRunningTxt;
+                if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
+                if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
                 stringToImgSrcConverter = new ImageSourceConverter();
                 ImgViewer.Opacity = 1.0f; //sets imageviewer opacity to 1
                 ImgViewer.Source = stringToImgSrcConverter.ConvertFromInvariantString(pathsOfImagesToConvert[0]) as ImageSource; //converts the path in ImageSource and shows it in ImgViewer
@@ -144,13 +148,29 @@ namespace ImageConverter
             //else
             finishedConversions = new List<bool>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
-            ConversionResultLabel.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
+            ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
             ConvertImgBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
-
-            foreach (string imagePath in pathsOfImagesToConvert)
+            if (Settings.Default.Language == "it")
             {
-                finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
-            } //executes the ConvertAndSaveAsync task for each image to convert
+                ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
+            }
+
+            if (selectedFormat == "gif")
+            {
+                finishedConversions.Add(await Task.Run(() => ImageConversionHandler.GifFromImages(pathsOfImagesToConvert, GifInLoopOpt)));
+            }
+            else
+            {
+                foreach (string imagePath in pathsOfImagesToConvert)
+                {
+                    finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
+                } //executes the ConvertAndSaveAsync task for each image to convert
+            }
+
 
             #region gets the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
@@ -166,40 +186,40 @@ namespace ImageConverter
             #endregion
 
             #region displays the result(s) of the conversion(s)
-            ConversionResultLabel.Visibility = Visibility.Visible;
+            ConversionResultTextBlock.Visibility = Visibility.Visible;
             if (unsuccessfulConversions.Count == 0)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush();
-                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedConversionLabelColor;
-                ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
+                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedConversionTextBlockColor;
+                ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    if (pathsOfImagesToConvert.Length == 1) ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelFinishedTxt;
-                    else ConversionResultLabel.Text = LanguageManager.IT_MultipleConversionResultLabelFinishedTxt;
+                    if (pathsOfImagesToConvert.Length == 1) ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockFinishedTxt;
+                    else ConversionResultTextBlock.Text = LanguageManager.IT_MultipleConversionResultTextBlockFinishedTxt;
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedTxt;
                 }
-            }
+            } //if there were no errors
             else
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush();
-                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedWithErrorsConversionLabelColor;
-                ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
+                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedWithErrorsConversionTextBlockColor;
+                ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    ConversionResultLabel.Text = LanguageManager.IT_UnsuccConversionResultLabelFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.IT_UnsuccConversionResultTextBlockFinishedTxt;
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    ConversionResultLabel.Text = LanguageManager.EN_UnsuccConversionResultLabelFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedTxt;
                 }
                 foreach (var conversion in unsuccessfulConversions)
                 {
-                    ConversionResultLabel.Text += conversion + ", ";
+                    ConversionResultTextBlock.Text += conversion + ", ";
                 }
-            }
+            } //if there was any error
             #endregion
             ConvertImgBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
         }
@@ -209,11 +229,28 @@ namespace ImageConverter
             Menu.OpenMenu(Menu);
         }
 
-        private void Button_MouseDown(object sender, MouseButtonEventArgs e)
+        private void FormatComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
-            ConversionResultLabel.Text += ".";
+            if ((((ComboBox)sender).SelectedItem as Label).Content.ToString() == "GIF")
+            {
+                GifLoopOptionCB.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GifLoopOptionCB.Visibility = Visibility.Hidden;
+            }
         }
 
+        private void GifLoopOption_Click(object sender, RoutedEventArgs e)
+        {
+            if (GifLoopOptionCB.IsChecked == false)
+            {
+                GifInLoopOpt = false;
+            }
+            else
+            {
+                GifInLoopOpt = true;
+            }
+        }
     }
 }
