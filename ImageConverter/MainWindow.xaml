@@ -40,12 +40,13 @@
 
         <!--Container of the image to convert-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
-            <Image Width="365" Height="330" x:Name="ImgViewer" Margin="0,0,0,0" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave"/>
+            <Image x:Name="ImgViewer" Height="330" Width="365" Margin="0,0,0,0" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave">
+            </Image>
         </Border>
 
         <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
         <ScrollViewer HorizontalAlignment="Left" Height="71" Margin="93,430,0,0" VerticalAlignment="Top" Width="365">
-            <TextBlock x:Name="ImageNameLabel" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+            <TextBlock x:Name="ImagesNameLabel" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
         </ScrollViewer>
 
         <!-- Label that appears only if the users is trying to drop files which can't be converted-->

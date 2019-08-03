@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace ImageConverter
 {
@@ -98,7 +99,7 @@ namespace ImageConverter
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             ConversionResultTextBlock.Visibility = Visibility.Hidden;
-            ImageNameLabel.Text = string.Empty;
+            ImagesNameLabel.Text = string.Empty;
             #endregion
 
             droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -109,17 +110,15 @@ namespace ImageConverter
                     WarningLabel.Visibility = Visibility.Hidden;
                     return;
                 }
-
-                //if it's an image
                 pathsOfImagesToConvert = droppedImages;
-                if (droppedImages.Length == 1) ImageNameLabel.Text += Path.GetFileName(droppedImages[0]);
+                if (droppedImages.Length == 1) ImagesNameLabel.Text += Path.GetFileName(droppedImages[0]);
                 else
                 {
-                    foreach (string imagePath in droppedImages) //shows the name of the image(s) under the image container
+                    foreach (string imagePath in droppedImages) 
                     {
-                        ImageNameLabel.Text += Path.GetFileName(imagePath + ", ");
+                        ImagesNameLabel.Text += Path.GetFileName(imagePath + ", ");
                     }
-                }
+                } //shows the name of the image(s) under the image container
                 if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
                 if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
                 stringToImgSrcConverter = new ImageSourceConverter();
@@ -167,10 +166,10 @@ namespace ImageConverter
             {
                 foreach (string imagePath in pathsOfImagesToConvert)
                 {
-                    finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
+                   finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
+                  //   finishedConversions = await Task.Run(()=>ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert));
                 } //executes the ConvertAndSaveAsync task for each image to convert
             }
-
 
             #region gets the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
@@ -184,7 +183,6 @@ namespace ImageConverter
                 i++;
             }
             #endregion
-
             #region displays the result(s) of the conversion(s)
             ConversionResultTextBlock.Visibility = Visibility.Visible;
             if (unsuccessfulConversions.Count == 0)
@@ -221,6 +219,7 @@ namespace ImageConverter
                 }
             } //if there was any error
             #endregion
+
             ConvertImgBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
         }
 
@@ -231,8 +230,8 @@ namespace ImageConverter
 
         private void FormatComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            if ((((ComboBox)sender).SelectedItem as Label).Content.ToString() == "GIF")
-            {
+            if ((((ComboBox)sender).SelectedItem as Label)?.Content.ToString() == "GIF")// the null coalescing operator (?.) is needed beacause if the user closes the combobox menu
+            {                                                                           // without selecting a format the selected item would be null, casuing a NullReferenceException
                 GifLoopOptionCB.Visibility = Visibility.Visible;
             }
             else
