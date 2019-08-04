@@ -3,6 +3,8 @@ namespace ImageConverter
 {
     class LanguageManager
     {
+        public static readonly string[] languages = new string[2] { "it", "en" };
+
         //Italian
         public static readonly string
          IT_SettingsLabelTxt = "Impostazioni",
@@ -24,7 +26,9 @@ namespace ImageConverter
          IT_CantConvertImageToSameFormat = "Non si può convertire un'immagine in un'altra immagine con lo stesso formato",
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
          IT_GifLoopOptionCheckBoxText = "Ripeti la gif per sempre",
-         IT_EmpyBttnCntxtMenu = "Svuota";
+         IT_EmpyBttnCntxtMenu = "Svuota",
+         IT_ApplyLanguageMsgBox = "Per applicare la lingua bisogna riavviare l'applicazione, riavviarla desso?",
+         IT_LanguageLabelTxt = "Lingua:";
 
         //English
         public static readonly string
@@ -46,7 +50,8 @@ namespace ImageConverter
          EN_CantConvertImageToSameFormat = "You can't convert an image to another image with the same format",
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_GifLoopOptionCheckBoxText = "Gif in loop",
-         EN_EmpyBttnCntxtMenu = "Empty Image viewer";
-
+         EN_EmpyBttnCntxtMenu = "Empty Image viewer",
+         EN_ApplyLanguageMsgBox = "To apply the language the application needs to be restarted, restart it now?",
+         EN_LanguageLabelTxt = "Language:";
     }
 }

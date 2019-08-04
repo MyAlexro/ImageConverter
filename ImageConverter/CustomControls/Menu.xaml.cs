@@ -33,6 +33,8 @@ namespace ImageConverter
                 FontColorLabel.Content = LanguageManager.IT_FontColorLabelTxT;
                 ThemeLabel.Content = LanguageManager.IT_ThemeLabelTxt;
                 CreditsLabel.Content = LanguageManager.IT_CreditsLabelTxt;
+                LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "it");
+                LanguageOptionLabel.Content = LanguageManager.IT_LanguageLabelTxt;
             }
             else if (Settings.Default.Language == "en")
             {
@@ -40,6 +42,8 @@ namespace ImageConverter
                 FontColorLabel.Content = LanguageManager.EN_FontColorLabelTxT;
                 ThemeLabel.Content = LanguageManager.EN_ThemeLabelTxt;
                 CreditsLabel.Content = LanguageManager.EN_CreditsLabelTxt;
+                LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
+                LanguageOptionLabel.Content = LanguageManager.EN_LanguageLabelTxt;
             }
         }
 
@@ -192,6 +196,28 @@ namespace ImageConverter
             }
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //riavvia l'applicazione
             Application.Current.Shutdown(0);
+        }
+
+        private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            var previousLanguage = Settings.Default.Language;
+            Settings.Default.Language = (LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower();
+            Settings.Default.Save();
+            Settings.Default.Reload();
+            var response = MessageBoxResult.Yes;
+            if (previousLanguage == "it")
+            {
+                response = MessageBox.Show(LanguageManager.IT_ApplyLanguageMsgBox, "Applica lingua", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
+            else if (previousLanguage == "en")
+            {
+                response = MessageBox.Show(LanguageManager.EN_ApplyLanguageMsgBox, "Apply language", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
+            if (response == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //riavvia l'applicazione
+                Application.Current.Shutdown(0);
+            }
         }
     }
 }

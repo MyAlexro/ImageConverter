@@ -43,6 +43,7 @@ namespace ImageConverter
                 WarningLabel.Content = LanguageManager.IT_WarningLabelTxt;
                 ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
                 GifLoopOptionCB.Content = LanguageManager.IT_GifLoopOptionCheckBoxText;
+                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_EmpyBttnCntxtMenu;
             }
             else if (Settings.Default.Language == "en")
             {
@@ -51,6 +52,7 @@ namespace ImageConverter
                 WarningLabel.Content = LanguageManager.EN_WarningLabelTxt;
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
                 GifLoopOptionCB.Content = LanguageManager.EN_GifLoopOptionCheckBoxText;
+                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_EmpyBttnCntxtMenu;
             }
         }
 
@@ -84,7 +86,7 @@ namespace ImageConverter
                     WarningLabel.Visibility = Visibility.Visible;
                     break;
                 }
-            }
+            } 
         }
 
         private void ImgViewer_DragLeave(object sender, DragEventArgs e)
@@ -114,7 +116,7 @@ namespace ImageConverter
                 if (droppedImages.Length == 1) ImagesNameLabel.Text += Path.GetFileName(droppedImages[0]);
                 else
                 {
-                    foreach (string imagePath in droppedImages) 
+                    foreach (string imagePath in droppedImages)
                     {
                         ImagesNameLabel.Text += Path.GetFileName(imagePath + ", ");
                     }
@@ -123,7 +125,17 @@ namespace ImageConverter
                 if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
                 stringToImgSrcConverter = new ImageSourceConverter();
                 ImgViewer.Opacity = 1.0f; //sets imageviewer opacity to 1
-                ImgViewer.Source = stringToImgSrcConverter.ConvertFromInvariantString(pathsOfImagesToConvert[0]) as ImageSource; //converts the path in ImageSource and shows it in ImgViewer
+                using (var st = File.OpenRead(pathsOfImagesToConvert[0]))
+                {
+                    var imageToShow = new BitmapImage();
+                    imageToShow.BeginInit();
+                    imageToShow.StreamSource = st;
+                    imageToShow.CacheOption = BitmapCacheOption.OnLoad;
+                    imageToShow.EndInit();
+                    ImgViewer.Source = imageToShow;
+                    st.Close();
+                } //loads image to show from a stream and shows it, if the image was used directly it would've 
+                                                                             //remained in use even after emptying the ImgViewer and so couldn't be deleted
                 WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
@@ -142,9 +154,8 @@ namespace ImageConverter
                     MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 return;
-            } //if a format hasn't been selected 
+            } //if a format hasn't been selected prompt user to select one and return
 
-            //else
             finishedConversions = new List<bool>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
             ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
@@ -158,19 +169,7 @@ namespace ImageConverter
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
             }
 
-            if (selectedFormat == "gif")
-            {
-                finishedConversions.Add(await Task.Run(() => ImageConversionHandler.GifFromImages(pathsOfImagesToConvert, GifInLoopOpt)));
-            }
-            else
-            {
-                foreach (string imagePath in pathsOfImagesToConvert)
-                {
-                   finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
-                  //   finishedConversions = await Task.Run(()=>ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert));
-                } //executes the ConvertAndSaveAsync task for each image to convert
-            }
-
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert, GifInLoopOpt));
             #region gets the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
             int i = 0;
@@ -250,6 +249,21 @@ namespace ImageConverter
             {
                 GifInLoopOpt = true;
             }
+        }
+
+        private void EmptyImgViewerCntxtMenuBttn_Click(object sender, RoutedEventArgs e)
+        {
+            ImgViewer.ClearValue(Image.SourceProperty);
+            if (Settings.Default.Language == "it") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg")); }
+            else if (Settings.Default.Language == "en") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png")); }
+            stringToImgSrcConverter = null;
+            ConvertImgBttn.IsEnabled = false;
+            ImagesNameLabel.Text = string.Empty;
+            ImgViewer.Opacity = 0.3f;
+            droppedImages = null;
+            stringToImgSrcConverter = null;
+            pathsOfImagesToConvert = null;
+            imgSourceConverter = null;
         }
     }
 }
