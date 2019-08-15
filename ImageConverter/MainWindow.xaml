@@ -13,7 +13,7 @@
         <!-- Title of the window-->
         <TextBlock x:Name="TitleTextBox" Margin="282,0,0,0" TextWrapping="Wrap" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" Height="60" VerticalAlignment="Top" HorizontalAlignment="Left" Width="388" Grid.Row="1">
             <TextBlock.Effect>
-                <DropShadowEffect RenderingBias="Quality" Opacity="0.215"/>
+                <DropShadowEffect Opacity="0.215"/>
             </TextBlock.Effect>
         </TextBlock>
 
@@ -38,12 +38,18 @@
         <!-- GIF: checkbox that is shown only when the format "GIF" is selected, it indicates whether the gif shall be in loop or not-->
         <CheckBox x:Name="GifLoopOptionCB"  Content="Ripeti la gif per sempre" HorizontalAlignment="Left" Margin="468,192,0,0" VerticalAlignment="Top" Visibility="Hidden" IsChecked="True" Click="GifLoopOption_Click" />
 
+        <!-- These controls are shown only when the dropped image format is png, it indicates the color to replace the transparency with-->
+        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Margin="468,212,173,255" Visibility="Hidden">
+            
+        </StackPanel>
+
+
         <!--Container of the image to convert-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
             <Image x:Name="ImgViewer" Height="330" Width="365" Margin="0,0,0,0" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave">
                 <Image.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem x:Name="EmptyImgViewerCntxtMenuBttn" Click="EmptyImgViewerCntxtMenuBttn_Click"/>
+                    <ContextMenu x:Name="ImageViewerContextMenu" Opened="ImageViewerContextMenu_Opened">
+                        <MenuItem x:Name="EmptyImgViewerCntxtMenuBttn" Click="EmptyImgViewerCntxtMenuBttn_Click" IsEnabled="False"/>
                     </ContextMenu>
                 </Image.ContextMenu>
             </Image>
@@ -66,7 +72,7 @@
         <!--Menu-->
         <local:Menu x:Name="Menu" Height="511" Width="255" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-262,0,0,0" >
             <local:Menu.Effect>
-                <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
+                <DropShadowEffect BlurRadius="10" Opacity="0.75"/>
             </local:Menu.Effect>
         </local:Menu>
 
