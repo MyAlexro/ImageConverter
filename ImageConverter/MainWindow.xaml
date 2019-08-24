@@ -17,13 +17,11 @@
             </TextBlock.Effect>
         </TextBlock>
 
-
         <!-- Button to start the conversion of the image-->
         <local:ConvertRoundBttn x:Name="ConvertImgBttn" HorizontalAlignment="Left" Height="36" Margin="468,398,0,0" VerticalAlignment="Top" Width="129" MouseDown="ConvertRoundBttn_MouseDown" IsEnabled="False"/>
 
         <!--Label that says to choose a format-->
-        <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
-
+        <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" Background="{x:Null}" Foreground="Black"/>
         <!-- ComboBox to choose the format to which convert the image-->
         <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True" DropDownClosed="FormatComboBox_DropDownClosed">
             <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG"/>
@@ -35,14 +33,49 @@
             <Label Height="26" Width="76" Background="#FFDAA619" Content="CUR"/>
         </ComboBox>
 
-        <!-- GIF: checkbox that is shown only when the format "GIF" is selected, it indicates whether the gif shall be in loop or not-->
-        <CheckBox x:Name="GifLoopOptionCB"  Content="Ripeti la gif per sempre" HorizontalAlignment="Left" Margin="468,192,0,0" VerticalAlignment="Top" Visibility="Hidden" IsChecked="True" Click="GifLoopOption_Click" />
-
-        <!-- These controls are shown only when the dropped image format is png, it indicates the color to replace the transparency with-->
-        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Margin="468,212,173,255" Visibility="Hidden">
+        <!-- GIF format options-->
+        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Margin="470,190,165,256" Visibility="Hidden">
+            <!-- Option that indicates how many times the gif shall be repeated -->
+            <StackPanel Orientation="Horizontal">
+                <Label x:Name="GifRepeatTimes" Content="Volte che la gif si ripeterà:"/>
+                <ComboBox x:Name="GifRepTimesCB" Margin="3,0,0,0"  VerticalAlignment="Center" Height="20" SelectedIndex="0" DropDownClosed="GifRepTimesCB_DropDownClosed_1">
+                    <Label Content="∞"/>
+                    <Label Content="1"/>
+                    <Label Content="2"/>
+                    <Label Content="3"/>
+                    <Label Content="4"/>
+                    <Label Content="5"/>
+                    <Label Content="6"/>
+                    <Label Content="7"/>
+                    <Label Content="8"/>
+                    <Label Content="9"/>
+                    <Label Content="10"/>
+                </ComboBox>
+            </StackPanel>
             
+            <!-- Option that indicates the delay between frames-->
+            <StackPanel Orientation="Horizontal" Height="26">
+                <Label Content="Tempo di passaggio da un frame all'altro:" x:Name="DelayTimeLabel" />
+                <ComboBox FontSize="10" x:Name="DelayTimesCB" DropDownClosed="DelayTimesCB_DropDownClosed" SelectedIndex="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Label Content="250"/>
+                    <Label Content="500"/>
+                    <Label Content="1000"/>
+                    <Label Content="1500"/>
+                    <Label Content="2000"/>
+                </ComboBox>
+                <Label Content="ms" HorizontalAlignment="Left"/>
+            </StackPanel>
         </StackPanel>
 
+        <!-- IMG to convert is PNG: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
+        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Width="400" Margin="463,205,91,263" Visibility="Hidden">
+            <Label Content="Sostituisci la trasparenza della png con: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68" SelectedIndex="0" DropDownClosed="ReplTranspColCB_DropDownClosed">
+                <Label Content="Niente"/>
+                <Label Content="Bianco"/>
+                <Label Content="Nero"/>
+            </ComboBox>
+        </StackPanel>
 
         <!--Container of the image to convert-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">

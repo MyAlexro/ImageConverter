@@ -1,8 +1,4 @@
-﻿/*
- * doc for gif conversion: http://giflib.sourceforge.net/whatsinagif/index.html
- */
-
-using ImageConverter.Properties;
+﻿using ImageConverter.Properties;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -26,6 +22,7 @@ namespace ImageConverter
 
         private static string imageName; //name of the image to convert
         private static string directoryOfImageToConvert; //directory of the image to convert
+        private static int color = 0; //color to replace the transparency with
 
         public static bool IsImage(string pathOfFile)
         {
@@ -37,8 +34,18 @@ namespace ImageConverter
             return false;
         }
 
-        public static async Task<List<bool>> StartConversion(string format, string[] pathsOfImagesToConvert, bool gifInLoop)
+        public static async Task<List<bool>> StartConversion(string format, string[] pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime)
         {
+            if (colorToReplTheTranspWith != 0)
+            {
+                MessageBox.Show("Replace transparency not implemented yet", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var list = new List<bool>();
+                list.Add(false);
+                return list;
+
+                color = colorToReplTheTranspWith;
+            }
+
             conversionsResults = new List<bool>();
             foreach (var imageToConvertPath in pathsOfImagesToConvert)
             {
@@ -57,34 +64,26 @@ namespace ImageConverter
                     return conversionsResults;
                 }
             } //checks whether the user is trying to convert the image to the same format, converting an image to the same format causes an error because it will try to overwrite the image that is in use by the program
-            if (format == "png")
+            foreach (var imagePath in pathsOfImagesToConvert)
             {
-                foreach (var imagePath in pathsOfImagesToConvert)
+                if (format == "png")
                 {
                     conversionsResults.Add(await Task.Run(() => ToPng(imagePath)));
                 }
-            }
-            else if (format == "jpeg" || format == "jpg")
-            {
-                foreach (var imagePath in pathsOfImagesToConvert)
+                else if (format == "jpeg" || format == "jpg")
                 {
                     conversionsResults.Add(await Task.Run(() => ToJpegOrJpg(imagePath, format)));
                 }
-            }
-            else if (format == "bmp")
-            {
-                foreach (var imagePath in pathsOfImagesToConvert)
+                else if (format == "bmp")
                 {
                     conversionsResults.Add(await Task.Run(() => ToBmp(imagePath)));
                 }
-            }
-            else if (format == "gif")
-            {
-                conversionsResults.Add(await Task.Run(() => ImagesToGif(pathsOfImagesToConvert, gifInLoop)));
-            }
-            else if (format == "ico" || format == "cur")
-            {
-                foreach (var imagePath in pathsOfImagesToConvert)
+                else if (format == "gif")
+                {
+                    conversionsResults.Add(await Task.Run(() => ImagesToGif(pathsOfImagesToConvert, gifRepeatTimes, delayTime)));
+                    break;
+                }
+                else if (format == "ico" || format == "cur")
                 {
                     conversionsResults.Add(await Task.Run(() => ToIconOrCur(imagePath, format)));
                 }
@@ -143,6 +142,7 @@ namespace ImageConverter
                 imageToConv.CacheOption = BitmapCacheOption.OnLoad;
                 imageToConv.EndInit();
                 jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+
                 st.Close();
             }//loads image to convert from a stream and converts it
 
@@ -163,6 +163,7 @@ namespace ImageConverter
                     st.Close();
                 }
             }
+
             if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpeg") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpg"))
             {
                 return true;
@@ -188,6 +189,7 @@ namespace ImageConverter
                 imageToConv.StreamSource = st;
                 imageToConv.CacheOption = BitmapCacheOption.OnLoad;
                 imageToConv.EndInit();
+
                 bmpEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                 st.Close();
             }//loads image to convert from a stream and converts it
@@ -209,7 +211,7 @@ namespace ImageConverter
             #endregion
         }
 
-        private static async Task<bool> ImagesToGif(string[] imagesPaths, bool inLoop)
+        private static async Task<bool> ImagesToGif(string[] imagesPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(imagesPaths[0]);
@@ -217,50 +219,58 @@ namespace ImageConverter
             gifEncoder = new GifBitmapEncoder();
             #endregion
 
-            try
+            foreach (var image in imagesPaths)
             {
-                foreach (var image in imagesPaths)
+                using (Stream st = File.OpenRead(image))
                 {
-                    using (Stream st = File.OpenRead(image))
-                    {
-                        var imageToConv = new BitmapImage();
-                        imageToConv.BeginInit();
-                        imageToConv.StreamSource = st;
-                        imageToConv.CacheOption = BitmapCacheOption.OnLoad;
-                        imageToConv.EndInit();
-                        gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
-                        st.Close();
-                    }//loads image to convert from a stream and converts it
-                }
-                if (inLoop == true)
+                    var imageToConv = new BitmapImage();
+                    imageToConv.BeginInit();
+                    imageToConv.StreamSource = st;
+                    imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                    imageToConv.EndInit();
+
+                    gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                    st.Close();
+                }//loads image to convert from a stream and converts it
+            }
+            using (var ms = new MemoryStream())
+            {
+                gifEncoder.Save(ms);
+                var fileBytes = ms.ToArray();
+
+                // This is the NETSCAPE2.0 Application Extension to set the repeat times of the gif
+                var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, (byte)repeatTimes, 0, 0 };
+
+                // This is the graphic control extension block to set the delay time between two frames
+                var graphicExtension = new byte[] { 33, 249, 4, 0, (byte)delayTime, 0, 0, 0 };
+                var fileBytesList = fileBytes.ToList<byte>();
+
+                #region add graphic control extension block
+                int a = 1;
+                for (int i = 0; i < fileBytesList.Count; i++)
                 {
-                    using (var ms = new MemoryStream())
+                    if(fileBytesList[i] == 44 && fileBytesList[i+1] == 0 && fileBytesList[i+2] == 0 && fileBytesList[i+3] == 0 && fileBytesList[i+4] == 0)
                     {
-                        gifEncoder.Save(ms);
-                        var fileBytes = ms.ToArray();
-                        // This is the NETSCAPE2.0 Application Extension to loop the gif.
-                        var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
-                        var newBytes = new List<byte>();
-                        newBytes.AddRange(fileBytes.Take(13));
-                        newBytes.AddRange(applicationExtension);
-                        newBytes.AddRange(fileBytes.Skip(13));
-                        File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_Gif.gif", newBytes.ToArray());
-                        ms.Close();
-                    }//add the bytes to put the gif in loop and saves it
-                }
-                else
-                {
-                    using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_Gif.gif"))
-                    {
-                        gifEncoder.Save(st);
-                        st.Close();
+                        System.Diagnostics.Debug.WriteLine($"Found start of image descriptor block at index: {i}.\nImage descriptor n°{a}");
+                        fileBytesList.InsertRange(i, graphicExtension);
+                        System.Diagnostics.Debug.WriteLine($"Added graphic control extension block at index {i}\n");
+                        i += 18;
+                        a++;
                     }
-                }//saves the gif using the Save() method of GifBitmapEncoder
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                }
+                fileBytes = fileBytesList.ToArray();
+                #endregion
+                var newBytes = new List<byte>();
+                #region adds application extension block
+                newBytes.AddRange(fileBytes.Take(13));
+                newBytes.AddRange(applicationExtension);
+                newBytes.AddRange(fileBytes.Skip(13));
+                #endregion
+
+                File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_Gif.gif", newBytes.ToArray());
+                ms.Close();
+
+            }//add the application extensions and graphic control extension blocks
 
             if (File.Exists($"{directoryOfImageToConvert}\\{imageName}_Gif.gif"))
             {
@@ -303,53 +313,71 @@ namespace ImageConverter
                 #region Icon header
                 binWriter.Write((short)0);   //offset #0: reserved
 
-                byte type;
-                if (format == "ico") type = 1;
-                else type = 2;
-                binWriter.Write((short)type); //offset #2: specify ico or cur file
+                binWriter.Write((short)1); //offset #2
 
-                binWriter.Write((short)1);   //offset #4: number of resolutions of the image in the final icon  
+                binWriter.Write((short)1);   //offset #4: number of resolutions of the image in the final icon 
                 #endregion
                 #region Structure of image directory
-                var w = imgToConvert.Width;
-                if (w >= 256) w = 0;
+                byte w = (byte)imgToConvert.Width;
+                if (w > 255)
+                    w = 0;
                 binWriter.Write((byte)w); //offset #0: image width
 
-                var h = imgToConvert.Height;
-                if (h >= 256) h = 0;
-                binWriter.Write((byte)h); //offset #1: image height
+                byte h = (byte)imgToConvert.Height;
+                if (h > 255) h = 0;
+                binWriter.Write(h); //offset #1: image height
 
                 binWriter.Write((byte)0);    //offset #2: number of colors in palette
                 binWriter.Write((byte)0);    //offset #3: reserved
 
-                if (format == "ico") binWriter.Write((short)0); //offset #4: (if ico) number of color planes
-                else binWriter.Write((short)1); //offset #4: (if cur) horizontal coordinates of hotspot,in pixels, from the left
+                if (format == "ico")
+                    binWriter.Write((short)0); //offset #4: (if ico) number of color planes
+                else
+                    binWriter.Write((short)1); //offset #4: (if cur) horizontal coordinates of hotspot,in pixels, from the left
 
-                if (format == "ico") binWriter.Write((short)0); //offset #6: (if ico) bits per pixel
-                else binWriter.Write((short)1); //offset #6: (if cur) vertical coordinates of hotspot,in pixels, from the left
+                if (format == "ico")
+                    binWriter.Write((short)1); //offset #6: (if ico) bits per pixel
+                else
+                    binWriter.Write((short)1); //offset #6: (if cur) vertical coordinates of hotspot,in pixels, from the top
 
                 var sizeHere = memStream.Position;
-                binWriter.Write((int)0);    //offset #8: size of image data
+                binWriter.Write((int)sizeHere);    //offset #8: size of image data
 
                 var start = (int)memStream.Position + 4;
                 binWriter.Write(start); //offset #12: of image data from the beginning of the ico/cur file
                 #endregion
                 #region Image data
-                if (ext == ".png") imgToConvert.Save(memStream, ImageFormat.Png);
-                else imgToConvert.Save(memStream, ImageFormat.Bmp);
+                if (ext == ".png")
+                    imgToConvert.Save(memStream, ImageFormat.Png);
+                else
+                {
+                    byte[] bmpBytes = File.ReadAllBytes(imgToConvertPath);
+                    List<byte> bytesList = bmpBytes.ToList<byte>();
+                    for (int i = 0; i <= 14; i++)
+                    {
+                        bytesList.RemoveAt(i);
+                    }
+                    bmpBytes = bytesList.ToArray();
+                    Stream stream = new MemoryStream(bmpBytes);
+                    imgToConvert = Image.FromStream(stream);
+                    imgToConvert.Save(memStream, ImageFormat.Png);
+                }//if the image to convert is a bmp then the BITMAPFILEHEADER has to be deleted
+
                 var imageSize = (int)memStream.Position - start;
                 memStream.Seek(sizeHere, SeekOrigin.Begin);
                 binWriter.Write(imageSize);
                 memStream.Seek(0, SeekOrigin.Begin);
                 #endregion
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
 
             #region saves icon or cur and checkes whether it was saved correctly
-            Icon convertedIcon = new Icon(memStream);
+            Icon convertedIcon;
+            convertedIcon = new Icon(memStream);
+            memStream.Close();
             if (format == "ico")
             {
                 using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.ico"))
@@ -376,6 +404,11 @@ namespace ImageConverter
                 return false;
             }
             #endregion
+        }
+
+        private static async Task<BitmapImage> ReplaceTransparency(Image img)
+        {
+            return new BitmapImage();
         }
     }
 }

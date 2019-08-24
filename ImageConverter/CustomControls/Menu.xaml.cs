@@ -59,7 +59,7 @@ namespace ImageConverter
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
             };
 
-            foreach (Rectangle rect in ThemeColorsSP.Children) // carica lo spessore del bordo dei rettangoli
+            foreach (Rectangle rect in FontColorsSP.Children) // carica lo spessore del bordo dei rettangoli
             {
                 if (Settings.Default.FontCol == rect.Name) //se il nome del rettangolo è uguale al colore del tema selezionato
                 {
@@ -126,19 +126,22 @@ namespace ImageConverter
 
         private void ThemeRects_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if ((sender as Rectangle).Name != Settings.Default.FontCol) //se il mouse se ne va da sopra i rect per selezionare il colore del menu(a meno che non sia il rect con il nome del tema selezionato)
+            if ((sender as Rectangle).Name != Settings.Default.FontCol && (sender as Rectangle).Name != Settings.Default.ThemeType) //se il mouse se ne va da sopra i rect per selezionare il colore del menu(a meno che non sia il rect con il nome del tema selezionato)
             {
                 (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //gli mette il bordo da rect non selezionato
             }
         }
 
-        private void ThemeColRects_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        private void FontColRects_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (((FrameworkElement)sender).Name == Settings.Default.FontCol)
+                return;
+
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
             Settings.Default.FontCol = ((FrameworkElement)sender).Name; //modifica l'opzione del colore del tema con il nome del rect
             Settings.Default.Save();
             Settings.Default.Reload();
-            foreach(Rectangle rect in ThemeColorsSP.Children) //rimette a tutti gli altri rect il bordo di un rect non selezionato
+            foreach(Rectangle rect in FontColorsSP.Children) //rimette a tutti gli altri rect il bordo di un rect non selezionato
             {
                 if (rect.Name != Settings.Default.FontCol)
                 {
@@ -165,6 +168,8 @@ namespace ImageConverter
 
         private void ThemeType_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (((FrameworkElement)sender).Name == Settings.Default.ThemeType)
+                return;
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
             Settings.Default.ThemeType = ((Rectangle)sender).Name; ////modifica l'opzione del tipo di tema con il nome del rect
             if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //se il tema che si seleziona è quello bianco e il colore del font è bianco

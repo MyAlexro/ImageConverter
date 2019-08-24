@@ -25,7 +25,7 @@ namespace ImageConverter
 
 
         //colors of the label, in MainWindow, which tells if the conversion is ongoing, ended successfully or ended with errors 
-        public static Color RunningConversionLabelColor = Color.FromArgb(255, 0, 0, 0);
+        public static Color RunningOrStaticConversionLabelColor = Color.FromArgb(255, 0, 0, 0);
         public static Color CompletedConversionTextBlockColor = Color.FromArgb(255, 53, 181, 87);
         public static Color CompletedWithErrorsConversionTextBlockColor = Color.FromArgb(255, 235, 64, 52);
 

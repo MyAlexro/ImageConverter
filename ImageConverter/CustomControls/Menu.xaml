@@ -40,12 +40,12 @@
             <!--Theme color label-->
             <Label x:Name="FontColorLabel" FontFamily="Segoa UI" FontSize="17" Content="Colore Font:" VerticalAlignment="Center"/>
             <!--Colors stackpanel-->
-            <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultFontCol" Fill="#FFDAA619" MouseDown="ThemeColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="GreenFontCol" Fill="#77e339" MouseDown="ThemeColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="RedFontCol" Fill="Red" MouseDown="ThemeColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="VioletFontCol" Fill="#FFCF6BCF" MouseDown="ThemeColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="WhiteFontCol" Fill="White" MouseDown="ThemeColRects_MouseDown"/>
+            <StackPanel x:Name="FontColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultFontCol" Fill="#FFDAA619" MouseDown="FontColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="GreenFontCol" Fill="#77e339" MouseDown="FontColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="RedFontCol" Fill="Red" MouseDown="FontColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="VioletFontCol" Fill="#FFCF6BCF" MouseDown="FontColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="WhiteFontCol" Fill="White" MouseDown="FontColRects_MouseDown"/>
             </StackPanel>
         </StackPanel>
 
