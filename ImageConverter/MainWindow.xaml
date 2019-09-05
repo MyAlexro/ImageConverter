@@ -34,7 +34,7 @@
         </ComboBox>
 
         <!-- GIF format options-->
-        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Margin="470,190,165,256" Visibility="Hidden">
+        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Margin="470,202,165,244" Visibility="Hidden">
             <!-- Option that indicates how many times the gif shall be repeated -->
             <StackPanel Orientation="Horizontal">
                 <Label x:Name="GifRepeatTimes" Content="Volte che la gif si ripeterà:"/>
@@ -52,7 +52,7 @@
                     <Label Content="10"/>
                 </ComboBox>
             </StackPanel>
-            
+
             <!-- Option that indicates the delay between frames-->
             <StackPanel Orientation="Horizontal" Height="26">
                 <Label Content="Tempo di passaggio da un frame all'altro:" x:Name="DelayTimeLabel" />
@@ -68,7 +68,7 @@
         </StackPanel>
 
         <!-- IMG to convert is PNG: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
-        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Width="400" Margin="463,205,91,263" Visibility="Hidden">
+        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Margin="468,165,107,303" Visibility="Hidden">
             <Label Content="Sostituisci la trasparenza della png con: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68" SelectedIndex="0" DropDownClosed="ReplTranspColCB_DropDownClosed">
                 <Label Content="Niente"/>

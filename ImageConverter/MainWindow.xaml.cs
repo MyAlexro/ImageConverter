@@ -83,13 +83,16 @@ namespace ImageConverter
 
         private void ImgViewer_DragOver(object sender, DragEventArgs e)
         {
-            string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //se l'utente sta tentando di convertire più di un'immagine
-            foreach (var file in droppingFiles)
+            if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                if (ImageConversionHandler.IsImage(file) == false)
+                string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //se l'utente sta tentando di convertire più di un'immagine
+                foreach (var file in droppingFiles)
                 {
-                    WarningLabel.Visibility = Visibility.Visible;
-                    break;
+                    if (ImageConversionHandler.IsImage(file) == false)
+                    {
+                        WarningLabel.Visibility = Visibility.Visible;
+                        break;
+                    }
                 }
             }
         }
@@ -101,28 +104,28 @@ namespace ImageConverter
 
         private void ImgViewer_Drop(object sender, DragEventArgs e)
         {
-            if (WarningLabel.Visibility == Visibility.Visible)
+            if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                WarningLabel.Visibility = Visibility.Hidden;
-                return;
-            } //if the warning label IS visible the dropped file is not an image, so ignore the drop(return)
+                if (WarningLabel.Visibility == Visibility.Visible)
+                {
+                    WarningLabel.Visibility = Visibility.Hidden;
+                    return;
+                } //if the warning label IS visible the dropped file is not an image, so ignore the drop(return)
 
-            #region resets controls
-            ThemeManager.solidColorBrush = new SolidColorBrush();
-            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
-            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
-            ConversionResultTextBlock.Visibility = Visibility.Hidden;
-            ImagesNameLabel.Text = string.Empty;
-            if(FormatComboBox.SelectedValue?.ToString() != "System.Windows.Controls.Label: GIF")
-            {
-                GifOptionsSP.Visibility = Visibility.Hidden;
-            }
-            ReplaceTransparencySP.Visibility = Visibility.Hidden;
-            #endregion
+                #region resets controls
+                ThemeManager.solidColorBrush = new SolidColorBrush();
+                ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
+                ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
+                ConversionResultTextBlock.Visibility = Visibility.Hidden;
+                ImagesNameLabel.Text = string.Empty;
+                if (FormatComboBox.SelectedValue?.ToString() != "System.Windows.Controls.Label: GIF")
+                {
+                    GifOptionsSP.Visibility = Visibility.Hidden;
+                }
+                ReplaceTransparencySP.Visibility = Visibility.Hidden;
+                #endregion
 
-            droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
-            if (e.Data.GetData(DataFormats.FileDrop) != null) 
-            {
+                droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
                 if (WarningLabel.Visibility == Visibility.Visible)
                 {
                     WarningLabel.Visibility = Visibility.Hidden;
@@ -158,7 +161,7 @@ namespace ImageConverter
                     ImgViewer.Source = imageToShow;
                     st.Close();
                 } //loads image to show from a stream and shows it, if the image was used directly it would've 
-                                                                             //remained in use even after emptying the ImgViewer and so couldn't be deleted
+                  //remained in use even after emptying the ImgViewer and so couldn't be deleted
                 WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
@@ -179,10 +182,11 @@ namespace ImageConverter
                 return;
             } //if a format hasn't been selected prompt user to select one and return
 
+            ConversionResultTextBlock.Visibility = Visibility.Hidden; //necessary because if the user converts one image two times in a row it would seem like the conversion didn't start
             finishedConversions = new List<bool>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
-            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //se
+            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //sets
             ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
             ConvertImgBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
             if (Settings.Default.Language == "it")
@@ -256,7 +260,7 @@ namespace ImageConverter
         {
             var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
 
-            if (selectedValue == "GIF")                      
+            if (selectedValue == "GIF")
                 GifOptionsSP.Visibility = Visibility.Visible;
             else
                 GifOptionsSP.Visibility = Visibility.Hidden;
@@ -265,21 +269,18 @@ namespace ImageConverter
         private void ReplTranspColCB_DropDownClosed(object sender, EventArgs e)
         {
             var selectedIndex = ((ComboBox)sender).SelectedIndex;
-            if (selectedIndex == 0)
-                replTranspWithCol = 0;
-            else
-                replTranspWithCol = selectedIndex;
+            replTranspWithCol = selectedIndex;
         }
 
         private void GifRepTimesCB_DropDownClosed_1(object sender, EventArgs e)
         {
             var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
-            if(selectedValue == "∞")
+            if (selectedValue == "∞")
             {
                 repGifTimes = 0;
                 return;
             }
-            repGifTimes = Convert.ToInt32(selectedValue);        
+            repGifTimes = Convert.ToInt32(selectedValue);
         }
 
         private void DelayTimesCB_DropDownClosed(object sender, EventArgs e)

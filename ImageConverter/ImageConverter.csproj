@@ -221,5 +221,8 @@
     <Resource Include="TestImages\PngImages\simpsons_PNG95.png" />
     <Resource Include="TestImages\PngImages\smp_badge1-500x500.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Temp\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
