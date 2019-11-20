@@ -13,3 +13,5 @@ A very customizable program to convert images to different image formats: jpeg, 
 - ~400Kb of free disk space 
 - .NET framework 4.6 or higher
 
+### Your antivirus might flag the software as a virus because it lacks a digital signature  
+
