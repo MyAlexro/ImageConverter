@@ -448,6 +448,13 @@ namespace ImageConverter
                 }
             }
 
+            #region dispose objects
+            binWriter.Dispose();
+            memStream.Dispose();
+            convertedIcon.Dispose();
+            imgToConvert.Dispose();
+            #endregion
+
             if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.ico") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.cur"))
             {
                 return true;
