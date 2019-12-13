@@ -20,10 +20,11 @@ namespace ImageConverter
     public partial class MainWindow : Window
     {
         string[] droppedImages;
-        string[] pathsOfImagesToConvert;
+        bool isValidDirectory; //if the dropped folder contains files that can be converted
+        string[] pathsOfImagesToConvert; //paths of the images to convert that get passed to the imageconversionhandler class
         ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
-        List<bool> finishedConversions;
-        List<string> unsuccessfulConversions;
+        List<bool> finishedConversions; //
+        List<string> unsuccessfulConversions; //name of the images that didn't get converted
         int repGifTimes = 0;
         int delayTimeInCs = 50; //delay time (in centiseconds so that it doesn't have to be converted later)
         int replTranspWithCol = 0;
@@ -69,10 +70,10 @@ namespace ImageConverter
         {
             if (Settings.Default.FirstRun == true)
             {
-                if (CultureInfo.CurrentCulture.ToString().Contains("it")) //imposta la lingua dell'applicazione dalla lingua di sistema
+                if (CultureInfo.CurrentCulture.ToString().Contains("it")) 
                 {
                     Settings.Default.Language = "it";
-                }
+                }//set app language based off the default pc language 
                 else
                 {
                     Settings.Default.Language = "en";
@@ -92,11 +93,25 @@ namespace ImageConverter
                 string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //se l'utente sta tentando di convertire più di un'immagine
                 foreach (var file in droppingFiles)
                 {
-                    if (ImageConversionHandler.IsImage(file) == false)
+                    FileAttributes attr = File.GetAttributes(file);
+                    if(attr.HasFlag(FileAttributes.Directory))
+                    {
+                        string[] filesInDir = Directory.GetFiles(file);
+                        foreach(var fileInDir in filesInDir)
+                        {
+                            if(ImageConversionHandler.IsImage(fileInDir) == false)
+                            {
+                                isValidDirectory = false;
+                                break;
+                            }
+                            isValidDirectory = true;
+                        }
+                    } //check if the file is a folder and check if it doesn't contain any convertable file(an image)
+                    else if (ImageConversionHandler.IsImage(file) == false && isValidDirectory == false) 
                     {
                         WarningLabel.Visibility = Visibility.Visible;
                         break;
-                    }
+                    }//and if the file isn't an image
                 }
             }
         }
@@ -136,8 +151,15 @@ namespace ImageConverter
                 {
                     WarningLabel.Visibility = Visibility.Hidden;
                     return;
-                } //if the warning label is not visible, so if the file(s) is/are image(s)
-                pathsOfImagesToConvert = droppedImages;
+                } //if the warning label is not visible, so if the file(s) is/are not image(s) return
+
+                if (isValidDirectory)
+                {
+                    droppedImages = Directory.GetFiles(droppedImages[0]);
+                } //if the dropped file is a folder then the dropped images(the ones to convert) are the images inside it
+
+                pathsOfImagesToConvert = droppedImages; //paths of the images to convert that will be passed to the imageConversionHandler
+
                 if (droppedImages.Length == 1) ImagesNameLabel.Text += Path.GetFileName(droppedImages[0]);
                 else
                 {
@@ -166,7 +188,7 @@ namespace ImageConverter
                     ImgViewer.Source = imageToShow;
                     st.Close();
                 } //loads image to show from a stream and shows it, if the image was used directly it would've 
-                  //remained in use even after emptying the ImgViewer and so couldn't be deleted
+                                                                             //remained in use even after emptying the ImgViewer and so couldn't be deleted
                 WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
