@@ -6,7 +6,7 @@ namespace ImageConverter
     class ThemeManager
     {
         static Color LightTheme = Color.FromArgb(255, 255, 255, 255);
-        static Color DarkTheme = Color.FromArgb(255, 29, 29, 29);
+        static Color DarkTheme = Color.FromArgb(255, 46, 46, 46);
 
         static Color defaultFontColor = Color.FromArgb(255, 218, 166, 25); //the color of the font  when the mouse ISN'T over the mouse
         static Color defaultFontHoveringColor = Color.FromArgb(255, 162, 123, 17); //the color of the font when the mouse IS over the mouse

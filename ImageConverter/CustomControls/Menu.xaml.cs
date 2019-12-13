@@ -10,22 +10,22 @@ namespace ImageConverter
 {
     /// <summary>
     /// Code that makes the Menu work
-    /// I rect hanno il nome del colore del tema a cui corrispondono 
+    /// The rects have the name of the color at which they correspond
     /// </summary>
     public partial class Menu : UserControl
     {
         private Storyboard storyboard;
         private ThicknessAnimation thicknessAnimation;
         private FrameworkElement nameOfMenu;
-        private Thickness closedPos = new Thickness(-262, 0, 0, 0); //posizione del menu quando è chiuso
-        private Thickness openedPos = new Thickness(0, 0, 0, 0);  //posizione del menu quando è aperto
-        private int selectedRectStrokeThickness = 3; //spessore del bordo del rect quando è selezionato o la freccetta del mouse c'è sopra
-        private int unselectedRectStrokeThickness = 1; //spessore del bordo del rect non selezionato (normale)
+        private Thickness closedPos = new Thickness(-262, 0, 0, 0); //position of the menu when it's closed
+        private Thickness openedPos = new Thickness(0, 0, 0, 0);  //position of the menu when it's opened
+        private int selectedRectStrokeThickness = 3; //width of the border of the rect when it's selected or the mouse is over it
+        private int unselectedRectStrokeThickness = 1; //width of the border of the rect when it's not selected (normal state)
 
         public Menu()
         {
             InitializeComponent();
-            MenuSP.Background = ThemeManager.SelectedThemeType();//applica il tema quando il menu viene inizializzato
+            MenuSP.Background = ThemeManager.SelectedThemeType();//apply the chosen theme when initialized
             SettingsLabel.Foreground = ThemeManager.SelectedFontColor();
             if (Settings.Default.Language == "it")
             {
@@ -49,9 +49,9 @@ namespace ImageConverter
 
         public void OpenMenu(FrameworkElement nameOfMenuRect)
         {
-            nameOfMenu = nameOfMenuRect; //nome del menu che si vuole spostare
+            nameOfMenu = nameOfMenuRect; //name of the menu that you want to move
             storyboard = new Storyboard();
-            thicknessAnimation = new ThicknessAnimation() //setta le proprietà dell'animazione
+            thicknessAnimation = new ThicknessAnimation() //set animation properties
             {
                 From = closedPos,
                 To = openedPos,
@@ -59,24 +59,24 @@ namespace ImageConverter
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
             };
 
-            foreach (Rectangle rect in FontColorsSP.Children) // carica lo spessore del bordo dei rettangoli
+            foreach (Rectangle rect in FontColorsSP.Children) //sets the width of the border of the rects in FontcolorSP
             {
-                if (Settings.Default.FontCol == rect.Name) //se il nome del rettangolo è uguale al colore del tema selezionato
+                if (Settings.Default.FontCol == rect.Name) //if the name of the rect is the same as the chosen font color
                 {
-                    rect.StrokeThickness = selectedRectStrokeThickness; //gli mette il lo spessore da rect selezionato
+                    rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
                 }
             }
-            foreach (Rectangle rect in ThemeTypeSP.Children) // carica lo spessore del bordo dei rettangoli
+            foreach (Rectangle rect in ThemeTypeSP.Children) //sets the width of the border of the rects in ThemeTypeSP
             {
-                if (Settings.Default.ThemeType == rect.Name) //se il nome del rettangolo è uguale al tipo di tema selezionato
+                if (Settings.Default.ThemeType == rect.Name) //if the name of the rect is the same as the chosen theme type
                 {
-                    rect.StrokeThickness = selectedRectStrokeThickness; //gli mette il lo spessore da rect selezionato
+                    rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
                 }
             }
             storyboard.Children.Add(thicknessAnimation);
             Storyboard.SetTargetProperty(thicknessAnimation, new PropertyPath(Grid.MarginProperty));
             Storyboard.SetTarget(thicknessAnimation, nameOfMenuRect);
-            storyboard.Begin(); //inizia l'animazione
+            storyboard.Begin(); //start animation of opening
         }
 
         public void CloseMenu(DependencyObject nameOfMenuRect)
@@ -98,37 +98,37 @@ namespace ImageConverter
 
         private void CloseMenuBttn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ThemeManager.solidColorBrush = new SolidColorBrush() //se la freccetta del mouse va sopra il bttn per chiudere il menu
+            ThemeManager.solidColorBrush = new SolidColorBrush() //if the mouse gets over the bttn to close the menu
             {
-                Color = Color.FromArgb(255, 0, 0, 0), // lo scurisce
+                Color = Color.FromArgb(255, 0, 0, 0), //darken it 
             };
             CloseMenuBttn.Foreground = ThemeManager.solidColorBrush;
         }
 
         private void CloseMenuBttn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ThemeManager.solidColorBrush = new SolidColorBrush() //se la freccetta del mouse si toglie dal bttn per chiudere il menu
+            ThemeManager.solidColorBrush = new SolidColorBrush() //if the mouse gets out the bttn to close the menu
             {
-                Color = Color.FromArgb(255, 202, 204, 207), //gli mette un colore più chiaro
+                Color = Color.FromArgb(255, 202, 204, 207), //set normal color
             };
             CloseMenuBttn.Foreground = ThemeManager.solidColorBrush;
         }
 
         private void CloseMenuBttn_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CloseMenu(nameOfMenu); //chiude il menu
+            CloseMenu(nameOfMenu); //close the menu
         }
 
         private void ThemeRects_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //mette al rect, sopra il quale è posizionata la freccetta del mouse, il bordo da rect selezionato 
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //sets the width of the rect, over which the mouse is, the selected-rect border width
         }
 
         private void ThemeRects_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if ((sender as Rectangle).Name != Settings.Default.FontCol && (sender as Rectangle).Name != Settings.Default.ThemeType) //se il mouse se ne va da sopra i rect per selezionare il colore del menu(a meno che non sia il rect con il nome del tema selezionato)
+            if ((sender as Rectangle).Name != Settings.Default.FontCol && (sender as Rectangle).Name != Settings.Default.ThemeType) //if the mouse gets out the theme-select rects(unless it's the already chosen theme type)
             {
-                (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //gli mette il bordo da rect non selezionato
+                (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //set normal border width
             }
         }
 
@@ -137,11 +137,11 @@ namespace ImageConverter
             if (((FrameworkElement)sender).Name == Settings.Default.FontCol)
                 return;
 
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
-            Settings.Default.FontCol = ((FrameworkElement)sender).Name; //modifica l'opzione del colore del tema con il nome del rect
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
+            Settings.Default.FontCol = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the font color
             Settings.Default.Save();
             Settings.Default.Reload();
-            foreach(Rectangle rect in FontColorsSP.Children) //rimette a tutti gli altri rect il bordo di un rect non selezionato
+            foreach(Rectangle rect in FontColorsSP.Children) //set to all the other rects a non selected-rect border width
             {
                 if (rect.Name != Settings.Default.FontCol)
                 {
@@ -162,7 +162,7 @@ namespace ImageConverter
             {
                 return;
             }
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //riavvia l'applicazione
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
             Application.Current.Shutdown(0);
         }
 
@@ -170,16 +170,20 @@ namespace ImageConverter
         {
             if (((FrameworkElement)sender).Name == Settings.Default.ThemeType)
                 return;
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
-            Settings.Default.ThemeType = ((Rectangle)sender).Name; ////modifica l'opzione del tipo di tema con il nome del rect
-            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //se il tema che si seleziona è quello bianco e il colore del font è bianco
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
+            Settings.Default.ThemeType = ((Rectangle)sender).Name; //set the name of the rect as the option of the theme type
+            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //if the selected theme is light but the font color is white
             {
-                Settings.Default.FontCol = "DefaultFontCol"; //mette il colore del font a default così si riesce a leggere
+                Settings.Default.FontCol = "DefaultFontCol"; //set the font color to default to prevent readability issues
+            }
+            else
+            {
+                Settings.Default.FontCol = "WhiteFontCol";
             }
             Settings.Default.Save();
             Settings.Default.Reload();
 
-            foreach(Rectangle rect in ThemeTypeSP.Children) //rimette a tutti gli altri rect il bordo di un rect non selezionato
+            foreach(Rectangle rect in ThemeTypeSP.Children) // set to all the other rects a non selected-rect border width
             {
                 if (rect.Name != Settings.Default.ThemeType)
                 {
@@ -199,7 +203,7 @@ namespace ImageConverter
             {
                 return;
             }
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //riavvia l'applicazione
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
             Application.Current.Shutdown(0);
         }
 
@@ -224,7 +228,7 @@ namespace ImageConverter
             }
             if (response == MessageBoxResult.Yes)
             {
-                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //riavvia l'applicazione
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
                 Application.Current.Shutdown(0);
             }
         }

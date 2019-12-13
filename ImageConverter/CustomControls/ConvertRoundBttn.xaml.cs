@@ -13,7 +13,7 @@ namespace ImageConverter
         public ConvertRoundBttn()
         {
             InitializeComponent();
-            BttnBackground.Fill = ThemeManager.SelectedFontColor(); //applica il tema quando il bttn viene inizializzato
+            BttnBackground.Fill = ThemeManager.SelectedFontColor(); //apply the chosen theme when the button gets initialized
             if (Settings.Default.Language == "it")
             {
                 ConvertLabel.Content = LanguageManager.IT_ConvertLabelTxt;
@@ -26,10 +26,10 @@ namespace ImageConverter
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            BttnBackground.Fill = ThemeManager.SelectedFontHoveringColor(); //se la freccetta del mouse va sopra al bttn lo scurisce
+            BttnBackground.Fill = ThemeManager.SelectedFontHoveringColor(); //if the mouse gets over the bttn darken it
         }
 
-        private void Grid_MouseLeave(object sender, MouseEventArgs e) //se invece se ne va gli mette il colore normale
+        private void Grid_MouseLeave(object sender, MouseEventArgs e) //otherwise set the normal colour
         {
             BttnBackground.Fill = ThemeManager.SelectedFontColor();
         }
