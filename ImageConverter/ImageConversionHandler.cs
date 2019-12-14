@@ -24,8 +24,13 @@ namespace ImageConverter
         private static string tempImgPath = null;
         private static string imageName; //name of the image to convert
         private static string directoryOfImageToConvert; //directory of the image to convert
-        private static int color = 0; //color to replace the transparency with
+        private static int color = 0; //color to replace the transparency with. 0 = no color, 1 = white, 2 = black
 
+        /// <summary>
+        /// Checks wether the given path of the file leads to an image
+        /// </summary>
+        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
+        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
         public static bool IsImage(string pathOfFile)
         {
             string filePath = pathOfFile.ToLower();
@@ -35,6 +40,7 @@ namespace ImageConverter
             }
             return false;
         }
+
 
         /// <summary>
         /// Starts the conversion of one or more image to the specified format
@@ -111,7 +117,7 @@ namespace ImageConverter
                 imageToConv.EndInit();
                 pngEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                 st.Close();
-            }//loads image to convert from a stream and converts it
+            }//loads image to convert from a stream and converts it, from a stream because otherwise it the image to conv. would remain in use and couldn't be deleted
 
             #region saves the image and checks whether it was save correctly
             using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.png"))
@@ -136,15 +142,15 @@ namespace ImageConverter
                 var imageToConv = new BitmapImage();
                 if (color != 0)
                 {
-                    Image imgToConvertImage = Image.FromStream(st);
-                    using (Stream st2 = File.OpenRead(ReplaceTransparency(imgToConvertImage)))
+                    Image imgToConvertAsImage = Image.FromStream(st);
+                    using (Stream st2 = File.OpenRead(ReplaceTransparency(imgToConvertAsImage)))
                     {
                         imageToConv.BeginInit();
                         imageToConv.StreamSource = st2;
                         imageToConv.CacheOption = BitmapCacheOption.OnLoad;
                         imageToConv.EndInit();
                         jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
-                        st.Close();
+                        st2.Close();
                     }
                 }//if the user selected a color to convert the image transparency with
                 else
@@ -240,14 +246,32 @@ namespace ImageConverter
                 using (Stream st = File.OpenRead(image))
                 {
                     var imageToConv = new BitmapImage();
-                    imageToConv.BeginInit();
-                    imageToConv.StreamSource = st;
-                    imageToConv.CacheOption = BitmapCacheOption.OnLoad;
-                    imageToConv.EndInit();
 
-                    gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                    if(color != 0) //if the user has chosen to replace the background with a color
+                    {
+                        Image imgToConvertAsImage = Image.FromStream(st);
+                        using (Stream st2 = File.OpenRead(ReplaceTransparency(imgToConvertAsImage)))
+                        {
+                            imageToConv.BeginInit();
+                            imageToConv.StreamSource = st2;
+                            imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                            imageToConv.EndInit();
+                            gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                            st2.Close();
+                        }
+                    }
+                    else
+                    {
+                        imageToConv.BeginInit();
+                        imageToConv.StreamSource = st;
+                        imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                        imageToConv.EndInit();
+
+                        gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                    }
+
                     st.Close();
-                }//loads image to convert from a stream and converts it
+                }//loads image to convert from a stream, eventually replace transparency and converts it
             }
             using (var ms = new MemoryStream())
             {
@@ -286,7 +310,7 @@ namespace ImageConverter
                 File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.gif", newBytes.ToArray());
                 ms.Close();
 
-            }//add the application extensions and graphic control extension blocks
+            }//adds the application extensions and graphic control extension blocks to the gif file structure
 
             return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
         }
@@ -425,6 +449,13 @@ namespace ImageConverter
             #endregion
         }
 
+
+        /// <summary>
+        /// Checks if an image has been converted correctly and thus if it has been saved correctly
+        /// </summary>
+        /// <param name="directoryOfImageToConvert"> path to the folder where the image has been saved to</param>
+        /// <param name="imageName"> image of the name that has been converted and saved</param>
+        /// <returns></returns>
         private static async Task<bool> CheckIfSavedCorrectly(string directoryOfImageToConvert, string imageName)
         {   
             if (await Task.Run(()=>File.Exists($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}")))
@@ -438,6 +469,12 @@ namespace ImageConverter
             
         }
 
+
+        /// <summary>
+        /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
+        /// </summary>
+        /// <param name="img">Image to which replace the transparency</param>
+        /// <returns name="tempImgPath"> path where the image with the transparency replaced has been saved </returns>
         private static string ReplaceTransparency(Image img)
         {
             Bitmap imgWithTranspReplaced = new Bitmap(img.Width, img.Height);

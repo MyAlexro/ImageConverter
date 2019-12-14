@@ -70,7 +70,7 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- PNG format options: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
+        <!-- PNG image options: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
         <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Margin="468,165,107,303" Visibility="Hidden">
             <Label Content="Sostituisci la trasparenza della png con: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68" SelectedIndex="0" DropDownClosed="ReplTranspColCB_DropDownClosed">
