@@ -233,6 +233,7 @@ namespace ImageConverter
             #endregion
         }
 
+        //TODO: Fix conversion to gif, sometimes the final gifs are buggy
         private static async Task<bool> ImagesToGif(string[] imagesPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
@@ -247,7 +248,7 @@ namespace ImageConverter
                 {
                     var imageToConv = new BitmapImage();
 
-                    if(color != 0) //if the user has chosen to replace the background with a color
+                    if (color != 0) //if the user has chosen to replace the background with a color
                     {
                         Image imgToConvertAsImage = Image.FromStream(st);
                         using (Stream st2 = File.OpenRead(ReplaceTransparency(imgToConvertAsImage)))
@@ -313,13 +314,13 @@ namespace ImageConverter
             }//adds the application extensions and graphic control extension blocks to the gif file structure
 
             return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
-        }
+        } 
 
-        private static async Task<bool> ToIconOrCur(string imgToConvertPath, string format) //TODO: Fix conversion of bmp images to ico or cur
+        private static async Task<bool> ToIconOrCur(string imgToConvertPath, string format)
         {
-            var ext = Path.GetExtension(imgToConvertPath).ToLower();
-            #region if the image to convert isn't a png or bmp image it can't be converterd: return null
-            if (ext != ".png" && ext != ".bmp")
+            var imgToConvExt = Path.GetExtension(imgToConvertPath).ToLower();
+            #region if the image to convert isn't a png or bmp image it can't be converterd: return false
+            if (imgToConvExt != ".png" && imgToConvExt != ".bmp")
             {
                 if (Settings.Default.Language == "it")
                 {
@@ -341,46 +342,46 @@ namespace ImageConverter
             var binWriter = new BinaryWriter(memStream);
             #endregion
 
-                #region Icon header
-                binWriter.Write((short)0);   //offset #0: reserved
+            #region Icon header
+            binWriter.Write((short)0);   //offset #0: reserved
 
-                binWriter.Write((short)1); //offset #2
+            binWriter.Write((short)1); //offset #2
 
-                binWriter.Write((short)1);   //offset #4: number of resolutions of the image in the final icon 
-                #endregion
-                #region Structure of image directory
-                byte w = (byte)imgToConvert.Width;
-                if (w > 255)
-                    w = 0;
-                binWriter.Write((byte)w); //offset #0: image width
+            binWriter.Write((short)1);   //offset #4: number of resolutions of the image in the final icon 
+            #endregion
+            #region Structure of image directory
+            byte w = (byte)imgToConvert.Width;
+            if (w > 255)
+                w = 0;
+            binWriter.Write((byte)w); //offset #0: image width
 
-                byte h = (byte)imgToConvert.Height;
-                if (h > 255) h = 0;
-                binWriter.Write(h); //offset #1: image height
+            byte h = (byte)imgToConvert.Height;
+            if (h > 255) h = 0;
+            binWriter.Write(h); //offset #1: image height
 
-                binWriter.Write((byte)0);    //offset #2: number of colors in palette
-                binWriter.Write((byte)0);    //offset #3: reserved
+            binWriter.Write((byte)0);    //offset #2: number of colors in palette
+            binWriter.Write((byte)0);    //offset #3: reserved
 
-                if (format == "ico")
-                    binWriter.Write((short)0); //offset #4: (if ico) number of color planes
-                else
-                    binWriter.Write((short)1); //offset #4: (if cur) horizontal coordinates of hotspot,in pixels, from the left
+            if (format == "ico")
+                binWriter.Write((short)0); //offset #4: (if ico) number of color planes
+            else
+                binWriter.Write((short)1); //offset #4: (if cur) horizontal coordinates of hotspot,in pixels, from the left
 
-                if (format == "ico")
-                    binWriter.Write((short)1); //offset #6: (if ico) bits per pixel
-                else
-                    binWriter.Write((short)1); //offset #6: (if cur) vertical coordinates of hotspot,in pixels, from the top
+            if (format == "ico")
+                binWriter.Write((short)1); //offset #6: (if ico) bits per pixel
+            else
+                binWriter.Write((short)1); //offset #6: (if cur) vertical coordinates of hotspot,in pixels, from the top
 
-                var sizeHere = memStream.Position;
-                binWriter.Write((int)sizeHere);    //offset #8: size of image data
+            var sizeHere = memStream.Position;
+            binWriter.Write((int)sizeHere);    //offset #8: size of image data
 
-                var start = (int)memStream.Position + 4;
-                binWriter.Write(start); //offset #12: of image data from the beginning of the ico/cur file
+            var start = (int)memStream.Position + 4;
+            binWriter.Write(start); //offset #12 of image data from the beginning of the ico/cur file
             #endregion
             try
             {
                 #region Image data
-                if (ext == ".png")
+                if (imgToConvExt == ".png")
                 {
                     if (color != 0)
                     {
@@ -396,23 +397,17 @@ namespace ImageConverter
                 }
                 else
                 {
-                    imgToConvert.Save(memStream, ImageFormat.Bmp);
                     byte[] bmpBytes = File.ReadAllBytes(imgToConvertPath);
-                    List<byte> bytesList = bmpBytes.ToList();
-                    for (int i = 1 ; i <= 224; i++)
+                    List<byte> bmpBytesList = bmpBytes.ToList();
+                    for (int i = 0; i < 14; i++)
                     {
-                        bytesList.RemoveAt(i);
+                        bmpBytesList.RemoveAt(0);
                     }
-                    bmpBytes = bytesList.ToArray();
-                    using (Stream stream = new MemoryStream(bmpBytes))
-                    {
-                        imgToConvert = Image.FromStream(stream);
-                        stream.Close();
-                    }
+                    bmpBytes = bmpBytesList.ToArray();
+                    memStream.Write(bmpBytes, 0, bmpBytes.Length);
 
-                    imgToConvert.Save(memStream, ImageFormat.Bmp);
-                }//if the image to convert is a bmp then the BITMAPFILEHEADER block has to be deleted
-                 
+                }//if the image to convert is a bmp then the BITMAPFILEHEADER block has to be removed, reads the bmp image bytes sequence and removes it then writes it in the memory stream
+
                 var imageSize = (int)memStream.Position - start;
                 memStream.Seek(sizeHere, SeekOrigin.Begin);
                 binWriter.Write(imageSize);
@@ -424,6 +419,7 @@ namespace ImageConverter
                 System.Diagnostics.Debug.WriteLine(e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("\n");
                 System.Diagnostics.Debug.WriteLine(e.Message);
+                MessageBox.Show(messageBoxText:$"StackTrace: {e.StackTrace}", caption:e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -432,10 +428,10 @@ namespace ImageConverter
             convertedIcon = new Icon(memStream);
             memStream.Close();
             using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}"))
-                {
-                    convertedIcon.Save(st);
-                    st.Close();
-                }
+            {
+                convertedIcon.Save(st);
+                st.Close();
+            }
 
 
             #region dispose objects
@@ -457,8 +453,8 @@ namespace ImageConverter
         /// <param name="imageName"> image of the name that has been converted and saved</param>
         /// <returns></returns>
         private static async Task<bool> CheckIfSavedCorrectly(string directoryOfImageToConvert, string imageName)
-        {   
-            if (await Task.Run(()=>File.Exists($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}")))
+        {
+            if (await Task.Run(() => File.Exists($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}")))
             {
                 return true;
             } //if the conversion was successful and the file of the converted image exists: return true
@@ -466,7 +462,7 @@ namespace ImageConverter
             {
                 return false;
             } //otherwise: return false
-            
+
         }
 
 
@@ -492,10 +488,7 @@ namespace ImageConverter
 
             string tempPath = Path.GetTempPath();
 
-            #region Creates folder of ImageConverter in temp folder, saves imgWithTranspReplaced in it and returns its path
-            if (!Directory.Exists($"{tempPath}\\ImageConverter")) //if the temp folder of ImageConverter doesn't exist create it
-                Directory.CreateDirectory($"{tempPath}\\ImageConverter");
-
+            #region Saves imgWithTranspReplaced in the temp folder and returns its path
             imgWithTranspReplaced.Save($"{tempPath}\\ImageConverter\\tempImgWithTranspReplaced.png"); //save image, return its path and dispose objects
             tempImgPath = $"{tempPath}\\ImageConverter\\tempImgWithTranspReplaced.png";
             imgWithTranspReplaced.Dispose();
