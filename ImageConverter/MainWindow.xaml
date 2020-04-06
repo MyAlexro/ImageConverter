@@ -18,7 +18,7 @@
         </TextBlock>
 
         <!-- Button to start the conversion of the image-->
-        <local:ConvertRoundBttn x:Name="ConvertImgBttn" HorizontalAlignment="Left" Height="36" Margin="468,398,0,0" VerticalAlignment="Top" Width="129" MouseDown="ConvertRoundBttn_MouseDown" IsEnabled="False"/>
+        <local:ConvertRoundBttn x:Name="StartConversionBttn" HorizontalAlignment="Left" Height="36" Margin="468,398,0,0" VerticalAlignment="Top" Width="129" MouseDown="StartConversionBttn_MouseDown" IsEnabled="False"/>
 
         <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
         <TextBlock x:Name="ConversionResultTextBlock" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>

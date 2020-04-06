@@ -20,6 +20,11 @@ namespace ImageConverter
         private static BmpBitmapEncoder bmpEncoder;
         private static GifBitmapEncoder gifEncoder;
 
+        //private static Encoder qualityEncoder = Encoder.Quality;
+        //private static Encoder compressioneEncoder = Encoder.Compression;
+        //private static EncoderParameters encodingParameters = new EncoderParameters(2);
+        //private static EncoderParameter myEncoderParameter = new EncoderParameter(qualityEncoder, 50L);
+
         private static string chosenFormat;
         private static string tempImgPath = null;
         private static string imageName; //name of the image to convert
@@ -34,13 +39,12 @@ namespace ImageConverter
         public static bool IsImage(string pathOfFile)
         {
             string filePath = pathOfFile.ToLower();
-            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".ico") || filePath.Contains(".tiff"))
+            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
             {
                 return true;
             }
             return false;
         }
-
 
         /// <summary>
         /// Starts the conversion of one or more image to the specified format
@@ -97,6 +101,9 @@ namespace ImageConverter
                     conversionsResults.Add(await Task.Run(() => ToIconOrCur(imageToConvertPath, format)));
                 }
             } //initialize the conversion of each image
+
+            if (tempImgPath != null) //deletes the temporary files in the temp folder(for example the images with the transparency replaced but still not converted)
+                File.Delete(tempImgPath);
 
             return conversionsResults;
         }
@@ -180,9 +187,6 @@ namespace ImageConverter
                     st.Close();
                 }
             }
-
-            if (tempImgPath != null) //deletes the temporary file in the temp folder(the image with the transparency replaced but still not converted)
-                File.Delete(tempImgPath);
 
             return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
             #endregion
@@ -444,7 +448,6 @@ namespace ImageConverter
             return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
             #endregion
         }
-
 
         /// <summary>
         /// Checks if an image has been converted correctly and thus if it has been saved correctly
