@@ -236,5 +236,15 @@ namespace ImageConverter
                 Application.Current.Shutdown(0);
             }
         }
+
+        private void PreviewImgCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Only one image will be shown");
+        }
+
+        private void PreviewImgCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("More than one image will be shown");
+        }
     }
 }

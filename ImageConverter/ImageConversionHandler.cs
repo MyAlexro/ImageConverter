@@ -55,7 +55,7 @@ namespace ImageConverter
         /// <param name="colorToReplTheTranspWith"> Color to replace the transparency of a png image with</param>
         /// <param name="delayTime"> delay between two frames of a gif</param>
         /// <returns></returns>
-        public static async Task<List<bool>> StartConversion(string format, string[] pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime)
+        public static async Task<List<bool>> StartConversion(string format, List<String> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime)
         {
             chosenFormat = format;
             color = colorToReplTheTranspWith;
@@ -102,7 +102,7 @@ namespace ImageConverter
                 }
             } //initialize the conversion of each image
 
-            if (tempImgPath != null) //deletes the temporary files in the temp folder(for example the images with the transparency replaced but still not converted)
+            if (tempImgPath != null) //deletes the temporary images in the temp folder(for example the image with the transparency replaced but still not converted)
                 File.Delete(tempImgPath);
 
             return conversionsResults;
@@ -170,7 +170,7 @@ namespace ImageConverter
                 }
             }//loads image to convert from a stream, eventually replace the transparency, and converts it
 
-            #region Saves image based on format(jpeg or jpg), eventually deletes temp file, and checks wether it was saved correctly
+            #region Saves image based on format(jpeg or jpg) and checkes whether the converted image was saved correctly
             if (format == "jpeg")
             {
                 using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.jpeg"))
@@ -226,7 +226,7 @@ namespace ImageConverter
                 st.Close();
             }//loads image to convert from a stream, eventually replace the transparency, and converts it
 
-            #region saves bmp image and checkes whether it was saved correctly
+            #region Saves bmp image and checkes whether the converted image was saved correctly
             using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.bmp"))
             {
                 bmpEncoder.Save(st);
@@ -238,7 +238,7 @@ namespace ImageConverter
         }
 
         //TODO: Fix conversion to gif, sometimes the final gifs are buggy
-        private static async Task<bool> ImagesToGif(string[] imagesPaths, int repeatTimes, int delayTime)
+        private static async Task<bool> ImagesToGif(List<String> imagesPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(imagesPaths[0]);
@@ -252,7 +252,7 @@ namespace ImageConverter
                 {
                     var imageToConv = new BitmapImage();
 
-                    if (color != 0) //if the user has chosen to replace the background with a color
+                    if (color != 0) 
                     {
                         Image imgToConvertAsImage = Image.FromStream(st);
                         using (Stream st2 = File.OpenRead(ReplaceTransparency(imgToConvertAsImage)))
@@ -264,7 +264,7 @@ namespace ImageConverter
                             gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                             st2.Close();
                         }
-                    }
+                    }//if the user has chosen to replace the background of a png image with a color
                     else
                     {
                         imageToConv.BeginInit();
@@ -468,7 +468,6 @@ namespace ImageConverter
 
         }
 
-
         /// <summary>
         /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
         /// </summary>
@@ -489,11 +488,9 @@ namespace ImageConverter
             }//replace transparency with black
             g.DrawImage(img, 0, 0);
 
-            string tempPath = Path.GetTempPath();
-
             #region Saves imgWithTranspReplaced in the temp folder and returns its path
-            imgWithTranspReplaced.Save($"{tempPath}\\ImageConverter\\tempImgWithTranspReplaced.png"); //save image, return its path and dispose objects
-            tempImgPath = $"{tempPath}\\ImageConverter\\tempImgWithTranspReplaced.png";
+            imgWithTranspReplaced.Save($"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png"); //save image, return its path and dispose objects
+            tempImgPath = $"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png";
             imgWithTranspReplaced.Dispose();
             g.Dispose();
 

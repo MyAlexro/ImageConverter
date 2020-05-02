@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using ImageConverter.Properties;
 
@@ -8,20 +9,22 @@ namespace ImageConverter
     /// <summary>
     /// Interaction logic for RoundButton.xaml
     /// </summary>
-    public partial class ConvertRoundBttn : UserControl
+    public partial class RoundBttn : UserControl
     {
-        public ConvertRoundBttn()
+
+
+        public string ButtonText
+        {
+            get { return (string)GetValue(ButtonTextProperty); }
+            set { SetValue(ButtonTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty ButtonTextProperty =
+            DependencyProperty.Register("ButtonText", typeof(string), typeof(RoundBttn), new PropertyMetadata("Text"));
+
+        public RoundBttn()
         {
             InitializeComponent();
-            BttnBackground.Fill = ThemeManager.SelectedFontColor(); //apply the chosen theme when the button gets initialized
-            if (Settings.Default.Language == "it")
-            {
-                ConvertLabel.Content = LanguageManager.IT_ConvertLabelTxt;
-            }
-            else if (Settings.Default.Language == "en")
-            {
-                ConvertLabel.Content = LanguageManager.EN_ConvertLabelTxt;
-            }
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)

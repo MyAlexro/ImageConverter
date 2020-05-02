@@ -111,8 +111,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CustomControls\ConvertRoundBttn.xaml.cs">
-      <DependentUpon>ConvertRoundBttn.xaml</DependentUpon>
+    <Compile Include="CustomControls\RoundBttn.xaml.cs">
+      <DependentUpon>RoundBttn.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\CheckBox.xaml.cs">
+      <DependentUpon>CheckBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
@@ -128,9 +131,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ThemeManager.cs" />
-    <Page Include="CustomControls\ConvertRoundBttn.xaml">
+    <Page Include="CustomControls\RoundBttn.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CustomControls\CheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\Menu.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -227,6 +234,12 @@
     <None Include="TestImages\PngImages\simpsons_PNG95.png" />
     <None Include="TestImages\PngImages\smp_badge1-500x500.png" />
     <None Include="TestImages\PngImages\yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AddImages.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ReplaceImages.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
