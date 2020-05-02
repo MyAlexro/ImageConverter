@@ -34,7 +34,7 @@ namespace ImageConverter
          IT_LanguageLabelTxt = "Lingua:",
          IT_DelayTimeLabelTxt = "Tempo di passaggio da un frame all'altro:",
          IT_AddToExistingImagesToolTip = "Aggiungi le immagini trascinate",
-         IT_ReplaceExistingImagesToolTip = "Sostituisci con le immagini presente con quelle trascinate";
+         IT_ReplaceExistingImagesToolTip = "Sostituisci le immagini presenti con quelle trascinate";
 
         //English
         public static readonly string
@@ -61,7 +61,7 @@ namespace ImageConverter
          EN_LanguageLabelTxt = "Language:",
          EN_DelayTimeLabelTxt = "Delay time between two frames:",
          EN_AddToExistingImagesToolTip = "Add the dropped images",
-         EN_ReplaceExistingImagesToolTip = "Replace current images with dropped images";
+         EN_ReplaceExistingImagesToolTip = "Replace the current images with the dropped ones";
 
     }
 }

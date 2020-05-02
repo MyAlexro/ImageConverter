@@ -28,7 +28,7 @@ namespace ImageConverter
         /// <summary>
         /// Paths of the dropped files on the ImgViewer
         /// </summary>
-        List<string> givenFilesToConvert;
+        List<string> droppedFilesToConvert;
 
         /// <summary>
         /// Paths of the images to convert that get passed to the ImageConversionHandler
@@ -137,7 +137,7 @@ namespace ImageConverter
         {
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //if the user is trying to convert more than one file
+                string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //Get files the user is trying to convert
                 if (CheckIfGivenFilesAreImages(droppingFiles) == false)
                 {
                     WarningLabel.Visibility = Visibility.Visible;
@@ -155,11 +155,12 @@ namespace ImageConverter
         {
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
+                //if the warning label IS visible the dropped file is not an image, so ignore the dropped files and exit from function
                 if (WarningLabel.Visibility == Visibility.Visible)
                 {
                     WarningLabel.Visibility = Visibility.Hidden;
                     return;
-                } //if the warning label IS visible the dropped file is not an image, so ignore the dropped files and exit from func
+                }
 
                 #region Resets various GUI controls
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -175,10 +176,23 @@ namespace ImageConverter
                 }
                 ReplaceTransparencySP.Visibility = Visibility.Hidden;
                 #endregion
-                givenFilesToConvert = new List<string>();
+                droppedFilesToConvert = new List<string>();
 
-                foreach (var file in e.Data.GetData(DataFormats.FileDrop) as string[]) { givenFilesToConvert.Add(file); }
-                GetImagesToConvertAndPrepareGUI(givenFilesToConvert); //Directly gets the images because the warning label is hidden, so the dropped files must be images
+                //Gets directly dropped files and files in folders to convert
+                foreach (var file in e.Data.GetData(DataFormats.FileDrop) as string[])
+                {
+                    FileAttributes attr = File.GetAttributes(file);
+                    if (attr.HasFlag(FileAttributes.Directory))
+                    {
+                        var folder = file;
+                        foreach (var image in Directory.GetFiles(folder))
+                        {
+                            droppedFilesToConvert.Add(image);
+                        }
+                    }
+                    else { droppedFilesToConvert.Add(file); }
+                }
+                GetImagesToConvertAndPrepareGUI(droppedFilesToConvert); //Directly gets the images because the warning label is hidden, so the dropped files must be images
                 LoadPreviewImage(pathsOfImagesToConvert);
 
                 StartConversionBttn.IsEnabled = true;
@@ -405,6 +419,7 @@ namespace ImageConverter
             foreach (var file in files)
             {
                 FileAttributes attr = File.GetAttributes(file);
+                //check if the file is a folder and check if it contains any image, if yes then the files are ok to convert
                 if (attr.HasFlag(FileAttributes.Directory))
                 {
                     string[] filesInDir = Directory.GetFiles(file);
@@ -420,11 +435,15 @@ namespace ImageConverter
                             return false;
                         }
                     }
-                } //check if the file is a folder and check if it contains any image, if yes then the files are valid
+                }
+                //if it's not a folder containing images
+                else { droppedFileisValidDirectory = false; }
+
+                //if the file isn't an image
                 if (!ImageConversionHandler.IsImage(file) && !droppedFileisValidDirectory)
                 {
                     return false;
-                }//if the file isn't an image
+                }
             }
             return true;
         }
@@ -432,40 +451,19 @@ namespace ImageConverter
         /// <summary>
         /// Gets the images dropped by the user on the ImgViewer control and prepares the GUI consequently
         /// </summary>
-        /// <param name="givenFilesToConvert"> Files dropped on the ImgViewer control, if the user drops a folder it would be the first element</param>
-        public void GetImagesToConvertAndPrepareGUI(List<String> givenFilesToConvert)
+        /// <param name="droppedFilesToConvert"> Files dropped on the ImgViewer control, if the user drops a folder it would be the first element</param>
+        public void GetImagesToConvertAndPrepareGUI(List<String> droppedFilesToConvert)
         {
             //If the user wants to replace the already dropped images
             if ((string)AddOrReplaceDroppedImages.Tag == "ReplaceImages")
             {
-                //if the dropped file is a folder the image(s) to convert will be inside it
-                if (droppedFileisValidDirectory)
-                {
-                    pathsOfImagesToConvert = Directory.GetFiles(givenFilesToConvert[0]).ToList();
-                }
-                //else if the user has dropped directly the image(s)
-                else
-                {
-                    pathsOfImagesToConvert = givenFilesToConvert;
-                }
+                pathsOfImagesToConvert = droppedFilesToConvert;
             }
 
             //If the user wants to add more images to convert
             else
             {
-                //if the dropped file is a folder the image(s) to convert will be inside it
-                if (droppedFileisValidDirectory)
-                {
-                    foreach (var imagePath in Directory.GetFiles(givenFilesToConvert[0]))
-                    {
-                        pathsOfImagesToConvert.Add(imagePath);
-                    }
-                }
-                //else if the user has dropped directly the image(s)
-                else
-                {
-                    pathsOfImagesToConvert.AddRange(givenFilesToConvert);
-                }
+                pathsOfImagesToConvert.AddRange(droppedFilesToConvert);
             }
 
             #region Adds name(s) of the image(s) to the textblock under ImgViewer

@@ -39,14 +39,14 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left block, Stackpanel containing the ImgViewer and all its related controls-->
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="0,0,0,0">
                 <!-- Label that appears only if the users is trying to drop files which can't be converted-->
                 <Label x:Name="WarningLabel" Content="Error text" HorizontalAlignment="Left" VerticalAlignment="Top" Height="Auto" Width="Auto" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="10" />
 
                 <!-- Button that determines if the dropped images replace the images to convert or add up to them-->
                 <Image Tag="ReplaceImages" x:Name="AddOrReplaceDroppedImages" Source="Resources/ReplaceImages.jpg" Stretch="Uniform" Width="24" Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImages_MouseDown"/>
 
-                <!--Container of the image to convert-->
+                <!--Container of the images to convert ImgViewer-->
                 <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <Image x:Name="ImgViewer" Height="330" Width="365" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave">
                         <Image.ContextMenu>
@@ -58,7 +58,7 @@
                 </Border>
 
                 <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
-                <ScrollViewer HorizontalAlignment="Left" Height="70" VerticalAlignment="Top" Width="365">
+                <ScrollViewer HorizontalAlignment="Left" Height="Auto" MaxHeight="62" VerticalAlignment="Top" Width="365">
                     <TextBlock x:Name="ImagesNameLabel" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
                 </ScrollViewer>
 
