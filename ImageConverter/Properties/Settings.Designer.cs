@@ -25,25 +25,25 @@ namespace ImageConverter.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DefaultFontCol")]
-        public string FontCol {
+        [global::System.Configuration.DefaultSettingValueAttribute("DefaultThemeColor")]
+        public string ThemeColor {
             get {
-                return ((string)(this["FontCol"]));
+                return ((string)(this["ThemeColor"]));
             }
             set {
-                this["FontCol"] = value;
+                this["ThemeColor"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("LightTheme")]
-        public string ThemeType {
+        public string ThemeMode {
             get {
-                return ((string)(this["ThemeType"]));
+                return ((string)(this["ThemeMode"]));
             }
             set {
-                this["ThemeType"] = value;
+                this["ThemeMode"] = value;
             }
         }
         

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ImageConverter.Properties;
+using System.Windows.Media;
 
 
 namespace ImageConverter
@@ -11,6 +11,15 @@ namespace ImageConverter
     /// </summary>
     public partial class RoundBttn : UserControl
     {
+        public new int FontSize
+        {
+            get { return (int)GetValue(FontSizeProperty); }
+            set { SetValue(FontSizeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for FontSize.  This enables animation, styling, binding, etc...
+        public static new readonly DependencyProperty FontSizeProperty =
+            DependencyProperty.Register("FontSize", typeof(int), typeof(RoundBttn), new PropertyMetadata(12));
 
 
         public string ButtonText
@@ -25,16 +34,17 @@ namespace ImageConverter
         public RoundBttn()
         {
             InitializeComponent();
+            BttnBackground.Fill = ThemeManager.SelectedThemeColor();
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            BttnBackground.Fill = ThemeManager.SelectedFontHoveringColor(); //if the mouse gets over the bttn darken it
+            BttnBackground.Fill = ThemeManager.SelectedThemeHoveringColor(); //if the mouse gets over the bttn darken it
         }
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e) //otherwise set the normal colour
         {
-            BttnBackground.Fill = ThemeManager.SelectedFontColor();
+            BttnBackground.Fill = ThemeManager.SelectedThemeColor();
         }
     }
 }

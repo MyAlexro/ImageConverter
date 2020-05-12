@@ -236,10 +236,10 @@
     <None Include="TestImages\PngImages\yellow.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\AddImages.jpg" />
+    <Resource Include="Resources\AddImages.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ReplaceImages.jpg" />
+    <Resource Include="Resources\ReplaceImages.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -20,7 +20,10 @@
             <EventSetter Event="MouseEnter" Handler="Rectangles_MouseEnter"/>
             <EventSetter Event="MouseLeave" Handler="Rectangles_MouseLeave"/>
         </Style>
-
+        <Style TargetType="Label" x:Key="LabelStyle">
+            <Setter Property="FontFamily" Value="Segoa UI"/>
+            <Setter Property="FontSize" Value="17"/>
+        </Style>
     </UserControl.Resources>
 
 
@@ -33,30 +36,30 @@
         <!--Impostazioni label-->
         <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="26" Foreground="#FFDAA619">Impostazioni</Label>
 
-        <!--#region Color and theme options-->
+        <!--#region Theme options-->
 
-        <!-- Choose font color Stackpanels -->
+        <!-- Choose theme color Stackpanels -->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,20,0,0">
             <!--Theme color label-->
-            <Label x:Name="FontColorLabel" FontFamily="Segoa UI" FontSize="17" Content="Colore Font:" VerticalAlignment="Center"/>
+            <Label x:Name="ThemeColorLabel" Style="{StaticResource LabelStyle}" Content="Theme color:" VerticalAlignment="Center"/>
             <!--Colors stackpanel-->
-            <StackPanel x:Name="FontColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultFontCol" Fill="#FFDAA619" MouseDown="FontColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="GreenFontCol" Fill="#77e339" MouseDown="FontColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="RedFontCol" Fill="Red" MouseDown="FontColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="VioletFontCol" Fill="#FFCF6BCF" MouseDown="FontColRects_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="WhiteFontCol" Fill="White" MouseDown="FontColRects_MouseDown"/>
+            <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultThemeColor" Fill="#FFDAA619" MouseDown="ThemeColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="GreenThemeColor" Fill="#77e339" MouseDown="ThemeColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="RedThemeColor" Fill="Red" MouseDown="ThemeColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="VioletThemeColor" Fill="#FFCF6BCF" MouseDown="ThemeColRects_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="WhiteThemeColor" Fill="White" MouseDown="ThemeColRects_MouseDown"/>
             </StackPanel>
         </StackPanel>
 
         <!-- Choose theme type Stackpanel-->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,5,0,0">
             <!-- Label theme type-->
-            <Label x:Name="ThemeLabel" FontFamily="Segoa UI" FontSize="17" Content="Tema:" VerticalAlignment="Center"/>
+            <Label x:Name="ThemeLabel" Style="{StaticResource LabelStyle}" Content="Theme:" VerticalAlignment="Center"/>
             <!--Theme type stackpanel-->
-            <StackPanel x:Name="ThemeTypeSP" Orientation="Horizontal" VerticalAlignment="Center">
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="LightTheme" Fill="White" MouseDown="ThemeType_MouseDown"/>
-                <Rectangle Style="{StaticResource rectStyle}" x:Name="DarkTheme" Fill=" #1d1d1d" Stroke="LightGray" MouseDown="ThemeType_MouseDown"/>
+            <StackPanel x:Name="ThemeModesSP" Orientation="Horizontal" VerticalAlignment="Center">
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="LightTheme" Fill="White" MouseDown="ThemeMode_MouseDown"/>
+                <Rectangle Style="{StaticResource rectStyle}" x:Name="DarkTheme" Fill=" #1d1d1d" Stroke="LightGray" MouseDown="ThemeMode_MouseDown"/>
             </StackPanel>
         </StackPanel>
 
@@ -64,16 +67,11 @@
 
         <Separator Opacity="0.5" Height="5"/>
 
-        <StackPanel Orientation="Horizontal">
-        </StackPanel>
-
-        <Separator Opacity="0.5" Height="5"/>
-
         <!--#region Language option-->
 
         <!-- Language stackpanel-->
         <StackPanel Orientation="Horizontal">
-            <Label x:Name="LanguageOptionLabel" FontFamily="Segoa UI" FontSize="17" Content="Lingua:" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <Label x:Name="LanguageOptionLabel" Style="{StaticResource LabelStyle}" Content="Language:" VerticalAlignment="Center" HorizontalAlignment="Left" />
             <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="46" DropDownClosed="LanguageComboBox_DropDownClosed">
                 <Label x:Name="ItOption" Background="{x:Null}">It</Label>
                 <Label x:Name="EnOption" Background="{x:Null}">En</Label>
@@ -84,7 +82,7 @@
 
         <Separator Opacity="0.5" Height="5"/>
 
-        <Rectangle Height="230" x:Name="Empty"/>
+        <Rectangle Height="250" x:Name="Empty"/>
 
         <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" DockPanel.Dock="Bottom">Creatore: Alessandro Dinardo (MyAlexro)</Label>
 

@@ -26,11 +26,11 @@ namespace ImageConverter
         {
             InitializeComponent();
             MenuSP.Background = ThemeManager.SelectedThemeType();//apply the chosen theme when initialized
-            SettingsLabel.Foreground = ThemeManager.SelectedFontColor();
+            SettingsLabel.Foreground = ThemeManager.SelectedThemeColor();
             if (Settings.Default.Language == "it")
             {
                 SettingsLabel.Content = LanguageManager.IT_SettingsLabelTxt;
-                FontColorLabel.Content = LanguageManager.IT_FontColorLabelTxT;
+                ThemeColorLabel.Content = LanguageManager.IT_ThemeColorLabelTxT;
                 ThemeLabel.Content = LanguageManager.IT_ThemeLabelTxt;
                 CreditsLabel.Content = LanguageManager.IT_CreditsLabelTxt;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "it");
@@ -39,7 +39,7 @@ namespace ImageConverter
             else if (Settings.Default.Language == "en")
             {
                 SettingsLabel.Content = LanguageManager.EN_SettingsLabelTxt;
-                FontColorLabel.Content = LanguageManager.EN_FontColorLabelTxT;
+                ThemeColorLabel.Content = LanguageManager.EN_ThemeColorLabelTxT;
                 ThemeLabel.Content = LanguageManager.EN_ThemeLabelTxt;
                 CreditsLabel.Content = LanguageManager.EN_CreditsLabelTxt;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
@@ -47,9 +47,13 @@ namespace ImageConverter
             }
         }
 
-        public void OpenMenu(FrameworkElement nameOfMenuRect)
+        /// <summary>
+        /// Opens the menu by moving it into the visible window
+        /// </summary>
+        /// <param name="menuElement"> Menu element used in the MainWindow</param>
+        public void OpenMenu(FrameworkElement menuElement)
         {
-            nameOfMenu = nameOfMenuRect; //name of the menu that you want to move
+            nameOfMenu = menuElement; //name of the menu that you want to move
             storyboard = new Storyboard();
             thicknessAnimation = new ThicknessAnimation() //set animation properties
             {
@@ -59,27 +63,31 @@ namespace ImageConverter
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
             };
 
-            foreach (Rectangle rect in FontColorsSP.Children) //sets the width of the border of the rects in FontcolorSP
+            foreach (Rectangle rect in ThemeColorsSP.Children) //sets the width of the border of the rects in ThemeColorSP
             {
-                if (Settings.Default.FontCol == rect.Name) //if the name of the rect is the same as the chosen font color
+                if (Settings.Default.ThemeColor == rect.Name) //if the name of the rect is the same as the chosen font color
                 {
                     rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
                 }
             }
-            foreach (Rectangle rect in ThemeTypeSP.Children) //sets the width of the border of the rects in ThemeTypeSP
+            foreach (Rectangle rect in ThemeModesSP.Children) //sets the width of the border of the rects in ThemeTypeSP
             {
-                if (Settings.Default.ThemeType == rect.Name) //if the name of the rect is the same as the chosen theme type
+                if (Settings.Default.ThemeMode == rect.Name) //if the name of the rect is the same as the chosen theme type
                 {
                     rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
                 }
             }
             storyboard.Children.Add(thicknessAnimation);
             Storyboard.SetTargetProperty(thicknessAnimation, new PropertyPath(Grid.MarginProperty));
-            Storyboard.SetTarget(thicknessAnimation, nameOfMenuRect);
+            Storyboard.SetTarget(thicknessAnimation, menuElement);
             storyboard.Begin(); //start animation of opening
         }
 
-        public void CloseMenu(DependencyObject nameOfMenuRect)
+        /// <summary>
+        /// Closes the menu by moving it outside of the window
+        /// </summary>
+        /// <param name="menuElement"> Menu element used in the MainWindow</param>
+        public void CloseMenu(DependencyObject menuElement)
         {
             storyboard = new Storyboard();
             thicknessAnimation = new ThicknessAnimation()
@@ -92,7 +100,7 @@ namespace ImageConverter
 
             storyboard.Children.Add(thicknessAnimation);
             Storyboard.SetTargetProperty(thicknessAnimation, new PropertyPath(Grid.MarginProperty));
-            Storyboard.SetTarget(thicknessAnimation, nameOfMenuRect);
+            Storyboard.SetTarget(thicknessAnimation, menuElement);
             storyboard.Begin();
         }
 
@@ -119,31 +127,46 @@ namespace ImageConverter
             CloseMenu(nameOfMenu); //close the menu
         }
 
+        /// <summary>
+        /// When the user hovers the mouse over any rectangle(theme mode or color)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rectangles_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //sets the width of the rect, over which the mouse is, the selected-rect border width
         }
 
+        /// <summary>
+        /// When the user's mouse leaves the area over any rectangle(theme mode or color)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rectangles_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if ((sender as Rectangle).Name != Settings.Default.FontCol && (sender as Rectangle).Name != Settings.Default.ThemeType) //if the mouse gets out the theme-select rects(unless it's the already chosen theme type)
+            if ((sender as Rectangle).Name != Settings.Default.ThemeColor && (sender as Rectangle).Name != Settings.Default.ThemeMode) //if the mouse gets out the theme-select rects(unless it's the already chosen theme type)
             {
                 (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //set normal border width
             }
         }
 
-        private void FontColRects_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        /// <summary>
+        /// When the user click the rectangles that represent the theme COLORS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ThemeColRects_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (((FrameworkElement)sender).Name == Settings.Default.FontCol)
+            if (((FrameworkElement)sender).Name == Settings.Default.ThemeColor)
                 return;
 
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
-            Settings.Default.FontCol = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the font color
+            Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the font color
             Settings.Default.Save();
             Settings.Default.Reload();
-            foreach(Rectangle rect in FontColorsSP.Children) //set to all the other rects a non selected-rect border width
+            foreach(Rectangle rect in ThemeColorsSP.Children) //set to all the other rects a non selected-rect border width
             {
-                if (rect.Name != Settings.Default.FontCol)
+                if (rect.Name != Settings.Default.ThemeColor)
                 {
                     rect.StrokeThickness = unselectedRectStrokeThickness;
                 }
@@ -151,11 +174,11 @@ namespace ImageConverter
             MessageBoxResult response = MessageBoxResult.No;
             if (Settings.Default.Language == "it")
             {
-                response = MessageBox.Show(LanguageManager.IT_ApplyFontColorMsgBox,"Cambia colore font",MessageBoxButton.YesNo,MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.IT_ApplyThemeColorMsgBox,"Cambia colore tema",MessageBoxButton.YesNo,MessageBoxImage.Information);
             }
             else if (Settings.Default.Language == "en")
             {
-                response = MessageBox.Show(LanguageManager.EN_ApplyFontColorMsgBox, "Change font color", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.EN_ApplyThemeColorMsgBox, "Change theme color", MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
 
             if (response == MessageBoxResult.No)
@@ -166,30 +189,33 @@ namespace ImageConverter
             Application.Current.Shutdown(0);
         }
 
-        private void ThemeType_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        /// <summary>
+        /// When the user click the rectangles that represent the theme TYPES
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ThemeMode_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (((FrameworkElement)sender).Name == Settings.Default.ThemeType)
+            if (((FrameworkElement)sender).Name == Settings.Default.ThemeMode)
                 return;
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
-            Settings.Default.ThemeType = ((Rectangle)sender).Name; //set the name of the rect as the option of the theme type
-            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //if the selected theme is light but the font color is white
+
+            Settings.Default.ThemeMode = ((Rectangle)sender).Name;
+            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.ThemeColor == "WhiteThemeColor") //if the selected theme mode is Light but the font color is White
             {
-                Settings.Default.FontCol = "DefaultFontCol"; //set the font color to default to prevent readability issues
+                Settings.Default.ThemeColor = "DefaultThemeColor"; //set the theme color to default to prevent readability issues
             }
-            else if (((Rectangle)sender).Name == "DarkTheme" && Settings.Default.FontCol == "DarkThemeFontColor") //if the selected theme is light but the font color is white
+            if(((Rectangle)sender).Name == "DarkTheme" && Settings.Default.ThemeColor != "WhiteThemeColor") //If the user selectes the dark theme and the theme color isn't already white
             {
-                Settings.Default.FontCol = "DefaultFontCol"; //set the font color to default to prevent readability issues
-            }
-            else
-            {
-                Settings.Default.FontCol = "WhiteFontCol";
+                Settings.Default.ThemeColor = "WhiteThemeColor";
             }
             Settings.Default.Save();
             Settings.Default.Reload();
 
-            foreach(Rectangle rect in ThemeTypeSP.Children) // set to all the other rects a non selected-rect border width
+            // set to all the other rects a non selected-rect border width
+            foreach (Rectangle rect in ThemeModesSP.Children)
             {
-                if (rect.Name != Settings.Default.ThemeType)
+                if (rect.Name != Settings.Default.ThemeMode)
                 {
                     rect.StrokeThickness = unselectedRectStrokeThickness;
                 }

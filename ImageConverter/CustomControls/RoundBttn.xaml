@@ -9,8 +9,8 @@
 
     <Viewbox>
         <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
-            <Rectangle x:Name="BttnBackground" Fill="#FFDAA619" Width="Auto" Height="Auto" RadiusY="4" RadiusX="4"/>
-            <Label Content="{Binding ButtonText, ElementName=RoundButton}" FontFamily="Segoa UI" x:Name="ConvertLabel" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Rectangle x:Name="BttnBackground" Fill="#FFDAA619" Width="Auto" Height="Auto" RadiusY="4.5" RadiusX="4.5"/>
+            <Label Content="{Binding ButtonText, ElementName=RoundButton}" FontSize="{Binding FontSize, ElementName=RoundButton}" FontFamily="Segoa UI" x:Name="ConvertLabel" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
     </Viewbox>
 

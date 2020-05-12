@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ImageConverter.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="FontCol" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DefaultFontCol</Value>
+    <Setting Name="ThemeColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DefaultThemeColor</Value>
     </Setting>
-    <Setting Name="ThemeType" Type="System.String" Scope="User">
+    <Setting Name="ThemeMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">LightTheme</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
