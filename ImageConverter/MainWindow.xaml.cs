@@ -51,27 +51,29 @@ namespace ImageConverter
         public MainWindow()
         {
             InitializeComponent();
-            MainWindowGrid.Background = ThemeManager.SelectedThemeType();
+            //Apply theme type and color
+            MainWindowGrid.Background = ThemeManager.SelectedThemeMode();
             TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
             ThemeManager.solidColorBrush = new SolidColorBrush()
             {
                 Color = ThemeManager.RunningOrStaticConversionTextBlockColor,
             };
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
-
-            //applies the selected font color to every label in the format combobox
             foreach (System.Windows.Controls.Label element in FormatComboBox.Items)
             {
                 element.Background = ThemeManager.SelectedThemeColor();
             }
+
+            //Applies the selected theme color to every label in the format combobox
+
             AddOrReplaceDroppedImagesBttn.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ReplaceImages.png"));
             ConversionResultTextBlock.Visibility = Visibility.Collapsed;
             WarningLabel.Content= String.Empty;
             GifOptionsSP.Visibility = Visibility.Collapsed;
             ReplaceTransparencySP.Visibility = Visibility.Collapsed;
-            CompressionOptionsSP.Visibility = Visibility.Collapsed;
+            Compression_QualityOptionsSP.Visibility = Visibility.Collapsed;
 
-            //applies translation to all the visible controls
+            //Apply translation to all the visible controls
             if (Settings.Default.Language == "it")
             {
                 ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg"));
@@ -182,18 +184,17 @@ namespace ImageConverter
                     else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_WarningUnsupportedFile; }
                 }
                 //Check if the any of the dropping-files are already present in the list of images to convert
-                pathsOfImagesToConvert.ForEach(Action =>
+                if (pathsOfImagesToConvert.Count == 0)
+                    return;
+                foreach (var file in droppingFiles)
                 {
-                    foreach(var file in droppingFiles)
+                    if (pathsOfImagesToConvert.Contains(file) && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
                     {
-                        if (pathsOfImagesToConvert.Contains(file) && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
-                        {
-                            if (Settings.Default.Language == "it") { WarningLabel.Content = LanguageManager.IT_SomeImagesAreAlreadyPresent; }
-                            else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_SomeImagesAreAlreadyPresent; }
-                            break;
-                        }
+                        if (Settings.Default.Language == "it") { WarningLabel.Content = LanguageManager.IT_SomeImagesAreAlreadyPresent; }
+                        else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_SomeImagesAreAlreadyPresent; }
+                        break;
                     }
-                });
+                }
             }
         }
 
@@ -245,6 +246,7 @@ namespace ImageConverter
 
         private async void StartConversionBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            //if a format hasn't been selected prompt user to select one and stop conversion
             if (FormatComboBox.SelectedItem == null)
             {
                 if (Settings.Default.Language == "it")
@@ -256,7 +258,7 @@ namespace ImageConverter
                     MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 return;
-            } //if a format hasn't been selected prompt user to select one and stop conversion
+            }
 
             #region Prepares GUI controls
             if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
@@ -271,14 +273,8 @@ namespace ImageConverter
             finishedConversions = new Dictionary<string, bool?>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
 
-            if (Settings.Default.Language == "it")
-            {
-                ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
-            }
-            else if (Settings.Default.Language == "en")
-            {
-                ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
-            }
+            if (Settings.Default.Language == "it"){ ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt; }
+            else if (Settings.Default.Language == "en") { ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt; }
 
             //adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
@@ -306,7 +302,7 @@ namespace ImageConverter
             {
                 if (conversion.Value == false)
                 {
-                    unsuccessfulConversions.Add(conversion.Key);
+                    unsuccessfulConversions.Add(Path.GetFileName(conversion.Key));
                 }
                 i++;
             }

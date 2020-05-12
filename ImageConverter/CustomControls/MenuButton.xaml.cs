@@ -13,8 +13,8 @@ namespace ImageConverter
         public MenuButton()
         {
             InitializeComponent();
-            BackgroundRect1.Fill = ThemeManager.SelectedThemeType();
-            BackgroundRect2.Fill = ThemeManager.SelectedThemeType();
+            BackgroundRect1.Fill = ThemeManager.SelectedThemeMode();
+            BackgroundRect2.Fill = ThemeManager.SelectedThemeMode();
             rect1.Fill = ThemeManager.SelectedThemeColor();
             rect2.Fill = ThemeManager.SelectedThemeColor();
             rect3.Fill = ThemeManager.SelectedThemeColor(); //applies the color of the selected theme
