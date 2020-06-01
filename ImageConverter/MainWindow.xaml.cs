@@ -40,46 +40,74 @@ namespace ImageConverter
         /// Name of the images that didn't get converted
         /// </summary>
         List<string> unsuccessfulConversions;
+        /// <summary>
+        /// Times the gif will repeat
+        /// </summary>
         int repGifTimes = 0;
         /// <summary>
         /// delay time (in centiseconds so that it doesn't have to be converted later)
         /// </summary>
         int gifDelayTimeinCs = 50;
+        /// <summary>
+        /// Index of the color to replace the transparency of a png image with. 0=nothing, 1=white, 2=black 
+        /// </summary>
         int replTranspWithCol = 0;
-        Stopwatch timer = new Stopwatch(); //timer that measures the time spent converting all the images
+        /// <summary>
+        /// Final quality of the converted image
+        /// </summary>
+        int qualityLevel;
+        /// <summary>
+        /// Timer that measures the time spent converting all the images
+        /// </summary>
+        Stopwatch timer = new Stopwatch();
+        /// <summary>
+        /// List of labels in the Options stackpanel
+        /// </summary>
+        List<Label> labels = new List<Label>();
+
 
         public MainWindow()
         {
             InitializeComponent();
-            //Apply theme type and color
+
+            #region Apply theme type and colors
             MainWindowGrid.Background = ThemeManager.SelectedThemeMode();
             TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
             ThemeManager.solidColorBrush = new SolidColorBrush()
             {
                 Color = ThemeManager.RunningOrStaticConversionTextBlockColor,
             };
+
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
-            foreach (System.Windows.Controls.Label element in FormatComboBox.Items)
+            //Applies the selected theme color to every label in the format combobox and hides some controls
+            foreach (Label element in FormatComboBox.Items)
             {
                 element.Background = ThemeManager.SelectedThemeColor();
             }
 
-            //Applies the selected theme color to every label in the format combobox
+            //Applies black or light gray color to all labels depending on theme mode
+            foreach (Label label in FindLabels(OptionsStackPanel))
+            {
+                label.Foreground = ThemeManager.SelectedThemeColor();
+            }
+            ConversionResultTextBlock.Foreground = ThemeManager.SelectedThemeColor();
 
+            //Hide some controls not viewable at the initial state of the app
             AddOrReplaceDroppedImagesBttn.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ReplaceImages.png"));
             ConversionResultTextBlock.Visibility = Visibility.Collapsed;
-            WarningLabel.Content= String.Empty;
+            WarningLabel.Content = String.Empty;
             GifOptionsSP.Visibility = Visibility.Collapsed;
             ReplaceTransparencySP.Visibility = Visibility.Collapsed;
-            Compression_QualityOptionsSP.Visibility = Visibility.Collapsed;
+            Compression_QualityOptionsSP.Visibility = Visibility.Visible;
+            #endregion
 
-            //Apply translation to all the visible controls
+            #region Apply translation to all the visible controls
             if (Settings.Default.Language == "it")
             {
                 ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg"));
                 StartConversionBttn.ButtonText = LanguageManager.IT_StartConversionLabelTxt;
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
-                ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
+                ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
                 GifRepeatTimes.Content = LanguageManager.IT_GifLoopsOptionText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_EmpyBttnCntxtMenu;
                 GifFramesDelayTimeLabel.Content = LanguageManager.IT_DelayTimeLabelTxt;
@@ -88,7 +116,7 @@ namespace ImageConverter
                 //Each item in the combobox that contains a series of colors to replace a png transparency with
                 foreach (Label item in ReplTranspColCB.Items)
                 {
-                    switch(item.Content)
+                    switch (item.Content)
                     {
                         case "Nothing":
                             item.Content = LanguageManager.IT_Nothing;
@@ -109,7 +137,7 @@ namespace ImageConverter
                 ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png"));
                 StartConversionBttn.ButtonText = LanguageManager.EN_StartConversionLabelTxt;
                 ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
-                ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
+                ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunning;
                 GifRepeatTimes.Content = LanguageManager.EN_GifLoopsOptionText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_EmpyBttnCntxtMenu;
                 GifFramesDelayTimeLabel.Content = LanguageManager.EN_DelayTimeLabelTxt;
@@ -141,6 +169,7 @@ namespace ImageConverter
                 Directory.CreateDirectory($"{Path.GetTempPath()}ImageConverter");
                 Settings.Default.TempFolderPath = $"{Path.GetTempPath()}ImageConverter";
             }
+            #endregion
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -178,7 +207,7 @@ namespace ImageConverter
             {
                 string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //Get files the user is trying to convert
                 //If the droopping files aren't images
-                if(CheckIfGivenFilesAreImages(droppingFiles) == false)
+                if (CheckIfGivenFilesAreImages(droppingFiles) == false)
                 {
                     if (Settings.Default.Language == "it") { WarningLabel.Content = LanguageManager.IT_WarningUnsupportedFile; }
                     else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_WarningUnsupportedFile; }
@@ -201,7 +230,7 @@ namespace ImageConverter
         private void ImgViewer_DragLeave(object sender, DragEventArgs e)
         {
             droppedFileisValidDirectory = false;
-            WarningLabel.Content= String.Empty; //nasconde l'avviso che appare se l'utente sta tentando di convertire più di un'immagine
+            WarningLabel.Content = String.Empty; //nasconde l'avviso che appare se l'utente sta tentando di convertire più di un'immagine
         }
 
         private void ImgViewer_Drop(object sender, DragEventArgs e)
@@ -211,7 +240,7 @@ namespace ImageConverter
                 //---if the warning label content is NOT empty the dropped file there must be a problem with the dropped files, so ignore the dropped files---
                 if ((string)WarningLabel.Content != String.Empty)
                 {
-                    WarningLabel.Content= String.Empty;
+                    WarningLabel.Content = String.Empty;
                     return;
                 }
 
@@ -261,8 +290,8 @@ namespace ImageConverter
             }
 
             #region Prepares GUI controls
-            if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
-            if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
+            if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
+            if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunning;
             ConversionResultTextBlock.Visibility = Visibility.Collapsed; //necessary because if the user converts one image two times in a row it would seem like the conversion didn't start
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionTextBlockColor;
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //sets the color of the textblock
@@ -271,10 +300,14 @@ namespace ImageConverter
             #endregion
 
             finishedConversions = new Dictionary<string, bool?>();
-            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
 
-            if (Settings.Default.Language == "it"){ ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt; }
-            else if (Settings.Default.Language == "en") { ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt; }
+            #region Take all the conversion parameters not already assigned to their corresponding variable
+            //takes the selected format
+            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower();
+            //takes the selected quality level
+            qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' '));
+            #endregion
+
 
             //adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
@@ -287,12 +320,12 @@ namespace ImageConverter
                     });
                     Thread.Sleep(500);
                 }
-            }); 
+            });
             ticker.IsBackground = true;
             ticker.Start();
             timer.Start();
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, gifDelayTimeinCs));
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, gifDelayTimeinCs, qualityLevel));
 
             timer.Stop();
             #region counts the unsuccessful conversions
@@ -309,7 +342,6 @@ namespace ImageConverter
             #endregion
             ticker.Abort();
             #region displays the result(s) of the conversion(s)
-            ConversionResultTextBlock.Visibility = Visibility.Visible;
             if (unsuccessfulConversions.Count == 0)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -350,7 +382,7 @@ namespace ImageConverter
             } //if there was any error
             #endregion
             timer.Reset();
-            
+
             StartConversionBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
             Thread.Sleep(300); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
         }
@@ -375,7 +407,7 @@ namespace ImageConverter
             /* The null coalescing operator (?.) is needed beacause if the user closes the combobox menu without 
              * selecting a format the selected item would be null and its content can't be accessed, casuing a NullReferenceException */
             var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
-                                                                                               
+
             if (selectedValue == "GIF")
                 GifOptionsSP.Visibility = Visibility.Visible;
             else
@@ -455,6 +487,62 @@ namespace ImageConverter
         }
 
         /// <summary>
+        /// Determines wether the dropped images replace or add up to the previous dropped images
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddOrReplaceDroppedImagesBttn_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Image imageControl = sender as Image;
+
+            //Chande button option
+            if ((string)imageControl.Tag == "Replace")
+            {
+                imageControl.Tag = "Add";
+                imageControl.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/AddImages.png"));
+                if (Settings.Default.Language.ToLower() == "it") { imageControl.ToolTip = LanguageManager.IT_AddToExistingImagesToolTip; }
+                else if (Settings.Default.Language.ToLower() == "en") { imageControl.ToolTip = LanguageManager.EN_AddToExistingImagesToolTip; }
+            }
+            else
+            {
+                imageControl.Tag = "Replace";
+                imageControl.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/ReplaceImages.png"));
+                if (Settings.Default.Language.ToLower() == "it") { imageControl.ToolTip = LanguageManager.IT_ReplaceExistingImagesToolTip; }
+                else if (Settings.Default.Language.ToLower() == "en") { imageControl.ToolTip = LanguageManager.EN_ReplaceExistingImagesToolTip; }
+            }
+        }
+
+        private void QualityLevelTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //TODO: sanitize input and if the value exceeds 100 or is lower than 1 set it back to normal
+        }
+
+
+        /// <summary>
+        /// Finds all labels in a stackpanel
+        /// </summary>
+        /// <param name="stackpanel"></param>
+        /// <returns>Returns a list containing all the labels</returns>
+        private List<Label> FindLabels(StackPanel stackpanel)
+        {
+            foreach (var control in stackpanel.Children)
+            {
+                if (control == null)
+                    break;
+
+                if (control.GetType() == typeof(StackPanel))
+                {
+                    FindLabels((StackPanel)control);
+                }
+                else if (control.GetType() == typeof(Label))
+                {
+                    labels.Add(control as Label);
+                }
+            }
+            return labels;
+        }
+
+        /// <summary>
         /// Checks wether the files that the user wants to convert are images or not.
         /// The files are given by dropping them on the ImgViewer control
         /// </summary>
@@ -505,22 +593,22 @@ namespace ImageConverter
                 //Empty list of images to convert
                 pathsOfImagesToConvert = new List<string>();
             }
-                foreach (var file in droppedFilesToConvert)
+            foreach (var file in droppedFilesToConvert)
+            {
+                FileAttributes attr = File.GetAttributes(file);
+                //If the file is a folder add the images inside it
+                if (attr.HasFlag(FileAttributes.Directory))
                 {
-                    FileAttributes attr = File.GetAttributes(file);
-                    //If the file is a folder add the images inside it
-                    if (attr.HasFlag(FileAttributes.Directory))
+                    var folder = file;
+                    foreach (var image in Directory.GetFiles(folder))
                     {
-                        var folder = file;
-                        foreach (var image in Directory.GetFiles(folder))
-                        {
-                            pathsOfImagesToConvert.Add(image);
-                        }
+                        pathsOfImagesToConvert.Add(image);
                     }
-                    //add the image
-                    else { pathsOfImagesToConvert.Add(file); }
                 }
-            
+                //add the image
+                else { pathsOfImagesToConvert.Add(file); }
+            }
+
 
             #region Adds name(s) of the image(s) to the textblock under ImgViewer
             if (pathsOfImagesToConvert.Count == 1) ImagesNameLabel.Text += Path.GetFileName(pathsOfImagesToConvert[0]);
@@ -561,32 +649,6 @@ namespace ImageConverter
                 imageToShow.EndInit();
                 ImgViewer.Source = imageToShow;
                 st.Close();
-            }
-        }
-
-        /// <summary>
-        /// Determines wether the dropped images replace or add up to the previous dropped images
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddOrReplaceDroppedImagesBttn_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Image imageControl = sender as Image;
-
-            //Chande button option
-            if ((string)imageControl.Tag == "Replace")
-            {
-                imageControl.Tag = "Add";
-                imageControl.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/AddImages.png"));
-                if (Settings.Default.Language.ToLower() == "it") { imageControl.ToolTip = LanguageManager.IT_AddToExistingImagesToolTip; }
-                else if (Settings.Default.Language.ToLower() == "en") { imageControl.ToolTip = LanguageManager.EN_AddToExistingImagesToolTip; }
-            }
-            else
-            {
-                imageControl.Tag = "Replace";
-                imageControl.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/ReplaceImages.png"));
-                if (Settings.Default.Language.ToLower() == "it") { imageControl.ToolTip = LanguageManager.IT_ReplaceExistingImagesToolTip; }
-                else if (Settings.Default.Language.ToLower() == "en") { imageControl.ToolTip = LanguageManager.EN_ReplaceExistingImagesToolTip; }
             }
         }
     }

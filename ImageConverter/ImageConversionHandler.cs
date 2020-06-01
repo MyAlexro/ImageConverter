@@ -55,7 +55,6 @@ namespace ImageConverter
             return false;
         }
 
-
         /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
         /// </summary>
@@ -65,7 +64,7 @@ namespace ImageConverter
         /// <param name="colorToReplTheTranspWith"> Color to replace the transparency of a png image with</param>
         /// <param name="delayTime"> delay between two frames of a gif</param>
         /// <returns></returns>
-        public static async Task<Dictionary<string, bool?>> StartConversionAsync(string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime)
+        public static async Task<Dictionary<string, bool?>> StartConversionAsync(string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime, int qualityLevel)
         {
             chosenFormat = selectedFormat;
             color = colorToReplTheTranspWith;

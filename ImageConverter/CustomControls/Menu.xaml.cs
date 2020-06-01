@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,16 +18,41 @@ namespace ImageConverter
         private Storyboard storyboard;
         private ThicknessAnimation thicknessAnimation;
         private FrameworkElement nameOfMenu;
-        private Thickness closedPos = new Thickness(-262, 0, 0, 0); //position of the menu when it's closed
-        private Thickness openedPos = new Thickness(0, 0, 0, 0);  //position of the menu when it's opened
-        private int selectedRectStrokeThickness = 3; //width of the border of the rect when it's selected or the mouse is over it
-        private int unselectedRectStrokeThickness = 1; //width of the border of the rect when it's not selected (normal state)
+        /// <summary>
+        /// Position of the menu when it's closed
+        /// </summary>
+        private Thickness closedPos = new Thickness(-262, 0, 0, 0);
+        /// <summary>
+        /// Position of the menu when it's opened
+        /// </summary>
+        private Thickness openedPos = new Thickness(0, 0, 0, 0);
+        /// <summary>
+        /// Width of the border of the rect when it's selected or the mouse is over it
+        /// </summary>
+        private int selectedRectStrokeThickness = 3;
+        /// <summary>
+        /// Width of the border of the rect when it's not selected (normal state)
+        /// </summary>
+        private int unselectedRectStrokeThickness = 1;
+        /// <summary>
+        /// List of labels in the Options stackpanel
+        /// </summary>
+        List<Label> labels = new List<Label>();
 
         public Menu()
         {
             InitializeComponent();
-            MenuSP.Background = ThemeManager.SelectedThemeMode();//apply the chosen theme when initialized
+
+            #region Apply theme mode and color
+            MenuSP.Background = ThemeManager.SelectedThemeMode();
             SettingsLabel.Foreground = ThemeManager.SelectedThemeColor();
+            labels = FindLabels(MenuSP);
+            foreach (var label in labels)
+            {
+                label.Foreground = ThemeManager.SelectedThemeColor();
+            }
+            #endregion
+            #region Apply translations
             if (Settings.Default.Language == "it")
             {
                 SettingsLabel.Content = LanguageManager.IT_SettingsLabelTxt;
@@ -45,10 +71,12 @@ namespace ImageConverter
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
                 LanguageOptionLabel.Content = LanguageManager.EN_LanguageLabelTxt;
             }
+            #endregion
         }
 
         /// <summary>
         /// Opens the menu by moving it into the visible window
+        /// <para>Parameter: "menuElement" Menu element used in the MainWindow</para>
         /// </summary>
         /// <param name="menuElement"> Menu element used in the MainWindow</param>
         public void OpenMenu(FrameworkElement menuElement)
@@ -85,6 +113,7 @@ namespace ImageConverter
 
         /// <summary>
         /// Closes the menu by moving it outside of the window
+        /// <para>Parameter: "menuElement" Menu element used in the MainWindow </para>
         /// </summary>
         /// <param name="menuElement"> Menu element used in the MainWindow</param>
         public void CloseMenu(DependencyObject menuElement)
@@ -263,14 +292,28 @@ namespace ImageConverter
             }
         }
 
-        private void PreviewImgCheckBox_Checked(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Finds all labels in a stackpanel
+        /// </summary>
+        /// <param name="stackpanel"></param>
+        /// <returns>Returns a list containing all the labels</returns>
+        private List<Label> FindLabels(StackPanel stackpanel)
         {
-            MessageBox.Show("Only one image will be shown");
-        }
+            foreach (var control in stackpanel.Children)
+            {
+                if (control == null)
+                    break;
 
-        private void PreviewImgCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("More than one image will be shown");
+                if (control.GetType() == typeof(StackPanel))
+                {
+                    FindLabels((StackPanel)control);
+                }
+                else if (control.GetType() == typeof(Label))
+                {
+                    labels.Add(control as Label);
+                }
+            }
+            return labels;
         }
     }
 }
