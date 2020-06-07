@@ -10,9 +10,10 @@
 
     <Window.Resources>
         <Style x:Key="ComboBoxElement" TargetType="Label">
-            <Setter Property="Height" Value="26"/>
-            <Setter Property="Width" Value="76"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Width" Value="Auto"/>
             <Setter Property="Background" Value="#FFDAA619"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
         </Style>
     </Window.Resources>
 
@@ -65,14 +66,14 @@
                 <!-- Right block, Conversion options etc -->
                 <Grid Width="330">
                     <!-- Stackpanel that contains all the options for the conversion -->
-                    <StackPanel x:Name="OptionsStackPanel" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left">
 
                         <!-- Format to convert images to stackpanel-->
                         <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,0">
                             <!--Label that says to choose a format-->
                             <Label x:Name="ChooseFormatLabel" Content="Choose the format &#xA;to convert the images to:" FontFamily="Segoa UI" FontSize="14" Height="50" VerticalAlignment="Top"/>
                             <!-- ComboBox to choose the format to which convert the image-->
-                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="85" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True" DropDownClosed="FormatComboBox_DropDownClosed">
+                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="Auto" Height="Auto" DropDownClosed="FormatComboBox_DropDownClosed">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="PNG"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="JPG"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="JPEG"/>
@@ -80,6 +81,7 @@
                                 <Label Style="{StaticResource ComboBoxElement}" Content="GIF"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="ICO"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="CUR"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="TIFF"/>
                             </ComboBox>
                         </StackPanel>
 
@@ -87,29 +89,44 @@
                         <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Visibility="Visible" Margin="0,8">
                             <Label x:Name="ReplacePngTransparencyLabel" Content="Replace the transparency of png images with:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" SelectedIndex="0" DropDownClosed="ReplTranspColCB_DropDownClosed">
-                                <Label x:Name="Nothing" Content="Nothing"/>
-                                <Label x:Name="White"  Content="White"/>
-                                <Label x:Name="Black" Content="Black"/>
+                                <Label Style="{StaticResource ComboBoxElement}" x:Name="Nothing" Content="Nothing"/>
+                                <Label Style="{StaticResource ComboBoxElement}" x:Name="White"  Content="White"/>
+                                <Label Style="{StaticResource ComboBoxElement}" x:Name="Black" Content="Black"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- TIFF images option-->
+                        <StackPanel x:Name="CompressionAlgoOptionSP" Orientation="Horizontal" Margin="0,8">
+                            <Label Content="Compression algorithm:" x:Name="CompressionAlgoLabel"/>
+                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left"  VerticalAlignment="Bottom" DropDownClosed="CompressionTypesCB_DropDownClosed">
+                                <Label x:Name="NoneAlgoLabel" Style="{StaticResource ComboBoxElement}" Content="None"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Default"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt3"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt4"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Lzw"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Rle"/>
+                                <Label Style="{StaticResource ComboBoxElement}" Content="Zip"/>
                             </ComboBox>
                         </StackPanel>
 
                         <!-- GIF format options-->
                         <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" Height="Auto" Margin="0,8,0,0">
+
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
                                 <ComboBox x:Name="GifRepTimesCB" Margin="3,0,0,0"  VerticalAlignment="Center" Height="20" SelectedIndex="0" DropDownClosed="GifRepTimesCB_DropDownClosed">
-                                    <Label Content="∞"/>
-                                    <Label Content="1"/>
-                                    <Label Content="2"/>
-                                    <Label Content="3"/>
-                                    <Label Content="4"/>
-                                    <Label Content="5"/>
-                                    <Label Content="6"/>
-                                    <Label Content="7"/>
-                                    <Label Content="8"/>
-                                    <Label Content="9"/>
-                                    <Label Content="10"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="∞"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="1"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="2"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="3"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="4"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="5"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="6"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="7"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="8"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="9"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="10"/>
                                 </ComboBox>
                             </StackPanel>
 
@@ -117,35 +134,24 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="26" Margin="0,8">
                                 <Label Content="Delay time between two frames:" x:Name="GifFramesDelayTimeLabel" />
                                 <ComboBox FontSize="10" x:Name="GifFramesDelayOptionsCB" DropDownClosed="GifFramesDelayOptionsCB_DropDownClosed" SelectedIndex="0" VerticalAlignment="Center">
-                                    <Label Content="250"/>
-                                    <Label Content="500"/>
-                                    <Label Content="1000"/>
-                                    <Label Content="1500"/>
-                                    <Label Content="2000"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="250"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="500"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="1000"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="1500"/>
+                                    <Label Style="{StaticResource ComboBoxElement}" Content="2000"/>
                                 </ComboBox>
                                 <Label Content="ms" Height="Auto" Width="Auto"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Compression/Quality options -->
-                        <StackPanel x:Name="Compression_QualityOptionsSP" Orientation="Vertical" Margin="0,8">
-
+                        <!-- Quality compression options -->
+                        <StackPanel x:Name="QualityCompressionOptionSP" Orientation="Vertical" Margin="0,8">
                             <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
-                                <Label Content="Quality:"/>
+                                <Label Content="Quality:" x:Name="QualityLabel"/>
                                 <Border>
                                     <TextBox x:Name="QualityLevelTextBox" Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" TextChanged="QualityLevelTextBox_TextChanged"/>
                                 </Border>
                             </StackPanel>
-
-                            <StackPanel x:Name="CompressionOptionSP" Orientation="Horizontal" Margin="0,8">
-                                <Label Content="Compression:"/>
-                                <ComboBox x:Name="CompressionTypesCB">
-                                    <ComboBoxItem>
-                                        <Label Content=""/>
-                                    </ComboBoxItem>
-                                </ComboBox>
-                            </StackPanel>
-
                         </StackPanel>
 
                     </StackPanel>

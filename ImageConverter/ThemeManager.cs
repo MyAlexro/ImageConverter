@@ -61,7 +61,8 @@ namespace ImageConverter
         /// <summary>
         /// Returns the current theme mode color as a SolidColorBrush
         /// <para>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</para>
-        /// <para>Colors: DEFAULT, RED, GREEN, VIOLET, WHITE</para>
+        /// <para>Colors: Default(Yellowish), red, green, violet, white</para>
+        /// <para>Reminder: Only if the ThemeMode is DarkTheme, the ThemeColor will be applied to the text of labels and textblocks</para>
         /// </summary>
         /// <returns>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</returns>
         public static SolidColorBrush SelectedThemeColor()
