@@ -88,7 +88,7 @@
                         <!-- PNG image options: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
                         <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Visibility="Visible" Margin="0,8">
                             <Label x:Name="ReplacePngTransparencyLabel" Content="Replace the transparency of png images with:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" SelectedIndex="0" DropDownClosed="ReplTranspColCB_DropDownClosed">
+                            <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" SelectedIndex="0">
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="Nothing" Content="Nothing"/>
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="White"  Content="White"/>
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="Black" Content="Black"/>
@@ -98,7 +98,7 @@
                         <!-- TIFF images option-->
                         <StackPanel x:Name="CompressionAlgoOptionSP" Orientation="Horizontal" Margin="0,8">
                             <Label Content="Compression algorithm:" x:Name="CompressionAlgoLabel"/>
-                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left"  VerticalAlignment="Bottom" DropDownClosed="CompressionTypesCB_DropDownClosed">
+                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left"  VerticalAlignment="Bottom">
                                 <Label x:Name="NoneAlgoLabel" Style="{StaticResource ComboBoxElement}" Content="None"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Default"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt3"/>
@@ -133,7 +133,7 @@
                             <!-- Option that indicates the delay between frames-->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="26" Margin="0,8">
                                 <Label Content="Delay time between two frames:" x:Name="GifFramesDelayTimeLabel" />
-                                <ComboBox FontSize="10" x:Name="GifFramesDelayOptionsCB" DropDownClosed="GifFramesDelayOptionsCB_DropDownClosed" SelectedIndex="0" VerticalAlignment="Center">
+                                <ComboBox FontSize="10" x:Name="GifFramesDelayOptionsCB" SelectedIndex="0" VerticalAlignment="Center">
                                     <Label Style="{StaticResource ComboBoxElement}" Content="250"/>
                                     <Label Style="{StaticResource ComboBoxElement}" Content="500"/>
                                     <Label Style="{StaticResource ComboBoxElement}" Content="1000"/>
