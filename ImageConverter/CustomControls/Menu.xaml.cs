@@ -59,21 +59,21 @@ namespace ImageConverter
             #region Apply translations
             if (Settings.Default.Language == "it")
             {
-                SettingsLabel.Content = LanguageManager.IT_SettingsLabelTxt;
-                ThemeColorLabel.Content = LanguageManager.IT_ThemeColorLabelTxT;
-                ThemeLabel.Content = LanguageManager.IT_ThemeLabelTxt;
-                CreditsLabel.Content = LanguageManager.IT_CreditsLabelTxt;
+                SettingsLabel.Content = LanguageManager.IT_SettingsLabelText;
+                ThemeColorLabel.Content = LanguageManager.IT_ThemeColorLabelText;
+                ThemeLabel.Content = LanguageManager.IT_ThemeLabelText;
+                CreditsLabel.Content = LanguageManager.IT_CreditsLabelText;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "it");
-                LanguageOptionLabel.Content = LanguageManager.IT_LanguageLabelTxt;
+                LanguageOptionLabel.Content = LanguageManager.IT_LanguageLabelText;
             }
             else if (Settings.Default.Language == "en")
             {
-                SettingsLabel.Content = LanguageManager.EN_SettingsLabelTxt;
-                ThemeColorLabel.Content = LanguageManager.EN_ThemeColorLabelTxT;
-                ThemeLabel.Content = LanguageManager.EN_ThemeLabelTxt;
-                CreditsLabel.Content = LanguageManager.EN_CreditsLabelTxt;
+                SettingsLabel.Content = LanguageManager.EN_SettingsLabelText;
+                ThemeColorLabel.Content = LanguageManager.EN_ThemeColorLabelText;
+                ThemeLabel.Content = LanguageManager.EN_ThemeLabelText;
+                CreditsLabel.Content = LanguageManager.EN_CreditsLabelText;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
-                LanguageOptionLabel.Content = LanguageManager.EN_LanguageLabelTxt;
+                LanguageOptionLabel.Content = LanguageManager.EN_LanguageLabelText;
             }
             #endregion
         }
@@ -207,11 +207,11 @@ namespace ImageConverter
             MessageBoxResult response = MessageBoxResult.No;
             if (Settings.Default.Language == "it")
             {
-                response = MessageBox.Show(LanguageManager.IT_ApplyThemeColorMsgBox,"Cambia colore tema",MessageBoxButton.YesNo,MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.IT_ApplyThemeColorMsgBox, LanguageManager.IT_ApplyThemeColorMsgBoxCaption, MessageBoxButton.YesNo,MessageBoxImage.Information);
             }
             else if (Settings.Default.Language == "en")
             {
-                response = MessageBox.Show(LanguageManager.EN_ApplyThemeColorMsgBox, "Change theme color", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.EN_ApplyThemeColorMsgBox, LanguageManager.EN_ApplyThemeColorMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
 
             if (response == MessageBoxResult.No)
@@ -256,11 +256,11 @@ namespace ImageConverter
             MessageBoxResult response = MessageBoxResult.No;
             if (Settings.Default.Language == "it")
             {
-                response = MessageBox.Show(LanguageManager.IT_ApplyThemeMsgBox, "Cambia tema", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.IT_ApplyThemeModeMsgBox, LanguageManager.IT_ApplyThemeModeMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
             else if (Settings.Default.Language == "en")
             {
-                response = MessageBox.Show(LanguageManager.EN_ApplyThemeMsgBox, "Change theme", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.EN_ApplyThemeModeMsgBox, LanguageManager.EN_ApplyThemeModeMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
             if (response == MessageBoxResult.No)
             {
@@ -273,21 +273,23 @@ namespace ImageConverter
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
         {
             var previousLanguage = Settings.Default.Language;
-            if((LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower() == previousLanguage) //if the user closes the dropdown menu without changing option
+            //if the user closes the dropdown menu without changing option
+            if ((LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower() == previousLanguage)
             {
                 return;
             }
+
             Settings.Default.Language = (LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower();
             Settings.Default.Save();
             Settings.Default.Reload();
             var response = MessageBoxResult.Yes;
             if (previousLanguage == "it")
             {
-                response = MessageBox.Show(LanguageManager.IT_ApplyLanguageMsgBox, "Applica lingua", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.IT_ApplyLanguageMsgBox, LanguageManager.IT_ApplyLanguageMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
             else if (previousLanguage == "en")
             {
-                response = MessageBox.Show(LanguageManager.EN_ApplyLanguageMsgBox, "Apply language", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.EN_ApplyLanguageMsgBox, LanguageManager.EN_ApplyLanguageMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
             if (response == MessageBoxResult.Yes)
             {

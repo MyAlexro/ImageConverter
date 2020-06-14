@@ -21,9 +21,11 @@ namespace ImageConverter
             {
                 foreach (var availableFormat in availableFormats)
                 {
-                    if (value == availableFormat)
+                    if (value == availableFormat.ToLower())
+                    {
                         _format = value;
-                    throw new Exception("A non-supported format has been selected");
+                        break;
+                    }
                 }
             }
         }
@@ -36,7 +38,6 @@ namespace ImageConverter
         /// <summary>
         /// Times the gif will repeat: infinite(0)-10
         /// </summary>
-        private int _gifRepeatTimes = 0;
         public int gifRepeatTimes { get; set; }
 
         /// <summary>
