@@ -32,7 +32,7 @@ namespace ImageConverter
         /// <summary>
         /// Paths of the images to convert that get passed to the ImageConversionHandler
         /// </summary>
-        List<string> pathsOfImagesToConvert = new List<string>();
+        List<string> local_pathsOfImagesToConvert = new List<string>();
         /// <summary>
         /// List of images names with their finished conversions result, the bool indicates wether it was finished successfully or not
         /// </summary>
@@ -59,9 +59,43 @@ namespace ImageConverter
         {
             InitializeComponent();
 
+            #region Checks wether the values of the settings are valid. If they aren't, set the default value
+            if (Settings.Default.Language != "it" && Settings.Default.Language != "en")
+            {
+                Settings.Default.Language = "en";
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Application.Current.Shutdown(0);
+            }
+            if(ThemeManager.ThemeColors.Contains(Settings.Default.ThemeColor) == false)
+            {
+                Settings.Default.ThemeColor = ThemeManager.ThemeColors[0];
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Application.Current.Shutdown(0);
+            }
+            if (ThemeManager.ThemeModes.Contains(Settings.Default.ThemeMode) == false)
+            {
+                Settings.Default.ThemeMode = ThemeManager.ThemeModes[0];
+                Settings.Default.Save();
+                Settings.Default.Reload();
+                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Application.Current.Shutdown(0);
+            }
+            if(Settings.Default.TempFolderPath == "" || Directory.Exists(Settings.Default.TempFolderPath) == false)
+            {
+                Directory.CreateDirectory($"{Path.GetTempPath()}ImageConverter");
+                Settings.Default.TempFolderPath = $"{Path.GetTempPath()}ImageConverter";
+                Settings.Default.Save();
+                Settings.Default.Reload();
+            }
+            #endregion
+
             #region Apply theme type, colors and hide or show controls
-            MainWindowGrid.Background = ThemeManager.SelectedThemeMode();
-            TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
+            MainWindowGrid.Background = ThemeManager.SolidColorBrushOfSelectedThemeMode();
+            TitleTextBox.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
             ThemeManager.solidColorBrush = new SolidColorBrush()
             {
                 Color = ThemeManager.RunningOrStaticConversionTextBlockColor,
@@ -81,7 +115,7 @@ namespace ImageConverter
                         {
                             if (label.GetType() == typeof(Label))
                             {
-                                ((Label)label).Background = ThemeManager.SelectedThemeColor();
+                                ((Label)label).Background = ThemeManager.SolidColorBrushOfSelectedThemeColor();
                             }
                         }
                     }
@@ -92,9 +126,9 @@ namespace ImageConverter
             {
                 foreach (Label label in FindLabelsInStackPanel(OptionsStackPanel))
                 {
-                    label.Foreground = ThemeManager.SelectedThemeColor();
+                    label.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
                 }
-                ConversionResultTextBlock.Foreground = ThemeManager.SelectedThemeColor();
+                ConversionResultTextBlock.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
             }
 
             //Hide some controls that should not viewable at the initial state of the app
@@ -106,7 +140,6 @@ namespace ImageConverter
             QualityCompressionOptionSP.Visibility = Visibility.Collapsed;
             CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
             #endregion
-
             #region Apply translation to all the visible controls
             if (Settings.Default.Language == "it")
             {
@@ -176,18 +209,10 @@ namespace ImageConverter
                 }
             }
             #endregion
-
-            //if the folder for ImageConverter in the temp direcory has been deleted create it again
-            if (!Directory.Exists($"{Path.GetTempPath()}\\ImageConverter"))
-            {
-                Directory.CreateDirectory($"{Path.GetTempPath()}ImageConverter");
-                Settings.Default.TempFolderPath = $"{Path.GetTempPath()}ImageConverter";
-            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
             if (Settings.Default.FirstRun == true)
             {
                 //set app language based off the default pc language 
@@ -226,11 +251,11 @@ namespace ImageConverter
                     else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_WarningUnsupportedFile; }
                 }
                 //Check if the any of the dropping-files are already present in the list of images to convert
-                if (pathsOfImagesToConvert.Count == 0)
+                if (local_pathsOfImagesToConvert.Count == 0)
                     return;
                 foreach (var file in droppingFiles)
                 {
-                    if (pathsOfImagesToConvert.Contains(file) && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
+                    if (local_pathsOfImagesToConvert.Contains(file) && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
                     {
                         if (Settings.Default.Language == "it") { WarningLabel.Content = LanguageManager.IT_SomeImagesAreAlreadyPresent; }
                         else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_SomeImagesAreAlreadyPresent; }
@@ -283,7 +308,7 @@ namespace ImageConverter
                 }
                 //Gets all the images and the ones in the folders because the warning label is hidden, so the dropped files must be images
                 GetImagesToConvertAndPrepareGUI(droppedFilesToConvert);
-                LoadPreviewImage(pathsOfImagesToConvert);
+                LoadPreviewImage(local_pathsOfImagesToConvert);
 
                 StartConversionBttn.IsEnabled = true;
             }
@@ -305,9 +330,9 @@ namespace ImageConverter
                 return;
             }
             //If one or more images aren't in their original folder anymore stop conversion start
-            foreach (var image in pathsOfImagesToConvert)
+            foreach (var image in local_pathsOfImagesToConvert)
             {
-                if (!Directory.GetFiles(Path.GetDirectoryName(pathsOfImagesToConvert[0])).Contains(image))
+                if (!Directory.GetFiles(Path.GetDirectoryName(local_pathsOfImagesToConvert[0])).Contains(image))
                 {
                     if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                     if (Settings.Default.Language.ToLower() == "en") { MessageBox.Show(LanguageManager.EN_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -331,7 +356,7 @@ namespace ImageConverter
             ImageConversionParametersModel conversionParameters = new ImageConversionParametersModel()
             {
                 format = ((FormatComboBox.SelectedItem as Label).Content as string).ToLower(),
-                pathsOfImagesToConvert = pathsOfImagesToConvert,
+                pathsOfImagesToConvert = local_pathsOfImagesToConvert,
                 gifRepeatTimes = repGifTimes,
                 colorToReplTheTranspWith = ReplTranspColCB.SelectedIndex,
                 delayTime = Convert.ToInt32((GifFramesDelayOptionsCB.SelectedItem as Label).Content) / 10,
@@ -382,7 +407,7 @@ namespace ImageConverter
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    if (pathsOfImagesToConvert.Count == 1) ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockFinishedText;
+                    if (local_pathsOfImagesToConvert.Count == 1) ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockFinishedText;
                     else ConversionResultTextBlock.Text = LanguageManager.IT_MultipleConversionResultTextBlockFinishedText;
                 }
                 else if (Settings.Default.Language == "en")
@@ -504,7 +529,7 @@ namespace ImageConverter
             StartConversionBttn.IsEnabled = false;
             ImagesNameLabel.Text = string.Empty;
             ImgViewer.Opacity = 0.3f;
-            pathsOfImagesToConvert.Clear();
+            local_pathsOfImagesToConvert.Clear();
             droppedFilesToConvert.Clear();
             EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
             foreach (var control in OptionsStackPanel.Children)
@@ -629,7 +654,7 @@ namespace ImageConverter
             if ((string)AddOrReplaceDroppedImagesBttn.Tag == "Replace")
             {
                 //Empty list of images to convert
-                pathsOfImagesToConvert = new List<string>();
+                local_pathsOfImagesToConvert = new List<string>();
             }
             foreach (var file in droppedFilesToConvert)
             {
@@ -640,18 +665,18 @@ namespace ImageConverter
                     var folder = file;
                     foreach (var image in Directory.GetFiles(folder))
                     {
-                        pathsOfImagesToConvert.Add(image);
+                        local_pathsOfImagesToConvert.Add(image);
                     }
                 }
                 //add the image
-                else { pathsOfImagesToConvert.Add(file); }
+                else { local_pathsOfImagesToConvert.Add(file); }
             }
 
             #region Adds name(s) of the image(s) to the textblock under ImgViewer
-            if (pathsOfImagesToConvert.Count == 1) ImagesNameLabel.Text += Path.GetFileName(pathsOfImagesToConvert[0]);
+            if (local_pathsOfImagesToConvert.Count == 1) ImagesNameLabel.Text += Path.GetFileName(local_pathsOfImagesToConvert[0]);
             else
             {
-                foreach (string imagePath in pathsOfImagesToConvert)
+                foreach (string imagePath in local_pathsOfImagesToConvert)
                 {
                     ImagesNameLabel.Text += Path.GetFileName(imagePath + ", ");
                 }
@@ -659,7 +684,7 @@ namespace ImageConverter
             #endregion
 
             //Checks if any image is a png, if so enable the option to replace its transparency
-            foreach (string imagePath in pathsOfImagesToConvert)
+            foreach (string imagePath in local_pathsOfImagesToConvert)
             {
                 if (Path.GetExtension(imagePath).ToLower() == ".png")
                 {
