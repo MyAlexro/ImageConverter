@@ -9,7 +9,11 @@ namespace ImageConverter
 {
     public class ImageConversionParametersModel
     {
+        /// <summary>
+        /// Available formats to convert the image(s) to
+        /// </summary>
         public readonly List<string> availableFormats = new List<string> { "PNG", "JPG", "JPEG", "BMP", "GIF", "ICO", "CUR", "TIFF" };
+
         private string _format;
         /// <summary>
         /// Format to which convert the images

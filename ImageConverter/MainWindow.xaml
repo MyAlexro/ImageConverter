@@ -19,7 +19,6 @@
 
     <Grid x:Name="MainWindowGrid">
         <StackPanel x:Name="MainWindowStackPanel" Orientation="Vertical">
-
             <!-- Top block, Stackpanel containing window name and side menu button -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="960">
                 <!--Button to open the Menu-->

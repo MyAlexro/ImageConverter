@@ -6,11 +6,13 @@ namespace ImageConverter
 {
     public class LanguageManager
     {
+        /// <summary>
+        /// Available languages
+        /// </summary>
         public static readonly string[] languages = new string[2] { "it", "en" };
 
         //--ITALIAN--
         public static readonly string
-
          //Conversion options
          IT_GifFramesDelayTimeLabelText = "Tempo di passaggio da un frame all'altro:",
          IT_AddToExistingImagesToolTip = "Aggiungi le immagini trascinate a quelle già presenti",
@@ -50,13 +52,10 @@ namespace ImageConverter
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
          IT_WarningUnsupportedFile = "⚠ Il file che si vuole convertire non è un'immagine o non è supportato",
          IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini non verranno aggiunte perchè sono già presenti",
-         IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale",
-
-         blank = "";
+         IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale";
 
         //--ENGLISH--
         public static readonly string
-
         //Conversion options
          EN_GifFramesDelayTimeLabelText = "Delay time between two frames:",
          EN_AddToExistingImagesToolTip = "Add the dropped images to the current ones",
@@ -96,9 +95,6 @@ namespace ImageConverter
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_WarningUnsupportedFile = "⚠ The file you are trying to convert isn't an image or isn't supported",
          EN_SomeImagesAreAlreadyPresent = "⚠ Some images won't be added because they are already present",
-         EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder",
-
-         blank2 = "";
-
+         EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder";
     }
 }
