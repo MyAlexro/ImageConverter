@@ -678,54 +678,6 @@ namespace ImageConverter
 
         #endregion
 
-        #region Utility methods
-        /// <summary>
-        /// Checks wether the given path of the file leads to an image
-        /// </summary>
-        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
-        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
-        public static bool IsImage(string pathOfFile)
-        {
-            string filePath = pathOfFile.ToLower();
-            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
-        /// </summary>
-        /// <param name="img">Image to which replace the transparency</param>
-        /// <returns name="tempImgPath"> path where the image with the transparency replaced has been saved </returns>
-        private static string ReplaceTransparency(Image img)
-        {
-            Bitmap imgWithTranspReplaced = new Bitmap(img.Width, img.Height);
-            Graphics g = Graphics.FromImage(imgWithTranspReplaced);
-
-            //replace transparency with white
-            if (color == 1)
-            {
-                g.Clear(Color.White);
-            }
-            //replace transparency with black
-            else
-            {
-                g.Clear(Color.Black);
-            }
-            g.DrawImage(img, 0, 0);
-
-            #region Saves imgWithTranspReplaced in the temp folder, dispose objects and returns its path
-            imgWithTranspReplaced.Save($"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png");
-            tempImgPath = $"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png";
-            imgWithTranspReplaced.Dispose();
-            g.Dispose();
-
-            return tempImgPath;
-            #endregion
-        }
-
         /// <summary>
         /// Compress an image, it gets called after an image has already been converted 
         /// </summary>
@@ -780,6 +732,55 @@ namespace ImageConverter
                 return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{pathOfImageToCompressDirectory}\\{imageName}_Compressed.{formatOfImageToCompress}"));
             else
                 return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{destinationPath}\\{imageName}_Compressed.{formatOfImageToCompress}"));
+        }
+
+
+        #region Utility methods
+        /// <summary>
+        /// Checks wether the given path of the file leads to an image
+        /// </summary>
+        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
+        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
+        public static bool IsImage(string pathOfFile)
+        {
+            string filePath = pathOfFile.ToLower();
+            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
+        /// </summary>
+        /// <param name="img">Image to which replace the transparency</param>
+        /// <returns name="tempImgPath"> path where the image with the transparency replaced has been saved </returns>
+        private static string ReplaceTransparency(Image img)
+        {
+            Bitmap imgWithTranspReplaced = new Bitmap(img.Width, img.Height);
+            Graphics g = Graphics.FromImage(imgWithTranspReplaced);
+
+            //replace transparency with white
+            if (color == 1)
+            {
+                g.Clear(Color.White);
+            }
+            //replace transparency with black
+            else
+            {
+                g.Clear(Color.Black);
+            }
+            g.DrawImage(img, 0, 0);
+
+            #region Saves imgWithTranspReplaced in the temp folder, dispose objects and returns its path
+            imgWithTranspReplaced.Save($"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png");
+            tempImgPath = $"{Settings.Default.TempFolderPath}\\tempImgWithTranspReplaced.png";
+            imgWithTranspReplaced.Dispose();
+            g.Dispose();
+
+            return tempImgPath;
+            #endregion
         }
 
         /// <summary>

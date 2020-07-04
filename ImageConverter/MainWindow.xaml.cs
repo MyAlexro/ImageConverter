@@ -53,7 +53,14 @@ namespace ImageConverter
         /// List of labels in the Options stackpanel
         /// </summary>
         List<Label> labels = new List<Label>();
-
+        /// <summary>
+        /// Image that gets set as the ImgViewer source
+        /// </summary>
+        BitmapImage previewImage;
+        /// <summary>
+        /// Stream that loads the preview image into memory and subsequently sets it as the ImgViwer source
+        /// </summary>
+        FileStream previewImageStream;
 
         public MainWindow()
         {
@@ -510,7 +517,7 @@ namespace ImageConverter
         /// <param name="e"></param>
         private void ImageViewerContextMenu_Opened(object sender, RoutedEventArgs e)
         {
-            if (ImgViewer.Source.ToString() != "pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg" && ImgViewer.Source.ToString() != "pack://application:,,,/Resources/ImageConverterDragAndDropEN.png")
+            if (local_pathsOfImagesToConvert.Count != 0)
             {
                 EmptyImgViewerCntxtMenuBttn.IsEnabled = true;
             }
@@ -531,7 +538,10 @@ namespace ImageConverter
             ImgViewer.Opacity = 0.3f;
             local_pathsOfImagesToConvert.Clear();
             droppedFilesToConvert.Clear();
-            EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
+            previewImage = null;
+            previewImageStream?.Dispose();
+            previewImageStream?.Close();
+            //Hide all conversion options
             foreach (var control in OptionsStackPanel.Children)
             {
                 if (((StackPanel)control).Name != "ChooseFormatSP")
@@ -539,6 +549,7 @@ namespace ImageConverter
                     ((StackPanel)control).Visibility = Visibility.Collapsed;
                 }
             }
+            EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
         }
 
         /// <summary>
@@ -700,17 +711,26 @@ namespace ImageConverter
         public void LoadPreviewImage(List<string> pathsOfImagesToConvert)
 
         {
+            previewImageStream?.Dispose();
+            previewImageStream?.Close();
+            previewImage = null;
+
             ImgViewer.Opacity = 1.0f; //sets ImgViewer opacity to 1(max)
             //loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be (in case) deleted
-            using (var st = File.OpenRead(pathsOfImagesToConvert[0]))
+            using (previewImageStream = File.OpenRead(pathsOfImagesToConvert[0]))
             {
-                var imageToShow = new BitmapImage();
-                imageToShow.BeginInit();
-                imageToShow.StreamSource = st;
-                imageToShow.CacheOption = BitmapCacheOption.OnLoad;
-                imageToShow.EndInit();
-                ImgViewer.Source = imageToShow;
-                st.Close();
+                previewImage = new BitmapImage();
+                previewImage.BeginInit();
+                previewImage.StreamSource = previewImageStream;
+                previewImage.CacheOption = BitmapCacheOption.OnLoad;
+                //Reduce height resolution of image
+                previewImage.DecodePixelHeight = (int)ImgViewer.Height;
+                previewImage.EndInit();
+
+                ImgViewer.Source = previewImage;
+                //Freeze bitmapimage to make in umodifiable and prevent the system to spend more resources on it
+                previewImage.Freeze();
+                previewImageStream.Close();
             }
         }
         #endregion
