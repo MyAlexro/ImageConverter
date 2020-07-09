@@ -37,10 +37,10 @@ namespace ImageConverter
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            BttnBackground.Fill = ThemeManager.SelectedThemeHoveringColor(); //if the mouse gets over the bttn darken it
+            BttnBackground.Fill = ThemeManager.SelectedThemeHoveringColor(); //If the mouse gets over the bttn darken it
         }
 
-        private void Grid_MouseLeave(object sender, MouseEventArgs e) //otherwise set the normal colour
+        private void Grid_MouseLeave(object sender, MouseEventArgs e) //Otherwise set the normal colour
         {
             BttnBackground.Fill = ThemeManager.SolidColorBrushOfSelectedThemeColor();
         }
