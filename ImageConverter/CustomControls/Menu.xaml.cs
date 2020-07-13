@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ImageConverter.Properties;
+using ImageConverter.Classes;
 
 namespace ImageConverter
 {
@@ -46,11 +47,11 @@ namespace ImageConverter
             #region Apply theme mode and color
             MenuSP.Background = ThemeManager.SolidColorBrushOfSelectedThemeMode();
             SettingsLabel.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
-            labels = FindLabels(MenuSP);
+            labels = UtilityMethods.FindLabelsInStackPanel(MenuSP);
             //If the selected ThemeMode is DArkTheme the ThemeColor will be applied to the text of all the labels and textblocks
             if (Settings.Default.ThemeMode == "DarkTheme")
             {
-                foreach (Label label in FindLabels(MenuSP))
+                foreach (Label label in UtilityMethods.FindLabelsInStackPanel(MenuSP))
                 {
                     label.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
                 }
@@ -298,28 +299,28 @@ namespace ImageConverter
             }
         }
 
-        /// <summary>
-        /// Finds all labels in a stackpanel
-        /// </summary>
-        /// <param name="stackpanel"></param>
-        /// <returns>Returns a list containing all the labels</returns>
-        private List<Label> FindLabels(StackPanel stackpanel)
-        {
-            foreach (var control in stackpanel.Children)
-            {
-                if (control == null)
-                    break;
+        ///// <summary>
+        ///// Finds all labels in a stackpanel
+        ///// </summary>
+        ///// <param name="stackpanel"></param>
+        ///// <returns>Returns a list containing all the labels</returns>
+        //private List<Label> FindLabels(StackPanel stackpanel)
+        //{
+        //    foreach (var control in stackpanel.Children)
+        //    {
+        //        if (control == null)
+        //            break;
 
-                if (control.GetType() == typeof(StackPanel))
-                {
-                    FindLabels((StackPanel)control);
-                }
-                else if (control.GetType() == typeof(Label))
-                {
-                    labels.Add(control as Label);
-                }
-            }
-            return labels;
-        }
+        //        if (control.GetType() == typeof(StackPanel))
+        //        {
+        //            FindLabels((StackPanel)control);
+        //        }
+        //        else if (control.GetType() == typeof(Label))
+        //        {
+        //            labels.Add(control as Label);
+        //        }
+        //    }
+        //    return labels;
+        //}
     }
 }

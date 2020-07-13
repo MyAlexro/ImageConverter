@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Linq;
+using ImageConverter.Classes;
 
 namespace ImageConverter
 {
@@ -21,10 +22,6 @@ namespace ImageConverter
     /// </summary>
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// If the dropped folder contains files that can be converted
-        /// </summary>
-        static bool droppedFileisValidDirectory;
         /// <summary>
         /// Paths of the dropped files on the ImgViewer
         /// </summary>
@@ -49,10 +46,6 @@ namespace ImageConverter
         /// Timer that measures the time spent converting all the images
         /// </summary>
         Stopwatch timer = new Stopwatch();
-        /// <summary>
-        /// List of labels in the Options stackpanel
-        /// </summary>
-        List<Label> labels = new List<Label>();
         /// <summary>
         /// Image that gets set as the ImgViewer source
         /// </summary>
@@ -131,7 +124,7 @@ namespace ImageConverter
             //If the selected ThemeMode is DarkTheme the ThemeColor will be applied to the text of all the labels
             if (Settings.Default.ThemeMode == "DarkTheme")
             {
-                foreach (Label label in FindLabelsInStackPanel(OptionsStackPanel))
+                foreach (Label label in UtilityMethods.FindLabelsInStackPanel(OptionsStackPanel))
                 {
                     label.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
                 }
@@ -252,7 +245,7 @@ namespace ImageConverter
             {
                 string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //Get files the user is trying to convert
                 //If the droopping files aren't images
-                if (CheckIfGivenFilesAreImages(droppingFiles) == false)
+                if (UtilityMethods.IsOrContainsImage(droppingFiles) == false)
                 {
                     if (Settings.Default.Language == "it") { WarningLabel.Content = LanguageManager.IT_WarningUnsupportedFile; }
                     else if (Settings.Default.Language == "en") { WarningLabel.Content = LanguageManager.EN_WarningUnsupportedFile; }
@@ -274,7 +267,6 @@ namespace ImageConverter
 
         private void ImgViewer_DragLeave(object sender, DragEventArgs e)
         {
-            droppedFileisValidDirectory = false;
             WarningLabel.Content = String.Empty; //Hides warning label by emptying it
         }
 
@@ -282,8 +274,8 @@ namespace ImageConverter
         {
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                //---if the warning label content is NOT empty there must be a problem with the file(s) the user wants to convert, so ignore the dropped files---
-                if ((string)WarningLabel.Content != String.Empty || WarningLabel.Visibility != Visibility.Hidden)
+                //---If the warning label content is NOT empty there must be a problem with the file(s) the user wants to convert, so ignore the dropped files---
+                if ((string)WarningLabel.Content != String.Empty)
                 {
                     WarningLabel.Content = String.Empty;
                     return;
@@ -371,7 +363,7 @@ namespace ImageConverter
                 compressionAlgo = (FormatComboBox.SelectedItem as Label)?.Content.ToString().ToLower(),
             };
 
-            //Adds a dot each 500ms during conversion
+            #region Adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
             {
                 while (true)
@@ -386,8 +378,10 @@ namespace ImageConverter
             ticker.IsBackground = true;
             ticker.Start();
             timer.Start();
+            #endregion
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(conversionParameters));
+            ImageConversionHandler imgConvHandler = new ImageConversionHandler();
+            finishedConversions = await Task.Run(() => imgConvHandler.StartConversionAsync(conversionParameters));
 
             timer.Stop();
             #region Counts the unsuccessful conversions
@@ -595,65 +589,8 @@ namespace ImageConverter
         }
 
         #region Utility methods
-        /// <summary>
-        /// Finds all labels in a stackpanel
-        /// </summary>
-        /// <param name="stackpanel"></param>
-        /// <returns>Returns a list containing all the labels</returns>
-        private List<Label> FindLabelsInStackPanel(StackPanel stackpanel)
-        {
-            foreach (var control in stackpanel.Children)
-            {
-                if (control?.GetType() == typeof(StackPanel))
-                {
-                    FindLabelsInStackPanel((StackPanel)control);
-                }
-                else if (control?.GetType() == typeof(Label))
-                {
-                    labels.Add(control as Label);
-                }
-            }
-            return labels;
-        }
 
-        /// <summary>
-        /// Checks wether the files that the user wants to convert are images or not.
-        /// The files are given by dropping them on the ImgViewer control
-        /// </summary>
-        /// <param name="files"></param>
-        public static bool CheckIfGivenFilesAreImages(string[] files)
-        {
-            foreach (var file in files)
-            {
-                FileAttributes attr = File.GetAttributes(file);
-                //Check if the file is a folder and check if it contains any image, if yes then the files are ok to convert
-                if (attr.HasFlag(FileAttributes.Directory))
-                {
-                    string[] filesInDir = Directory.GetFiles(file);
-                    foreach (var fileInDir in filesInDir)
-                    {
-                        if (ImageConversionHandler.IsImage(fileInDir))
-                        {
-                            droppedFileisValidDirectory = true;
-                        }
-                        else
-                        {
-                            droppedFileisValidDirectory = false;
-                            return false;
-                        }
-                    }
-                }
-                //If it's not a folder or it doesn't contain any images
-                else { droppedFileisValidDirectory = false; }
 
-                //If the file isn't an image
-                if (!ImageConversionHandler.IsImage(file) && !droppedFileisValidDirectory)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
         /// <summary>
         /// Gets the images dropped by the user on the ImgViewer control and prepares the GUI consequently

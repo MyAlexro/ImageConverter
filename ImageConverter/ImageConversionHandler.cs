@@ -14,59 +14,58 @@ namespace ImageConverter
 {
     public class ImageConversionHandler
     {
-        private static BitmapEncoder imageEncoder;
+        private BitmapEncoder imageEncoder;
 
-        private static Encoder imageCompressorEncoder;
-        private static ImageCodecInfo imgToCompressCodecInfo;
-        private static EncoderParameter qualityParam;
-        private static EncoderParameters encoderParameters;
+        private Encoder imageCompressorEncoder;
+        private ImageCodecInfo imgToCompressCodecInfo;
+        private EncoderParameter qualityParam;
+        private EncoderParameters encoderParameters;
 
         /// <summary>
         /// Results of the conversion(s) with the corresponding image: if the conversion was sucessful or not
         /// </summary>
-        private static Dictionary<string, bool> conversionsResults;
+        private Dictionary<string, bool> conversionsResults;
         /// <summary>
         /// List of the results of the compression for each image
         /// </summary>
-        private static Dictionary<string, bool> compressionResults;
+        private Dictionary<string, bool> compressionResults;
 
         /// <summary>
         /// Format to convert the images to
         /// </summary>
-        private static string chosenFormat;
+        private string chosenFormat;
         /// <summary>
         /// Temporary IMAGE located the user's temp folder, it could be a png after the ReplaceTransparency or the CompressImageAsync
         /// </summary>
-        private static string tempImgPath = null;
+        private string tempImgPath = null;
         /// <summary>
         /// Name of the image to convert
         /// </summary>
-        private static string imageToConvertName;
+        private string imageToConvertName;
         /// <summary>
         /// directory of the image to convert
         /// </summary>
-        private static string pathToImageToConvertDirectory;
+        private string pathToImageToConvertDirectory;
         /// <summary>
         /// Color to replace the transparency with. 0 = no color, 1 = white, 2 = black
         /// </summary>
-        private static int color = 0;
+        private int color = 0;
         /// <summary>
         /// Value of the final quality after compression of the image
         /// </summary>
-        private static int chosenQuality = 0;
+        private int chosenQuality = 0;
         /// <summary>
         /// Type of compression for Tiff images
         /// </summary>
-        private static string chosenCompressionAlgo;
+        private string chosenCompressionAlgo;
         /// <summary>
         /// Format of the image to convert
         /// </summary>
-        private static string imageFormat = String.Empty;
+        private string imageFormat = String.Empty;
         /// <summary>
         /// List of compression tasks that will be executed when all the images have been converted
         /// </summary>
-        private static List<Task<bool>> compressionsTasks;
-
+        private List<Task<bool>> compressionsTasks;
 
         /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
@@ -74,7 +73,7 @@ namespace ImageConverter
         /// <param name="conversionParameters"> ImageConversionParametersModel containing all the parameters of the conversion</param>
         /// <returns></returns>
         //string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime, int qualityLevel, string compressionAlgo
-        public static async Task<Dictionary<string, bool>> StartConversionAsync(ImageConversionParametersModel conversionParameters)
+        public async Task<Dictionary<string, bool>> StartConversionAsync(ImageConversionParametersModel conversionParameters)
         {
             chosenFormat = conversionParameters.format;
             color = conversionParameters.colorToReplTheTranspWith;
@@ -174,7 +173,7 @@ namespace ImageConverter
         /// </summary>
         /// <param name="pathsOfImagesToCompress"></param>
         /// <returns></returns>
-        public static async Task<List<bool>> StartCompressionParallelAsync()
+        public async Task<List<bool>> StartCompressionParallelAsync()
         {
             foreach (var compressionTask in compressionsTasks)
             {
@@ -186,7 +185,7 @@ namespace ImageConverter
         }
 
         #region Convert-to-formats methods
-        private static async Task<bool> ToPngAsync(string pathOfImageToConvert)
+        private async Task<bool> ToPngAsync(string pathOfImageToConvert)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -226,7 +225,7 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private static async Task<bool> ToJpegOrJpgAsync(string pathOfImageToConvert, string format)
+        private async Task<bool> ToJpegOrJpgAsync(string pathOfImageToConvert, string format)
         {
             #region Set up infos about the image to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -285,7 +284,7 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private static async Task<bool> ToBmpAsync(string pathOfImageToConvert)
+        private async Task<bool> ToBmpAsync(string pathOfImageToConvert)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -345,7 +344,7 @@ namespace ImageConverter
         }
 
         //TODO: Fix conversion to gif, sometimes the final gifs are buggy, when images are pngs the delay doesn't work 
-        private static async Task<bool> ImagesToGifAsync(List<String> imagesToConvertPaths, int repeatTimes, int delayTime)
+        private async Task<bool> ImagesToGifAsync(List<String> imagesToConvertPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(imagesToConvertPaths[0]);
@@ -447,7 +446,7 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private static async Task<bool> ToIcoOrCurAsync(string pathOfImageToConvert, string format)
+        private async Task<bool> ToIcoOrCurAsync(string pathOfImageToConvert, string format)
         {
             var imgToConvExt = Path.GetExtension(pathOfImageToConvert).ToLower();
             #region if the image to convert isn't a png or bmp image it can't be converterd: return false
@@ -587,7 +586,7 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private static async Task<bool> ToTiffAsync(string pathOfImageToConvert, string compressionAlgo)
+        private async Task<bool> ToTiffAsync(string pathOfImageToConvert, string compressionAlgo)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -687,7 +686,7 @@ namespace ImageConverter
         /// <param name="quality"></param>
         /// <param name="destinationPath"> Path where to save the image, if not specificed, the image will be saved to its original version's path</param>
         /// <returns></returns>
-        private static async Task<bool> CompressImageAsync(string imagePath, string formatOfImageToCompress, int quality, string destinationPath = "")
+        private async Task<bool> CompressImageAsync(string imagePath, string formatOfImageToCompress, int quality, string destinationPath = "")
         {
             #region Set up variables
             encoderParameters = new EncoderParameters();
@@ -734,29 +733,12 @@ namespace ImageConverter
                 return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{destinationPath}\\{imageName}_Compressed.{formatOfImageToCompress}"));
         }
 
-
-        #region Utility methods
-        /// <summary>
-        /// Checks wether the given path of the file leads to an image
-        /// </summary>
-        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
-        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
-        public static bool IsImage(string pathOfFile)
-        {
-            string filePath = pathOfFile.ToLower();
-            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
-            {
-                return true;
-            }
-            return false;
-        }
-
         /// <summary>
         /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
         /// </summary>
         /// <param name="img">Image to which replace the transparency</param>
         /// <returns name="tempImgPath"> path where the image with the transparency replaced has been saved </returns>
-        private static string ReplaceTransparency(Image img)
+        private string ReplaceTransparency(Image img)
         {
             Bitmap imgWithTranspReplaced = new Bitmap(img.Width, img.Height);
             Graphics g = Graphics.FromImage(imgWithTranspReplaced);
@@ -783,13 +765,15 @@ namespace ImageConverter
             #endregion
         }
 
+        #region Utility methods
+
         /// <summary>
         /// Checks if an image has been converted correctly and thus if it has been saved correctly
         /// </summary>
         /// <param name="directoryOfImageToConvert"> path to the folder where the image has been saved to</param>
         /// <param name="imageName"> image of the name that has been converted and saved</param>
         /// <returns></returns>
-        private static async Task<bool> CheckIfSavedCorrectlyAsync(string pathOfImageToCheck)
+        private async Task<bool> CheckIfSavedCorrectlyAsync(string pathOfImageToCheck)
         {
             //if the conversion was successful and the file of the converted image exists: return true
             if (await Task.Run(() => File.Exists(pathOfImageToCheck)))
