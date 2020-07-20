@@ -5,7 +5,7 @@ A very customizable program to convert images to different image formats: jpeg, 
 - [ ] Modify the metadata of the image to convert
 - [X] Option to replace the transparency of PNG images when converting them to a GIF
 - [ ] Add more colors for the replacement of the transparency of a PNG image
-- [ ] Choose where to save the converted image(s)
+- [X] Choose where to save the converted image(s)
 - [X] Add the possibility to compress the image(s) by choosing the final quality
 - [X] Add Tiff images support
 - and more
