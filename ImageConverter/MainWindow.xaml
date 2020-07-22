@@ -63,9 +63,9 @@
                 </StackPanel>
 
                 <!-- Right block, Conversion options etc -->
-                <Grid Width="330">
+                <Grid x:Name="RightBlockGrid" Width="350">
                     <!-- Stackpanel that contains all the options for the conversion -->
-                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
 
                         <!-- Format to convert images to stackpanel-->
                         <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,0">
@@ -108,7 +108,7 @@
                         </StackPanel>
 
                         <!-- GIF format options-->
-                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" Height="Auto" Margin="0,8,0,0">
+                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" MaxWidth="{Binding ElementName=RightBlockGrid, Path=MaxWidth}" Height="Auto" Margin="0,8,0,0">
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
@@ -129,15 +129,9 @@
 
                             <!-- Option that indicates the delay between frames-->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="26" Margin="0,8">
-                                <Label Content="Delay time between two frames:" x:Name="GifFramesDelayTimeLabel" />
-                                <ComboBox FontSize="10" x:Name="GifFramesDelayOptionsCB" SelectedIndex="0" VerticalAlignment="Center">
-                                    <Label Style="{StaticResource ComboBoxElement}" Content="250"/>
-                                    <Label Style="{StaticResource ComboBoxElement}" Content="500"/>
-                                    <Label Style="{StaticResource ComboBoxElement}" Content="1000"/>
-                                    <Label Style="{StaticResource ComboBoxElement}" Content="1500"/>
-                                    <Label Style="{StaticResource ComboBoxElement}" Content="2000"/>
-                                </ComboBox>
-                                <Label Content="ms" Height="Auto" Width="Auto"/>
+                                <Label Content="Delay time between two frames(1-2500ms):" x:Name="GifFramesDelayTimeLabel"/>
+                                <TextBox x:Name="GifFramesDelayOptionTextBox" Text="2500" VerticalAlignment="Center" TextChanged="GifFramesDelayOptionTextBox_TextChanged" MaxWidth="32"/>
+                                <Label Content="ms" HorizontalAlignment="Left" FontSize="10" VerticalAlignment="Bottom"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -145,7 +139,8 @@
                         <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
                             <Label Content="Quality:" x:Name="QualityLabel"/>
                             <Border>
-                                <TextBox x:Name="QualityLevelTextBox" Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" TextChanged="QualityLevelTextBox_TextChanged"/>
+                                <TextBox x:Name="QualityLevelTextBox" Text="100%" MaxWidth="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                         TextChanged="QualityLevelTextBox_TextChanged"/>
                             </Border>
                         </StackPanel>
 
@@ -158,7 +153,9 @@
                     </StackPanel>
 
                     <!-- Button to start the conversion of the image-->
-                    <CustomControls:RoundBttn x:Name="StartConversionBttn" ButtonText="Start Conversion" FontSize="12" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="129" MouseDown="StartConversionBttn_MouseDown" IsEnabled="False" Margin="4,340,0,0"/>
+                    <CustomControls:RoundBttn x:Name="StartConversionBttn" ButtonText="Start Conversion" FontSize="12" HorizontalAlignment="Left"  VerticalAlignment="Top" 
+                                              Height="36" Width="129" IsEnabled="False" Focusable="True" Margin="4,340,0,0"
+                                              MouseDown="StartConversionBttn_MouseDown" KeyDown="StartConversionBttn_KeyDown"/>
 
                     <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
                     <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Height="Auto" Margin="140,350,0,0"/>

@@ -14,8 +14,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Linq;
 using ImageConverter.Classes;
-using System.Runtime.InteropServices;
-using System.Windows.Documents.Serialization;
 
 namespace ImageConverter
 {
@@ -294,7 +292,7 @@ namespace ImageConverter
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
                 //---If the warning label content is NOT empty there must be a problem with the file(s) the user wants to convert, so ignore the dropped files---
-                if ((string)WarningTextBlock.Text != string.Empty)
+                if (WarningTextBlock.Text != string.Empty)
                 {
                     WarningTextBlock.Text = string.Empty;
                     return;
@@ -396,7 +394,7 @@ namespace ImageConverter
                     pathsOfImagesToConvert = local_pathsOfImagesToConvert,
                     gifRepeatTimes = repGifTimes,
                     colorToReplTheTranspWith = ReplTranspColCB.SelectedIndex,
-                    delayTime = Convert.ToInt32((GifFramesDelayOptionsCB.SelectedItem as Label).Content) / 10,
+                    delayTime = Convert.ToInt32(GifFramesDelayOptionTextBox.Text) / 10, //Divided by 10 because the delay is needed in centiseconds
                     qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' ')),
                     compressionAlgo = (CompressionTypesCB.SelectedItem as Label)?.Content.ToString().ToLower(),
                     savePath = SavePathTextBlock.Text,
@@ -610,6 +608,7 @@ namespace ImageConverter
             }
         }
 
+
         /// <summary>
         /// Sanitize text of QualityLevelTextBox if there are letters or other special characters present, if the value exceeds 100 or is lower than 1.
         /// </summary>
@@ -617,13 +616,85 @@ namespace ImageConverter
         /// <param name="e"></param>
         private void QualityLevelTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string text = QualityLevelTextBox.Text;
+            const int minLevel = ImageConversionParametersModel.minQualityLevel;
+            const int maxLevel = ImageConversionParametersModel.maxQualityLevel;
+            TextBox txtBox = (TextBox)sender;
+            string text = txtBox.Text;
             int value;
-            if (int.TryParse(text.Trim('%'), out value) && value < 100 && value >= 0 && text.Contains("%"))
+            bool validInput = int.TryParse(text.Trim('%'), out value);
+
+            if (validInput && value >= minLevel && value <= maxLevel && text[0] != '0' && text[text.Length - 1] == '%' 
+                && text[0] != '%' && text[text.Length - 1] == '%' && text[text.Length - 2] != '%' && text.Contains(" ") == false)
                 return;
-            QualityLevelTextBox.Text = Regex.Replace(QualityLevelTextBox.Text, "[^0-9]", "") + "%";
-            if (value > 100) { QualityLevelTextBox.Text = "100%"; }
-            else if (value < 1) { QualityLevelTextBox.Text = "0%"; }
+
+            if (value > maxLevel && validInput)
+                txtBox.Text = maxLevel.ToString() + "%";
+            else if ((value < minLevel && validInput) || text.Trim('%') == "")
+                txtBox.Text = minLevel.ToString() + "%";
+
+            //If the user deleted the % symbol 
+            if (text[text.Length - 1] != '%' && text[text.Length - 1] != ' ')
+                txtBox.Text += "%";
+
+            //Delete every character except numbers from 0 to 9
+            if (validInput == false)
+                txtBox.Text = Regex.Replace(txtBox.Text, "[^0-9]", "");
+            //Replace any zeros before the number unless the text is going to be empty
+            if (text != String.Empty && text[0] == '0' && text.Trim('%').Length != 1)
+                txtBox.Text = Regex.Replace(txtBox.Text, @"\A0+", "");
+
+            //If the user added symbols at the start
+            if (text[0] == '%')
+                txtBox.Text = txtBox.Text.TrimStart('%');
+            //If the user added % symbols at the end
+            if(text.Length > 1)
+            {
+                if (text[text.Length - 1] == '%' && text[text.Length - 2] == '%')
+                {
+                    text = text.TrimEnd('%');
+                    txtBox.Text = text + "%";
+                }
+            }
+
+            //Remove white spaces and tabs
+            if(text.Contains(' '))
+            {
+                txtBox.Text = Regex.Replace(text, @"\s+", "");
+            }
+        }
+
+        /// <summary>
+        /// Sanitize text of GifFramesDelayOptionTextBox if there are letters or other special characters present, if the value exceeds 2500 or is lower than 1.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GifFramesDelayOptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            const int minLevel = ImageConversionParametersModel.minDelayTime;
+            const int maxLevel = ImageConversionParametersModel.maxDelayTime;
+            TextBox txtBox = (TextBox)sender;
+            string text = txtBox.Text;
+            int value;
+            bool validInput = int.TryParse(text, out value);
+
+            if (validInput && value <= maxLevel & value >= minLevel && txtBox.Text[0] != '0' && text.Contains(' ') == false)
+                return;
+
+            if (value > maxLevel && validInput) { txtBox.Text = maxLevel.ToString(); }
+            else if ((value < minLevel && validInput) || text == "") { txtBox.Text = minLevel.ToString(); }
+
+            //Delete every character except numbers from 0 to 9
+            if (validInput == false)
+                txtBox.Text = Regex.Replace(txtBox.Text, "[^0-9]", "");
+            //Replace any zeros before the number unless the text is going to be empty
+            if (text != String.Empty && text[0] == '0')
+                txtBox.Text = Regex.Replace(txtBox.Text, @"\A0+", "");
+
+            //Remove white spaces and tabs
+            if (text.Contains(' '))
+            {
+                txtBox.Text = Regex.Replace(text, @"\s+", "");
+            }
         }
 
 
@@ -670,7 +741,7 @@ namespace ImageConverter
             for (int i = 0; i < newPathsOfImagesToConvert.Count; i++)
             {
                 string imageName = Path.GetFileName(newPathsOfImagesToConvert[i]);
-                
+
                 if (newPathsOfImagesToConvert.Count != 1 && i == newPathsOfImagesToConvert.Count - 1)
                     ImagesNameTextBlock.Text += $"{imageName}";
                 else
@@ -730,6 +801,12 @@ namespace ImageConverter
                 SavePathTextBlock.Text = browserDialog.SelectedPath;
                 browserDialog.Dispose();
             }
+        }
+
+        private void StartConversionBttn_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                StartConversionBttn_MouseDown(StartConversionBttn, null);
         }
     }
 }
