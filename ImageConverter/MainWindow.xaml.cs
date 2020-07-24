@@ -473,11 +473,26 @@ namespace ImageConverter
                 timer.Stop();
                 timer.Reset();
                 ticker.Abort();
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                ConversionResultTextBlock.Text = String.Empty;
+                Debug.WriteLine("Message: " + ex.Message);
+                Debug.WriteLine("StackTrace: " + ex.StackTrace);
+                Debug.WriteLine("Source: " + ex.Source);
+                Debug.WriteLine("TargetSite: " + ex.TargetSite);
+                Debug.WriteLine("Data: " + ex.Data);
+                MessageBox.Show($"Message:\n{ex.Message}\n----------\nStackTrace:\n{ex.StackTrace}\n----------\nSource:\n{ex.Source}\n----------\nTargetSite:\n{ex.TargetSite}\n----------\nData:\n{ex.Data}",
+                    "Unexpected error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                ThemeManager.solidColorBrush = new SolidColorBrush
+                {
+                    Color = ThemeManager.CompletedWithErrorsConversionTextBlockColor
+                };
+                ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
+                if (Settings.Default.Language == "it") { ConversionResultTextBlock.Text = LanguageManager.IT_UnsuccConversionResultTextBlockFinishedText; }
+                else if (Settings.Default.Language == "en") { ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedText; }
             }
 
-            Thread.Sleep(500); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
+            Thread.Sleep(800); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
+            StartConversionBttn.IsEnabled = false; //Unbug the button
             StartConversionBttn.IsEnabled = true; //Re-enables the convertbttn to convert another image
         }
 
@@ -623,7 +638,7 @@ namespace ImageConverter
             int value;
             bool validInput = int.TryParse(text.Trim('%'), out value);
 
-            if (validInput && value >= minLevel && value <= maxLevel && text[0] != '0' && text[text.Length - 1] == '%' 
+            if (validInput && value >= minLevel && value <= maxLevel && text[0] != '0' && text[text.Length - 1] == '%'
                 && text[0] != '%' && text[text.Length - 1] == '%' && text[text.Length - 2] != '%' && text.Contains(" ") == false)
                 return;
 
@@ -647,7 +662,7 @@ namespace ImageConverter
             if (text[0] == '%')
                 txtBox.Text = txtBox.Text.TrimStart('%');
             //If the user added % symbols at the end
-            if(text.Length > 1)
+            if (text.Length > 1)
             {
                 if (text[text.Length - 1] == '%' && text[text.Length - 2] == '%')
                 {
@@ -657,7 +672,7 @@ namespace ImageConverter
             }
 
             //Remove white spaces and tabs
-            if(text.Contains(' '))
+            if (text.Contains(' '))
             {
                 txtBox.Text = Regex.Replace(text, @"\s+", "");
             }

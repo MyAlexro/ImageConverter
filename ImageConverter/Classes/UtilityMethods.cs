@@ -87,5 +87,17 @@ namespace ImageConverter.Classes
             }
             return labels;
         }
+
+        /// <summary>
+        /// Empty a folder by deleting all its content
+        /// </summary>
+        /// <param name="path"></param>
+        public static void EmptyFolder(string path)
+        {
+            foreach (var file in Directory.GetFiles(path))
+            {
+                File.Delete(file);
+            }
+        }
     }
 }
