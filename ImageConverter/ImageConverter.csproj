@@ -63,10 +63,10 @@
     <ApplicationIcon>Resources\ImageConverterIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>9A86C01175C466C68DEEAFD39C5328304CC90830</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>25DC9DF4B5FD97DB87992D198D35B73DE231BEF1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ImageConverterKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ImageConverter_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -121,6 +121,9 @@
     <Compile Include="CustomControls\RoundBttn.xaml.cs">
       <DependentUpon>RoundBttn.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ToggleSwitch.xaml.cs">
+      <DependentUpon>ToggleSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageConversionHandler.cs" />
     <Compile Include="Models\ImageConversionParametersModel.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
@@ -157,6 +160,7 @@
     <None Include="Docs\What%27s In A GIF - Bits and Bytes.pdf" />
     <None Include="Docs\What%27s In A GIF - LZW Image Data.pdf" />
     <None Include="ImageConverterKey.pfx" />
+    <None Include="ImageConverter_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -232,6 +236,10 @@
     <Page Include="CustomControls\RoundBttn.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="CustomControls\ToggleSwitch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

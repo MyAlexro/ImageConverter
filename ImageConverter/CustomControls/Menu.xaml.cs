@@ -61,26 +61,30 @@ namespace ImageConverter
             if (Settings.Default.Language == "it")
             {
                 SettingsLabel.Content = LanguageManager.IT_SettingsLabelText;
-                ThemeColorLabel.Content = LanguageManager.IT_ThemeColorLabelText;
-                ThemeLabel.Content = LanguageManager.IT_ThemeLabelText;
+                ThemeColorTextBlock.Text = LanguageManager.IT_ThemeColorTextBlockText;
+                ThemeTextBlock.Text = LanguageManager.IT_ThemeTextBlockText;
                 CreditsLabel.Content = LanguageManager.IT_CreditsLabelText;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "it");
-                LanguageOptionLabel.Content = LanguageManager.IT_LanguageLabelText;
+                LanguageOptionTextBlock.Text = LanguageManager.IT_LanguageLabelText;
+                SaveBothImagesTextBlock.Text = LanguageManager.IT_SaveBothImagesTextBlockText;
             }
             else if (Settings.Default.Language == "en")
             {
                 SettingsLabel.Content = LanguageManager.EN_SettingsLabelText;
-                ThemeColorLabel.Content = LanguageManager.EN_ThemeColorLabelText;
-                ThemeLabel.Content = LanguageManager.EN_ThemeLabelText;
+                ThemeColorTextBlock.Text = LanguageManager.EN_ThemeColorTextBlockText;
+                ThemeTextBlock.Text = LanguageManager.EN_ThemeTextBlockText;
                 CreditsLabel.Content = LanguageManager.EN_CreditsLabelText;
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
-                LanguageOptionLabel.Content = LanguageManager.EN_LanguageLabelText;
+                LanguageOptionTextBlock.Text = LanguageManager.EN_LanguageLabelText;
+                SaveBothImagesTextBlock.Text = LanguageManager.EN_SaveBothImagesTextBlockText;
             }
             #endregion
+
+            SaveBothImagesToggleSwitch.IsToggled = Settings.Default.SaveBothImages;
         }
 
         /// <summary>
-        /// Opens the menu by moving it into the visible window
+        /// Opens the menu by moving it into the visible window and load settings
         /// <para>Parameter: "menuElement" Menu element used in the MainWindow</para>
         /// </summary>
         /// <param name="menuElement"> Menu element used in the MainWindow</param>
@@ -110,6 +114,7 @@ namespace ImageConverter
                     rect.StrokeThickness = selectedRectStrokeThickness; //Set the chosen-rect width border
                 }
             }
+
             storyboard.Children.Add(thicknessAnimation);
             Storyboard.SetTargetProperty(thicknessAnimation, new PropertyPath(Grid.MarginProperty));
             Storyboard.SetTarget(thicknessAnimation, menuElement);
@@ -198,7 +203,7 @@ namespace ImageConverter
             Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //Set the name of the rect as the option of the theme color
             Settings.Default.Save();
             Settings.Default.Reload();
-            foreach(Rectangle rect in ThemeColorsSP.Children) //Set to all the other rects a non selected-rect border width
+            foreach (Rectangle rect in ThemeColorsSP.Children) //Set to all the other rects a non selected-rect border width
             {
                 if (rect.Name != Settings.Default.ThemeColor)
                 {
@@ -208,7 +213,7 @@ namespace ImageConverter
             MessageBoxResult response = MessageBoxResult.No;
             if (Settings.Default.Language == "it")
             {
-                response = MessageBox.Show(LanguageManager.IT_ApplyThemeColorMsgBox, LanguageManager.IT_ApplyThemeColorMsgBoxCaption, MessageBoxButton.YesNo,MessageBoxImage.Information);
+                response = MessageBox.Show(LanguageManager.IT_ApplyThemeColorMsgBox, LanguageManager.IT_ApplyThemeColorMsgBoxCaption, MessageBoxButton.YesNo, MessageBoxImage.Information);
             }
             else if (Settings.Default.Language == "en")
             {
@@ -239,7 +244,7 @@ namespace ImageConverter
             {
                 Settings.Default.ThemeColor = "DefaultThemeColor"; //Set the theme color to default to prevent readability issues
             }
-            if(((Rectangle)sender).Name == "DarkTheme" && Settings.Default.ThemeColor != "WhiteThemeColor") //If the user selectes the dark theme and the theme color isn't already white
+            if (((Rectangle)sender).Name == "DarkTheme" && Settings.Default.ThemeColor != "WhiteThemeColor") //If the user selectes the dark theme and the theme color isn't already white
             {
                 Settings.Default.ThemeColor = "WhiteThemeColor";
             }
@@ -299,28 +304,11 @@ namespace ImageConverter
             }
         }
 
-        ///// <summary>
-        ///// Finds all labels in a stackpanel
-        ///// </summary>
-        ///// <param name="stackpanel"></param>
-        ///// <returns>Returns a list containing all the labels</returns>
-        //private List<Label> FindLabels(StackPanel stackpanel)
-        //{
-        //    foreach (var control in stackpanel.Children)
-        //    {
-        //        if (control == null)
-        //            break;
-
-        //        if (control.GetType() == typeof(StackPanel))
-        //        {
-        //            FindLabels((StackPanel)control);
-        //        }
-        //        else if (control.GetType() == typeof(Label))
-        //        {
-        //            labels.Add(control as Label);
-        //        }
-        //    }
-        //    return labels;
-        //}
+        private void ToggleSwitch_StateChanged(object sender, EventArgs e)
+        {
+            Settings.Default.SaveBothImages = SaveBothImagesToggleSwitch.IsToggled;
+            Settings.Default.Save();
+            Settings.Default.Reload();
+        }
     }
 }

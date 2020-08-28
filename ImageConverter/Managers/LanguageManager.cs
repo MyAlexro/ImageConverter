@@ -27,12 +27,13 @@
 
          //Settings menu
          IT_SettingsLabelText = "Impostazioni",
-         IT_ThemeColorLabelText = "Colore tema:",
-         IT_ThemeLabelText = "Tema:",
+         IT_ThemeColorTextBlockText = "Colore tema:",
+         IT_ThemeTextBlockText = "Tema:",
          IT_LanguageLabelText = "Lingua:",
+         IT_SaveBothImagesTextBlockText = "Salva sia l'immagine non compressa che quella compressa",
          IT_CreditsLabelText = "Creatore: Alessandro Dinardo(MyAlexro)",
 
-         //MessageBoxes, dialogs etc
+        //MessageBoxes, dialogs etc
          IT_ApplyThemeModeMsgBoxCaption = "Applica modalità tema",
          IT_ApplyThemeModeMsgBox = "Per applicare il tema bisogna riavviare l'applicazione, riavviarla adesso?",
          IT_ApplyThemeColorMsgBoxCaption = "Applica colore tema",
@@ -47,7 +48,7 @@
          IT_CantConvertImageToSameFormat = "Non è possibile un'immagine allo stesso formato",
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
          IT_WarningUnsupportedFile = "⚠ Il file che si vuole convertire non è un'immagine o non è supportato",
-         IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini non verranno aggiunte perchè sono già presenti nella lista di immagini da convertire",
+         IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini sono già presenti nelle immagini da convertire, rimuoverle e riprovare",
          IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale",
          IT_BrowserDialogDescription = "Selezionare la cartella dove salvare le immagini convertite";
 
@@ -71,9 +72,10 @@
 
          //Settings menu
          EN_SettingsLabelText = "Settings",
-         EN_ThemeColorLabelText = "Theme color:",
-         EN_ThemeLabelText = "Theme:",
+         EN_ThemeColorTextBlockText = "Theme color:",
+         EN_ThemeTextBlockText = "Theme:",
          EN_LanguageLabelText = "Language:",
+         EN_SaveBothImagesTextBlockText = "Save both the uncompressed and compressed image",
          EN_CreditsLabelText = "Creator: Alessandro Dinardo(MyAlexro)",
 
          //MessageBoxes, dialogs etc
@@ -91,7 +93,7 @@
          EN_CantConvertImageToSameFormat = "You can't convert an image to the same format",
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_WarningUnsupportedFile = "⚠ The file you are trying to convert isn't an image or isn't supported",
-         EN_SomeImagesAreAlreadyPresent = "⚠ Some images won't be added because they are already present in the list of images to convert",
+         EN_SomeImagesAreAlreadyPresent = "⚠ Some images are already present in the list of images to convert, remove them and retry",
          EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder",
          EN_BrowserDialogDescription = "Select the folder where the converted images will be saved";
     }

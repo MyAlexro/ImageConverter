@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageConverter"
-        xmlns:CustomControls="clr-namespace:ImageConverter" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
+        xmlns:CustomControls="clr-namespace:ImageConverter" xmlns:CustomControls1="clr-namespace:ImageConverter.CustomControls" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
         Title="ImageConverter" Height="560" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
 
     <Window.Resources>
-        <Style x:Key="ComboBoxElement" TargetType="Label">
+        <Style x:Key="ComboBoxElement" TargetType="{x:Type Label}">
             <Setter Property="Height" Value="Auto"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Background" Value="#FFDAA619"/>
@@ -20,7 +20,7 @@
     <Grid x:Name="MainWindowGrid">
         <StackPanel x:Name="MainWindowStackPanel" Orientation="Vertical">
             <!-- Top block, Stackpanel containing window name and side menu button -->
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="{Binding ElementName=MainWindow1, Path=Width}">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="{Binding Width, ElementName=MainWindow1}">
                 <!--Button to open the Menu-->
                 <CustomControls:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="Auto" Width="Auto" VerticalAlignment="Top" MouseDown="MenuBttn_MouseDown" Margin="16,10,0,0"/>
 
@@ -108,7 +108,7 @@
                         </StackPanel>
 
                         <!-- GIF format options-->
-                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" MaxWidth="{Binding ElementName=RightBlockGrid, Path=MaxWidth}" Height="Auto" Margin="0,8,0,0">
+                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}" Height="Auto" Margin="0,8,0,0">
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
@@ -146,8 +146,8 @@
 
                         <!-- Choose where to save image(s) option-->
                         <StackPanel x:Name="SavePathOptionSP" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8" Height="28">
-                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="250">Path where the image(s) will be saved</TextBox>
-                            <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click">Choose folder</Button>
+                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="250" Text="Path where the image(s) will be saved"/>
+                            <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click" Content="Choose folder"/>
                         </StackPanel>
 
                     </StackPanel>
@@ -165,7 +165,7 @@
         </StackPanel>
 
         <!--Side menu-->
-        <CustomControls:Menu x:Name="Menu"  Height="{Binding ElementName=MainWindow1, Path=Height}" Width="255" Margin="-260,0,0,0" HorizontalAlignment="Left" >
+        <CustomControls:Menu x:Name="Menu"  Height="{Binding Height, ElementName=MainWindow1}" Width="255" Margin="-260,0,0,0" HorizontalAlignment="Left" >
             <CustomControls:Menu.Effect>
                 <DropShadowEffect BlurRadius="10" Opacity="0.75"/>
             </CustomControls:Menu.Effect>

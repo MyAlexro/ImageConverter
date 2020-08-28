@@ -12,7 +12,7 @@ namespace ImageConverter.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -59,7 +59,11 @@ namespace ImageConverter.Properties {
             }
         }
         
+        /// <summary>
+        /// Setting which determines wether the app has been launched a first time
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Setting which determines wether the app has been launched a first time")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool FirstRun {
@@ -71,7 +75,11 @@ namespace ImageConverter.Properties {
             }
         }
         
+        /// <summary>
+        /// Path to the user&apos;s temporary path, usually located in the Appdata folder
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Path to the user\'s temporary path, usually located in the Appdata folder")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TempFolderPath {
@@ -80,6 +88,24 @@ namespace ImageConverter.Properties {
             }
             set {
                 this["TempFolderPath"] = value;
+            }
+        }
+        
+        /// <summary>
+        /// Settings which determines wether, in case the user decided to compress the image(s),  to save the converted but uncompressed image(s) and the compressed image(s), or only the compressed one(s)
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Settings which determines wether, in case the user decided to compress the image(" +
+            "s),  to save the converted but uncompressed image(s) and the compressed image(s)" +
+            ", or only the compressed one(s)")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SaveBothImages {
+            get {
+                return ((bool)(this["SaveBothImages"]));
+            }
+            set {
+                this["SaveBothImages"] = value;
             }
         }
     }
