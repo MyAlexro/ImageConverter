@@ -1,4 +1,4 @@
-# ImageConverter <img src="https://github.com/MyAlexro/ImageConverter/blob/master/ImageConverter/Resources/ImageConverterWindowIcon.png" alt="Imageconverter logo" width="50px">
+# ImageConverter<img src="256x256_ImageConverterIcon.png" alt="ImageConverter icon" width="50" height="50">
 A very customizable program to convert images to different image formats: jpeg, jpg, png, ico, cur, bmp, gif and tiff
 
 ## Incoming features
