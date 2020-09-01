@@ -1,17 +1,18 @@
 ﻿using System;
+using ImageConverter.Classes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ImageConverter.UnitTests
 {
     [TestClass]
-    public class ImageConversionHandlerTests
+    public class UtilityMethodsUnitTests
     {
         [TestMethod]
         public void IsImage_FileIsNOTAnImage_ReturnsFalse()
         {
             string pathOfFile = @"C:\RandomFile.txt";
 
-            bool result = ImageConversionHandler.IsImage(pathOfFile);
+            bool result = UtilityMethods.IsOrContainsImage(pathOfFile);
 
             Assert.IsFalse(result);
         }
@@ -24,7 +25,7 @@ namespace ImageConverter.UnitTests
 
             for(int i = 0; i <= 2;  i++)
             {
-                results[i] = ImageConversionHandler.IsImage(pathsOfFiles[i]);
+                results[i] = UtilityMethods.IsOrContainsImage(pathsOfFiles[i]);
             }
             foreach(var result in results)
             {

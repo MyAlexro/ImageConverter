@@ -111,6 +111,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\DebuggingTools.cs" />
     <Compile Include="Classes\UtilityMethods.cs" />
     <Compile Include="CustomControls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
@@ -246,6 +247,5 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
