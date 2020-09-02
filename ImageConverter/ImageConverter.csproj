@@ -126,6 +126,7 @@
       <DependentUpon>ToggleSwitch.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageConversionHandler.cs" />
+    <Compile Include="Models\CompressionParametersModel.cs" />
     <Compile Include="Models\ImageConversionParametersModel.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -384,7 +384,7 @@ namespace ImageConverter
                     {
                         ConversionResultTextBlock.Text += ".";
                     });
-                    Thread.Sleep(500);
+                    Thread.Sleep(300);
                 }
             });
             ticker.IsBackground = true;
@@ -418,7 +418,6 @@ namespace ImageConverter
 
                 timer.Stop();
                 ticker.Abort();
-
 
                 #region Counts the unsuccessful conversions
                 unsuccessfulConversions = new List<string>();
@@ -499,7 +498,6 @@ namespace ImageConverter
                 else if (Settings.Default.Language == "en") { ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedText; }
             }
 
-            Thread.Sleep(800); //Add delay otherwise if the user pressed the button right after re-enabling it and the button would become dark
             StartConversionBttn.IsEnabled = false; //Unbug the button
             StartConversionBttn.IsEnabled = true; //Re-enables the convertbttn to convert another image
         }
