@@ -7,6 +7,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ImageConverter.Properties;
 using ImageConverter.Classes;
+using System.Diagnostics;
 
 namespace ImageConverter
 {
@@ -309,6 +310,11 @@ namespace ImageConverter
             Settings.Default.SaveBothImages = SaveBothImagesToggleSwitch.IsToggled;
             Settings.Default.Save();
             Settings.Default.Reload();
+        }
+
+        private void GithubMark_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Process.Start("https://github.com/MyAlexro/ImageConverter");
         }
     }
 }

@@ -97,7 +97,10 @@
 
         <Separator Opacity="0.5" Height="5"/>
 
-        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic">Creator: Alessandro Dinardo (MyAlexro)</Label>
+        <StackPanel x:Name="CreditsStackPanel" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label x:Name="CreditsLabel" Width="Auto" Height="21" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" FontSize="11.2">Creator: Alessandro Dinardo (MyAlexro)</Label>
+            <Image x:Name="GithubMark" Width="24" Height="24" MouseDown="GithubMark_MouseDown" ToolTip="Github repository" Source="/ImageConverter;component/Resources/GitHub-Mark-32px.png" />
+        </StackPanel>
 
     </StackPanel>
 
