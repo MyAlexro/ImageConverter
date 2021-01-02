@@ -73,9 +73,9 @@ namespace ImageConverter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GitHub_Mark_32px {
+        internal static System.Drawing.Bitmap BlackGitHubMark32px {
             get {
-                object obj = ResourceManager.GetObject("GitHub_Mark_32px", resourceCulture);
+                object obj = ResourceManager.GetObject("BlackGitHubMark32px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -116,6 +116,16 @@ namespace ImageConverter.Properties {
         internal static System.Drawing.Bitmap ImageConverterWindowIcon {
             get {
                 object obj = ResourceManager.GetObject("ImageConverterWindowIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LightGitHubMark32px {
+            get {
+                object obj = ResourceManager.GetObject("LightGitHubMark32px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

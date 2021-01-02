@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
 
-namespace ImageConverter.Classes
+namespace ImageConverter.HelperClasses
 {
     public class UtilityMethods
     {
@@ -78,11 +78,61 @@ namespace ImageConverter.Classes
             {
                 if (control?.GetType() == typeof(StackPanel))
                 {
-                    FindLabelsInStackPanel((StackPanel)control);
+                    labels.AddRange(FindLabelsInStackPanel((StackPanel)control));
                 }
                 else if (control?.GetType() == typeof(Label))
                 {
                     labels.Add(control as Label);
+                }
+            }
+            return labels;
+        }
+
+        public static List<TextBlock> FindTextBlocksInStackPanel(StackPanel stackpanel)
+        {
+            //List of labels in the Options stackpanel
+            List<TextBlock> textBlocks = new List<TextBlock>();
+
+            foreach (var control in stackpanel.Children)
+            {
+                if (control?.GetType() == typeof(StackPanel))
+                {
+                    textBlocks.AddRange(FindTextBlocksInStackPanel((StackPanel)control));
+                }
+                else if (control?.GetType() == typeof(TextBlock))
+                {
+                    textBlocks.Add(control as TextBlock);
+                }
+            }
+            return textBlocks;
+        }
+
+        /// <summary>
+        /// Returns a list of all the Labels contained in all the ComboBoxes in a Stackpanel passed by reference
+        /// </summary>
+        /// <param name="stackPanel"></param>
+        /// <returns>List of Label</returns>
+        public static List<Label> FindLabelsInComboBoxesInSPs(ref StackPanel stackPanel)
+        {
+            List<Label> labels = new List<Label>();
+
+            foreach (var control in stackPanel.Children)
+            {
+                if (control?.GetType() == typeof(StackPanel))
+                {
+                    StackPanel sp = (StackPanel)control;
+                    labels.AddRange(FindLabelsInComboBoxesInSPs(ref sp));
+                }
+                else if (control?.GetType() == typeof(ComboBox))
+                {
+                    ComboBox comboBox = (ComboBox)control;
+                    foreach(var item in comboBox.Items)
+                    {
+                        if(item?.GetType() == typeof(Label))
+                        {
+                            labels.Add((Label)item);
+                        }
+                    }
                 }
             }
             return labels;

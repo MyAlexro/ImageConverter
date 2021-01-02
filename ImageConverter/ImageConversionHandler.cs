@@ -1,4 +1,25 @@
-﻿using ImageConverter.Properties;
+﻿/*MIT License
+*Copyright (c) 2021 Alessandro Dinardo
+*
+*Permission is hereby granted, free of charge, to any person obtaining a copy
+*of this software and associated documentation files (the "Software"), to deal
+*in the Software without restriction, including without limitation the rights
+*to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*copies of the Software, and to permit persons to whom the Software is
+*furnished to do so, subject to the following conditions:
+
+*The above copyright notice and this permission notice shall be included in all
+*copies or substantial portions of the Software.
+*
+*THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+using ImageConverter.Properties;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,7 +30,7 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using ImageConverter.Classes;
+using ImageConverter.HelperClasses;
 using ImageConverter.Models;
 
 namespace ImageConverter
@@ -43,7 +64,7 @@ namespace ImageConverter
         /// <summary>
         /// List of compression tasks that will be executed when all the images have been converted
         /// </summary>
-        private List<CompressionParametersModel> compressionsParameters;
+        private List<CompressionParametersModel> compressionTasksParameters;
 
         /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
@@ -66,7 +87,7 @@ namespace ImageConverter
             var conversionsResults = new Dictionary<string, bool>();
             //List of the results of the compression for each image
             var compressionResults = new Dictionary<string, bool>();
-            compressionsParameters = new List<CompressionParametersModel>();
+            compressionTasksParameters = new List<CompressionParametersModel>();
             #endregion
 
             //Check whether the user is trying to convert an image to the same format, if yes don't convert by setting already its conversionResult to false
@@ -86,12 +107,12 @@ namespace ImageConverter
 
                 /*If the conversion result of an image isn't already "false" convert it. The conversion result of 
                 *an image may have already been evaluated to be false(unsuccessful) if the user wanted to convert it to its same format */
-                bool resultHasBeenAlreadyEvaluated = conversionsResults.TryGetValue(imageToConvertPath, out resultHasBeenAlreadyEvaluated);
+bool resultHasBeenAlreadyEvaluated = conversionsResults.TryGetValue(imageToConvertPath, out resultHasBeenAlreadyEvaluated);
                 if (resultHasBeenAlreadyEvaluated != true)
                 {
                     if (selectedFormat == "png")
                     {
-                        /* If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted&UNcompressed image in the 
+                        /* If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted-only image in the 
                         * temp folder because the compressed one will be saved in the chosen savePath later */
                         if (compressionQuality != 100 && Settings.Default.SaveBothImages == false)
                             resultsTuple = await Task.Run(() => ConvertToPngAndSaveAsync(imageToConvertPath, Settings.Default.TempFolderPath));
@@ -102,7 +123,7 @@ namespace ImageConverter
                         //If the user wants to compress the image, if the conversion has been successful, add the compression task for the converted image
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
                         {
-                            compressionsParameters.Add(new CompressionParametersModel
+                            compressionTasksParameters.Add(new CompressionParametersModel
                             {
                                 imageToCompressPath = resultsTuple.convertedImagePath,
                                 quality = compressionQuality,
@@ -120,7 +141,7 @@ namespace ImageConverter
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
                         {
-                            compressionsParameters.Add(new CompressionParametersModel
+                            compressionTasksParameters.Add(new CompressionParametersModel
                             {
                                 imageToCompressPath = resultsTuple.convertedImagePath,
                                 quality = compressionQuality,
@@ -138,7 +159,7 @@ namespace ImageConverter
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
                         {
-                            compressionsParameters.Add(new CompressionParametersModel
+                            compressionTasksParameters.Add(new CompressionParametersModel
                             {
                                 imageToCompressPath = resultsTuple.convertedImagePath,
                                 quality = compressionQuality,
@@ -157,7 +178,7 @@ namespace ImageConverter
                         {
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
-                                compressionsParameters.Add(new CompressionParametersModel
+                                compressionTasksParameters.Add(new CompressionParametersModel
                                 {
                                     imageToCompressPath = imagePath,
                                     quality = compressionQuality,
@@ -165,7 +186,7 @@ namespace ImageConverter
                                 });
                             }
                         }
-                        //Else create the uncompressed gif, then add the compression tasks for the compressed gif
+                        //Else if the user wants both version, create the uncompressed gif, then add the compression tasks for the images that will be used to create the gif later on in the start compression region
                         else if (compressionQuality != 100 && Settings.Default.SaveBothImages == true)
                         {
                             resultsTuple = await Task.Run(() => ConvertToGifAndSaveAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime, savePath));
@@ -176,7 +197,7 @@ namespace ImageConverter
                             {
                                 if (resultsTuple.conversionResult == true)
                                 {
-                                    compressionsParameters.Add(new CompressionParametersModel
+                                    compressionTasksParameters.Add(new CompressionParametersModel
                                     {
                                         imageToCompressPath = imagePath,
                                         quality = compressionQuality,
@@ -189,7 +210,7 @@ namespace ImageConverter
                         else
                         {
                             resultsTuple = await Task.Run(() => ConvertToGifAndSaveAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime, savePath));
-                            pathsOfImagesToConvert.ForEach(delegate(string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });                            
+                            pathsOfImagesToConvert.ForEach(delegate (string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });
                         }
                         break;
                     }
@@ -203,7 +224,7 @@ namespace ImageConverter
                         {
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
-                                compressionsParameters.Add(new CompressionParametersModel
+                                compressionTasksParameters.Add(new CompressionParametersModel
                                 {
                                     imageToCompressPath = imagePath,
                                     quality = compressionQuality,
@@ -219,7 +240,7 @@ namespace ImageConverter
                             {
                                 if (resultsTuple.conversionResult == true)
                                 {
-                                    compressionsParameters.Add(new CompressionParametersModel
+                                    compressionTasksParameters.Add(new CompressionParametersModel
                                     {
                                         imageToCompressPath = imagePath,
                                         quality = compressionQuality,
@@ -244,7 +265,7 @@ namespace ImageConverter
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
                         {
-                            compressionsParameters.Add(new CompressionParametersModel
+                            compressionTasksParameters.Add(new CompressionParametersModel
                             {
                                 imageToCompressPath = resultsTuple.convertedImagePath,
                                 quality = compressionQuality,
@@ -257,11 +278,12 @@ namespace ImageConverter
             }
 
             #region Start the compression(if wanted) and change conversion results based on success of compression. Eventually combine the results of the conversions and compressions
+
             compressionResults = new Dictionary<string, bool>();
 
             /*If the user has set a quality for the compression and there's any possible compression, 
             *compress the image(s) and combine the results of the compression(s) with the conversion(s) one(s)*/
-            if (compressionsParameters.Count != 0 && compressionQuality != 100)
+            if (compressionTasksParameters.Count != 0 && compressionQuality != 100)
             {
                 //Start the image-compression tasks in compressionsTasks list
                 List<bool> compressionResultsBoolList = await Task.Run(() => StartCompressionsParallelAsync());
@@ -325,7 +347,7 @@ namespace ImageConverter
         public async Task<List<bool>> StartCompressionsParallelAsync()
         {
             var compressionsTasks = new List<Task<bool>>();
-            foreach (var compressionParam in compressionsParameters)
+            foreach (var compressionParam in compressionTasksParameters)
             {
                 //Execute task and when it finishes add its value to the list
                 compressionsTasks.Add(CompressImageAsync(compressionParam));

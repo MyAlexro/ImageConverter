@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Windows.Media;
+using ImageConverter.HelperClasses;
 using ImageConverter.Properties;
 
 namespace ImageConverter
@@ -33,12 +35,8 @@ namespace ImageConverter
         static Color violetThemeColor = Color.FromArgb(255, 238, 130, 238);
         static Color violetThemeHoveringColor = Color.FromArgb(255, 207, 107, 207);
 
-        static Color whiteThemeColor = Color.FromArgb(255, 200, 200, 200); 
-        static Color whiteThemeHoveringColor = Color.FromArgb(255, 175, 175, 175);
-
-        //Color for labels and textblocks when the WHITE theme is selected
-        static Color blackColor = Colors.Black;
-
+        static Color whiteThemeColor = Color.FromArgb(255, 232, 232, 232); 
+        static Color whiteThemeHoveringColor = Color.FromArgb(255, 200, 200, 200);
 
         //colors of the label, in MainWindow, which tells if the conversion is ongoing, ended successfully or ended with errors 
         public static Color RunningOrStaticConversionTextBlockColor = Color.FromArgb(255, 0, 0, 0);
@@ -52,7 +50,7 @@ namespace ImageConverter
         /// <para> Returns a SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </para>
         /// </summary>
         /// <returns> SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </returns>
-        public static SolidColorBrush SolidColorBrushOfSelectedThemeMode() //THEME OF THE APPLICATION (LIGHT,DARK)
+        public static SolidColorBrush SolidColorBrushOfThemeMode() //THEMES OF THE APPLICATION (LIGHT,DARK)
         {
             solidColorBrush = new SolidColorBrush();
 
@@ -76,7 +74,7 @@ namespace ImageConverter
         /// <para>Reminder: Only if the ThemeMode is DarkTheme, the ThemeColor will be applied to the text of labels and textblocks</para>
         /// </summary>
         /// <returns>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</returns>
-        public static SolidColorBrush SolidColorBrushOfSelectedThemeColor()
+        public static SolidColorBrush SolidColorBrushOfThemeColor()
         {
             solidColorBrush = new SolidColorBrush();
 
@@ -133,6 +131,30 @@ namespace ImageConverter
                 solidColorBrush.Color = whiteThemeHoveringColor;
             }
             return solidColorBrush;
+        }
+
+        /// <summary>
+        /// Applies the current theme color as foreground of every Label found in the stackpanel passed by reference
+        /// </summary>
+        /// <param name="stackPanel"></param>
+        public static void ApplyThemeColorToLabelsInSP(ref StackPanel stackPanel)
+        {
+            foreach (Label label in UtilityMethods.FindLabelsInStackPanel(stackPanel))
+            {
+                label.Foreground = ThemeManager.SolidColorBrushOfThemeColor();
+            }
+        }
+
+        /// <summary>
+        /// Applies the current theme color as foreground of every TextBlock found in the stackpanel passed by reference
+        /// </summary>
+        /// <param name="stackPanel"></param>
+        public static void ApplyThemeColorToTextBlocksInSP(ref StackPanel stackPanel)
+        {
+            foreach (TextBlock textblock in UtilityMethods.FindTextBlocksInStackPanel(stackPanel))
+            {
+                textblock.Foreground = ThemeManager.SolidColorBrushOfThemeColor();
+            }
         }
     }
 }

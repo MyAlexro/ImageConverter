@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ImageConverter.Classes
+namespace ImageConverter.HelperClasses
 {
     /// <summary>
     /// Useful methods to be used during the debugging process in the Immediate Window
     /// </summary>
-    public static class DebuggingTools
+    public class DebuggingTools
     {
-        private static int i = 1;
+        private int i = 1;
         /// <summary>
         /// Dump the content of a MemoryStream in a txt file to to the specified directory, otherwise on the desktop if 
         /// <br>the directoryPath parameter is not specified</br>
@@ -21,7 +18,7 @@ namespace ImageConverter.Classes
         /// <br>String. "Success" if everything went correctly, "Error" and information about the error</br>
         /// </summary>
         /// <param name="memStream"></param>
-        public static string DumpMemoryStream(MemoryStream memStream, string directoryPath = "")
+        public string DumpMemoryStream(MemoryStream memStream, string directoryPath = "")
         {
             //If the user hasn't specified 
             if(directoryPath == "")
@@ -62,7 +59,7 @@ namespace ImageConverter.Classes
         /// </summary>
         /// <param name="pathOfFile"></param>
         /// <returns></returns>
-        public static string GetFileBytesLength(string pathOfFile)
+        public string GetFileBytesLength(string pathOfFile)
         {
             try
             {
