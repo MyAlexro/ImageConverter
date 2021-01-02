@@ -121,6 +121,24 @@ namespace ImageConverter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The software &quot;ImageConverter&quot; is licensed under the MIT License.
+        ///Images and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
+        ///
+        ///MIT License
+        ///Copyright (c) 2021 Alessandro Dinardo
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy
+        ///of this software and associated documentation files (the &quot;Software&quot;), to deal
+        ///in the Software without restriction, including without limitation the rights
+        ///to use, copy, m [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string License {
+            get {
+                return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap LightGitHubMark32px {
