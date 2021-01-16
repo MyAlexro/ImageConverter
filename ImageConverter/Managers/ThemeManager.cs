@@ -139,7 +139,7 @@ namespace ImageConverter
         /// <param name="stackPanel"></param>
         public static void ApplyThemeColorToLabelsInSP(ref StackPanel stackPanel)
         {
-            foreach (Label label in UtilityMethods.FindLabelsInStackPanel(stackPanel))
+            foreach (Label label in UtilityMethods.FindAllLabelsInPanelOrDerivedObjs(stackPanel))
             {
                 label.Foreground = ThemeManager.SolidColorBrushOfThemeColor();
             }

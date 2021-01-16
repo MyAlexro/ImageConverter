@@ -10,7 +10,7 @@
         //--ITALIAN--
         public static readonly string
          //Conversion options
-         IT_GifFramesDelayTimeLabelText = $"Tempo di passaggio da un frame all'altro({ImageConversionParametersModel.minDelayTime}-{ImageConversionParametersModel.maxDelayTime}ms):",
+         IT_GifFramesDelayTimeLabelText = $"Tempo di passaggio da un frame all'altro({ConversionParamsModel.minDelayTime}-{ConversionParamsModel.maxDelayTime}ms):",
          IT_AddToExistingImagesToolTip = "Aggiungi le immagini trascinate a quelle già presenti",
          IT_ReplaceExistingImagesToolTip = "Sostituisci le immagini presenti con quelle trascinate",
          IT_StartConversionBttnText = "Converti immagini",
@@ -19,12 +19,13 @@
          IT_CompressionAlgoLabelText = "Algortimo di compressione:",
          IT_ReplacePngTransparencyLabelText = "Sostituisci la trasparenza con:",
          IT_GifRepeatTimesLabelText = "Volte che la gif si ripeterà:",
-         IT_QualityLabelText = "Qualità finale:",
+         IT_QualityLabelText = "Qualità finale dell'immagine/i:",
          IT_ImageSavePathLabelText = "Salva in:",
          IT_ChooseFolderBttnText = "Scegli cartella...",
          IT_Nothing = "Niente",
          IT_White = "Bianco",
          IT_Black = "Nero",
+         IT_IconSizesTextBlockText = "Dimensioni(px) dell'immagine disponibili nell'icona:",
 
          //Settings menu
          IT_SettingsLabelText = "Impostazioni",
@@ -51,16 +52,17 @@
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
          IT_WarningUnsupportedFile = "⚠ Il file che si vuole convertire non è un'immagine o non è supportato",
          IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini sono già presenti nella lista di immagini da convertire, rimuoverle e riprovare",
-         IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale",
+         IT_CantFindImagesToConvertInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale",
          IT_BrowserDialogDescription = "Selezionare la cartella dove salvare le immagini convertite",
          IT_OpenFileDialogTitle = "Selezionare una o più immagini da convertire",
          IT_UnexpectedErrorMsgBoxText = "Un'operazione ha causato un errore inaspettato. Un file log è stato creato nella cartella temp, perfavore riportare questo errore alla pagina https://github.com/MyAlexro/ImageConverter/issues",
-         IT_Images = "Immagini";
+         IT_Images = "Immagini",
+         IT_SelectOneIconSize = "Selezionare almeno una dimensione dell'icona!";
 
         //--ENGLISH--
         public static readonly string
         //Conversion options
-         EN_GifFramesDelayTimeLabelText = $"Delay time between two frames({ImageConversionParametersModel.minDelayTime}-{ImageConversionParametersModel.maxDelayTime}ms):",
+         EN_GifFramesDelayTimeLabelText = $"Delay time between two frames({ConversionParamsModel.minDelayTime}-{ConversionParamsModel.maxDelayTime}ms):",
          EN_AddToExistingImagesToolTip = "Add the dropped images to the current ones",
          EN_ReplaceExistingImagesToolTip = "Replace the current images with the dropped ones",
          EN_StartConversionBttnText = "Convert images",
@@ -69,15 +71,16 @@
          EN_CompressionAlgoLabelText = "Compression algorithm:",
          EN_ReplacePngTransparencyLabelText = "Replace the transparency with:",
          EN_GifRepeatTimesLabelText = "Times the gif will repeat:",
-         EN_QualityLabelText = "Final quality:",
+         EN_QualityLabelText = "Final image(s) quality:",
          EN_ImageSavePathLabelText = "Save path:",
          EN_ChooseFolderBttnText = "Choose folder...",
          EN_Nothing = "Nothing",
          EN_White = "White",
          EN_Black = "Black",
+         EN_IconSizesTextBlockText = "Sizes(px) of the image available in the icon:",
 
          //Settings menu
-         EN_SettingsLabelText = "Settings",
+        EN_SettingsLabelText = "Settings",
          EN_ThemeColorTextBlockText = "Theme color:",
          EN_ThemeTextBlockText = "Theme:",
          EN_LanguageLabelText = "Language:",
@@ -101,10 +104,12 @@
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_WarningUnsupportedFile = "⚠ The file you are trying to convert isn't an image or isn't supported",
          EN_SomeImagesAreAlreadyPresent = "⚠ Some images are already present in the list of images to convert, remove them and retry",
-         EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder",
+         EN_CantFindImagesToConvertInOriginalFolder = "Some images to convert couldn't be found in their original folder",
          EN_BrowserDialogDescription = "Select the folder where the converted images will be saved",
          EN_OpenFileDialogTitle = "Select one or more images to convert",
          EN_UnexpectedErrorMsgBoxText = "An operation caused an unexpected error. A log file has been created in the temp folder, please report this error at https://github.com/MyAlexro/ImageConverter/issues",
-         EN_Images = "Images";
+         EN_Images = "Images",
+         EN_SelectOneIconSize = "Select at least one available icon size!";
+
     }
 }

@@ -1,5 +1,5 @@
 The software "ImageConverter" is licensed under the MIT License.
-Images and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
+Images, icons and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
 
 MIT License
 Copyright (c) 2021 Alessandro Dinardo
@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
 
 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License
 

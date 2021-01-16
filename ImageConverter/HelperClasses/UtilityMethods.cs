@@ -15,7 +15,7 @@ namespace ImageConverter.HelperClasses
         public static bool IsOrContainsImage(string pathOfFile)
         {
             string filePath = pathOfFile.ToLower();
-            foreach (var format in ImageConversionParametersModel.availableFormats)
+            foreach (var format in ConversionParamsModel.availableFormats)
             {
                 if (filePath.Contains($".{format.ToLower()}"))
                     return true;
@@ -65,20 +65,24 @@ namespace ImageConverter.HelperClasses
         }
 
         /// <summary>
-        /// Finds all labels in a stackpanel
+        /// Finds all labels in Panel elements(Grid, StackPanel etc.)
         /// </summary>
         /// <param name="stackpanel"></param>
         /// <returns>Returns a list containing all the labels</returns>
-        public static List<Label> FindLabelsInStackPanel(StackPanel stackpanel)
+        public static List<Label> FindAllLabelsInPanelOrDerivedObjs(Panel panel)
         {
-            //List of labels in the Options stackpanel
+            //List of labels in the panel
             List<Label> labels = new List<Label>();
 
-            foreach (var control in stackpanel.Children)
+            foreach (var control in panel.Children)
             {
+                if((bool)control?.GetType().IsSubclassOf(typeof(Panel)))
+                {
+
+                }    
                 if (control?.GetType() == typeof(StackPanel))
                 {
-                    labels.AddRange(FindLabelsInStackPanel((StackPanel)control));
+                    labels.AddRange(FindAllLabelsInPanelOrDerivedObjs((StackPanel)control));
                 }
                 else if (control?.GetType() == typeof(Label))
                 {
