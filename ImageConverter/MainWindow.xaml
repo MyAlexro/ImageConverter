@@ -28,17 +28,21 @@
             <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="JPG"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="JPEG"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="BMP"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="ICO"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="GIF"/>
         </ComboBox>
 
         <!--Contenitore dell'immagine da convertire-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
-            <Image Width="363" Height="328" x:Name="ImgViewer" Margin="1,1,1,1" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver"/>
+            <Image Width="363" Height="328" x:Name="ImgViewer" Margin="1,1,1,1" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave"/>
         </Border>
 
         <!-- Label che appare solo se l'utente sta per droppare 2 file-->
         <Label x:Name="WarningLabel" Content="⚠ Solo la prima immagine verrà convertita" HorizontalAlignment="Left" Margin="131,73,0,0" VerticalAlignment="Top" Width="290" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden"/>
+
+        <!-- Label che appare quando si sta convertendo un'immagine e quando la conversione è finita-->
+        <Label x:Name="ConversionResultLabel" Content="Conversione in corso" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="312"/>
 
         <!--Bottone per aprire il Menu-->
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>
@@ -49,5 +53,6 @@
                 <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
             </local:Menu.Effect>
         </local:Menu>
+        
     </Grid>
 </Window>

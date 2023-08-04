@@ -20,8 +20,13 @@ namespace ImageConverter
         static Color VioletFontColor = Color.FromArgb(255, 238, 130, 238);
         static Color VioletFontHoveringColor = Color.FromArgb(255, 207, 107, 207);
 
-        static Color WhiteFontColor = Color.FromArgb(255, 255, 255, 255); //colore quando il mouse NON è sopra il pulsante
-        static Color WhiteFontHoveringColor = Color.FromArgb(255, 214, 214, 214); //colore quando il mouse è sopra il pulsante
+        static Color WhiteFontColor = Color.FromArgb(255, 255, 255, 255);
+        static Color WhiteFontHoveringColor = Color.FromArgb(255, 214, 214, 214);
+
+
+        //colori del label nella MainWindow che dice se la conversione dell'immagine è in corso o è finita
+        public static Color RunningConversionLabelColor = Color.FromArgb(255, 0, 0, 0);
+        public static Color CompletedConversionLabelColor = Color.FromArgb(255, 53, 181, 87);
 
         public static SolidColorBrush solidColorBrush;
 
@@ -31,7 +36,7 @@ namespace ImageConverter
             solidColorBrush = new SolidColorBrush();
 
             if (Settings.Default.ThemeType == "LightTheme")
-            { 
+            {
                 solidColorBrush.Color = LightTheme;
                 return solidColorBrush;
             }
