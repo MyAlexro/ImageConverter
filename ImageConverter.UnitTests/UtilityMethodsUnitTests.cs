@@ -1,5 +1,5 @@
 ﻿using System;
-using ImageConverter.Classes;
+using ImageConverter.HelperClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ImageConverter.UnitTests

@@ -63,7 +63,7 @@
     <ApplicationIcon>Resources\ImageConverterIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>25DC9DF4B5FD97DB87992D198D35B73DE231BEF1</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>9D6D4A319074458C1100C985E67EBE7E7C090956</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>ImageConverter_TemporaryKey.pfx</ManifestKeyFile>
@@ -82,7 +82,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ImageConverterKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ImageConverter_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -111,8 +111,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\DebuggingTools.cs" />
-    <Compile Include="Classes\UtilityMethods.cs" />
+    <Compile Include="HelperClasses\DebuggingTools.cs" />
+    <Compile Include="HelperClasses\UtilityMethods.cs" />
     <Compile Include="CustomControls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
@@ -161,7 +161,6 @@
     <None Include="Docs\What%27s In A GIF - Animation and Transparency.pdf" />
     <None Include="Docs\What%27s In A GIF - Bits and Bytes.pdf" />
     <None Include="Docs\What%27s In A GIF - LZW Image Data.pdf" />
-    <None Include="ImageConverterKey.pfx" />
     <None Include="ImageConverter_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -173,9 +172,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ImageConverterDragAndDropIT.jpg" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Resources\BlackGitHubMark32px.png" />
     <Resource Include="Resources\ImageConverterDragAndDropEN.png" />
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +200,7 @@
     <Resource Include="Resources\AddImages.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\LightGitHubMark32px.png" />
     <Resource Include="Resources\ReplaceImages.png" />
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +226,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\GitHub-Mark-32px.png" />
+    <Resource Include="Resources\ImageConverterDragAndDropIT.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

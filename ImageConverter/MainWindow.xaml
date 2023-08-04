@@ -46,7 +46,8 @@
 
                     <!--Container of the images to convert ImgViewer-->
                     <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1">
-                        <Image x:Name="ImgViewer" Height="330" Width="365" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/ImageConverterDragAndDropEN.png" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave">
+                        <Image x:Name="ImgViewer" Height="330" Width="365" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/ImageConverterDragAndDropEN.png" Opacity="0.3" 
+                               DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave" MouseDown="ImgViewerSelectImages_MouseDown">
                             <Image.ContextMenu>
                                 <ContextMenu x:Name="ImageViewerContextMenu" Opened="ImageViewerContextMenu_Opened">
                                     <MenuItem x:Name="EmptyImgViewerCntxtMenuBttn" Click="EmptyImgViewerCntxtMenuBttn_Click" IsEnabled="False"/>
@@ -57,7 +58,7 @@
 
                     <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
                     <ScrollViewer HorizontalAlignment="Left" Height="Auto" MaxHeight="60" VerticalAlignment="Top" Width="365" Margin="0,1,0,0">
-                        <TextBlock x:Name="ImagesNameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="ImagesNamesTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
                     </ScrollViewer>
 
                 </StackPanel>
@@ -137,7 +138,7 @@
 
                         <!-- Quality compression options -->
                         <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
-                            <Label Content="Quality:" x:Name="QualityLabel"/>
+                            <Label Content="Final quality:" x:Name="QualityLabel"/>
                             <Border>
                                 <TextBox x:Name="QualityLevelTextBox" Text="100%" MaxWidth="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                          TextChanged="QualityLevelTextBox_TextChanged"/>
@@ -146,7 +147,8 @@
 
                         <!-- Choose where to save image(s) option-->
                         <StackPanel x:Name="SavePathOptionSP" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8" Height="28">
-                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="250" Text="Path where the image(s) will be saved"/>
+                            <Label x:Name="ImageSavePathLabel">Salva in:</Label>
+                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="210" Text="Path where the image(s) will be saved"/>
                             <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click" Content="Choose folder"/>
                         </StackPanel>
 
@@ -158,7 +160,7 @@
                                               MouseDown="StartConversionBttn_MouseDown" KeyDown="StartConversionBttn_KeyDown"/>
 
                     <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
-                    <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Height="Auto" Margin="140,350,0,0"/>
+                    <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="140,350,0,0"/>
 
                 </Grid>
             </StackPanel>

@@ -6,8 +6,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ImageConverter.Properties;
-using ImageConverter.Classes;
+using ImageConverter.HelperClasses;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
 
 namespace ImageConverter
 {
@@ -46,16 +47,15 @@ namespace ImageConverter
             InitializeComponent();
 
             #region Apply theme mode and color
-            MenuSP.Background = ThemeManager.SolidColorBrushOfSelectedThemeMode();
-            SettingsLabel.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
+            MenuSP.Background = ThemeManager.SolidColorBrushOfThemeMode();
+            SettingsLabel.Foreground = ThemeManager.SolidColorBrushOfThemeColor();
             labels = UtilityMethods.FindLabelsInStackPanel(MenuSP);
-            //If the selected ThemeMode is DArkTheme the ThemeColor will be applied to the text of all the labels and textblocks
+            //If the selected ThemeMode is DarkTheme the ThemeColor will be applied to the text of all the labels and textblocks and the github mark must be white
             if (Settings.Default.ThemeMode == "DarkTheme")
             {
-                foreach (Label label in UtilityMethods.FindLabelsInStackPanel(MenuSP))
-                {
-                    label.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
-                }
+                ThemeManager.ApplyThemeColorToLabelsInSP(ref MenuSP);
+                ThemeManager.ApplyThemeColorToTextBlocksInSP(ref MenuSP);
+                GithubMark.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/LightGitHubMark32px.png"));
             }
             #endregion
             #region Apply translations
@@ -315,6 +315,11 @@ namespace ImageConverter
         private void GithubMark_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Process.Start("https://github.com/MyAlexro/ImageConverter");
+        }
+
+        private void LicenseLabel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
         }
     }
 }
