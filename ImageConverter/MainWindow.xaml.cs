@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Threading;
 using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace ImageConverter
@@ -35,7 +36,7 @@ namespace ImageConverter
         /// <summary>
         /// List of images names with their finished conversions result, the bool indicates wether it was finished successfully or not
         /// </summary>
-        Dictionary<string, bool?> finishedConversions;
+        Dictionary<string, bool> finishedConversions;
         /// <summary>
         /// Name of the images that didn't get converted
         /// </summary>
@@ -57,6 +58,10 @@ namespace ImageConverter
         /// </summary>
         int qualityLevel;
         /// <summary>
+        /// Type of compression for Tiff images
+        /// </summary>
+        string compressionAlgo;
+        /// <summary>
         /// Timer that measures the time spent converting all the images
         /// </summary>
         Stopwatch timer = new Stopwatch();
@@ -70,35 +75,52 @@ namespace ImageConverter
         {
             InitializeComponent();
 
-            #region Apply theme type and colors
+            #region Apply theme type, colors and hide or show controls
             MainWindowGrid.Background = ThemeManager.SelectedThemeMode();
             TitleTextBox.Foreground = ThemeManager.SelectedThemeColor();
             ThemeManager.solidColorBrush = new SolidColorBrush()
             {
                 Color = ThemeManager.RunningOrStaticConversionTextBlockColor,
             };
-
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
-            //Applies the selected theme color to every label in the format combobox and hides some controls
-            foreach (Label element in FormatComboBox.Items)
+
+            //Applies the selected theme color to every label in the comboboxes
+            foreach (var control in OptionsStackPanel.Children)
             {
-                element.Background = ThemeManager.SelectedThemeColor();
+                if (control.GetType() != typeof(StackPanel))
+                    break;
+                foreach(var innerControl in ((StackPanel)control).Children)
+                {
+                    if (innerControl.GetType() == typeof(ComboBox))
+                    {
+                        foreach (var label in ((ComboBox)innerControl).Items)
+                        {
+                            if (label.GetType() == typeof(Label))
+                            {
+                                ((Label)label).Background = ThemeManager.SelectedThemeColor();
+                            }
+                        }
+                    }
+                }
+            }
+            //If the selected ThemeMode is DarkTheme the ThemeColor will be applied to the text of all the labels
+            if (Settings.Default.ThemeMode == "DarkTheme")
+            {
+                foreach (Label label in FindLabelsInStackPanel(OptionsStackPanel))
+                {
+                    label.Foreground = ThemeManager.SelectedThemeColor();
+                }
+                ConversionResultTextBlock.Foreground = ThemeManager.SelectedThemeColor();
             }
 
-            //Applies black or light gray color to all labels depending on theme mode
-            foreach (Label label in FindLabels(OptionsStackPanel))
-            {
-                label.Foreground = ThemeManager.SelectedThemeColor();
-            }
-            ConversionResultTextBlock.Foreground = ThemeManager.SelectedThemeColor();
-
-            //Hide some controls not viewable at the initial state of the app
+            //Hide some controls that should not viewable at the initial state of the app
             AddOrReplaceDroppedImagesBttn.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ReplaceImages.png"));
             ConversionResultTextBlock.Visibility = Visibility.Collapsed;
             WarningLabel.Content = String.Empty;
             GifOptionsSP.Visibility = Visibility.Collapsed;
             ReplaceTransparencySP.Visibility = Visibility.Collapsed;
-            Compression_QualityOptionsSP.Visibility = Visibility.Visible;
+            QualityCompressionOptionSP.Visibility = Visibility.Collapsed;
+            CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
             #endregion
 
             #region Apply translation to all the visible controls
@@ -113,6 +135,9 @@ namespace ImageConverter
                 GifFramesDelayTimeLabel.Content = LanguageManager.IT_DelayTimeLabelTxt;
                 AddOrReplaceDroppedImagesBttn.ToolTip = LanguageManager.IT_ReplaceExistingImagesToolTip;
                 ReplacePngTransparencyLabel.Content = LanguageManager.IT_ReplacePngTransparencyLabelTxt;
+                QualityLabel.Content = LanguageManager.IT_QualityLabelText;
+                CompressionAlgoLabel.Content = LanguageManager.IT_CompressionAlgoLabelText;
+                NoneAlgoLabel.Content = LanguageManager.IT_NoneAlgoLabelText;
                 //Each item in the combobox that contains a series of colors to replace a png transparency with
                 foreach (Label item in ReplTranspColCB.Items)
                 {
@@ -143,6 +168,10 @@ namespace ImageConverter
                 GifFramesDelayTimeLabel.Content = LanguageManager.EN_DelayTimeLabelTxt;
                 AddOrReplaceDroppedImagesBttn.ToolTip = LanguageManager.EN_ReplaceExistingImagesToolTip;
                 ReplacePngTransparencyLabel.Content = LanguageManager.EN_ReplacePngTransparencyLabelTxt;
+                QualityLabel.Content = LanguageManager.EN_QualityLabelText;
+                CompressionAlgoLabel.Content = LanguageManager.EN_CompressionAlgoLabelText;
+                NoneAlgoLabel.Content = LanguageManager.EN_NoneAlgoLabelText;
+
                 //Each item in the combobox that contains a series of colors to replace a png transparency with
                 foreach (Label item in ReplTranspColCB.Items)
                 {
@@ -162,6 +191,7 @@ namespace ImageConverter
                     }
                 }
             }
+            #endregion
 
             //if the folder for ImageConverter in the temp direcory has been deleted create it again
             if (!Directory.Exists($"{Path.GetTempPath()}\\ImageConverter"))
@@ -169,7 +199,6 @@ namespace ImageConverter
                 Directory.CreateDirectory($"{Path.GetTempPath()}ImageConverter");
                 Settings.Default.TempFolderPath = $"{Path.GetTempPath()}ImageConverter";
             }
-            #endregion
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -188,10 +217,10 @@ namespace ImageConverter
                 }
 
                 //Creates a folder for ImageConverter in the temp directory
-                if (!Directory.Exists($"{Path.GetTempPath()}\\ImageConverter"))
+                if (!Directory.Exists($"{Path.GetTempPath()}ImageConverter"))
                 {
-                    Directory.CreateDirectory($"{Path.GetTempPath()}\\ImageConverter");
-                    Settings.Default.TempFolderPath = $"{Path.GetTempPath()}\\ImageConverter";
+                    Directory.CreateDirectory($"{Path.GetTempPath()}ImageConverter");
+                    Settings.Default.TempFolderPath = $"{Path.GetTempPath()}ImageConverter";
                 }
                 Settings.Default.FirstRun = false;
                 Settings.Default.Save();
@@ -244,19 +273,22 @@ namespace ImageConverter
                     return;
                 }
 
-                #region Resets various GUI controls
+                #region Resets and adjust various GUI controls
                 ThemeManager.solidColorBrush = new SolidColorBrush
                 {
                     Color = ThemeManager.RunningOrStaticConversionTextBlockColor
                 };
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
+
+                ReplaceTransparencySP.Visibility = Visibility.Collapsed;
                 ConversionResultTextBlock.Visibility = Visibility.Collapsed;
+                QualityCompressionOptionSP.Visibility = Visibility.Visible;
                 ImagesNameLabel.Text = string.Empty;
+
                 if (FormatComboBox.SelectedValue?.ToString() != "System.Windows.Controls.Label: GIF")
                 {
                     GifOptionsSP.Visibility = Visibility.Collapsed;
                 }
-                ReplaceTransparencySP.Visibility = Visibility.Collapsed;
                 #endregion
                 droppedFilesToConvert = new List<string>();
 
@@ -275,7 +307,7 @@ namespace ImageConverter
 
         private async void StartConversionBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //if a format hasn't been selected prompt user to select one and stop conversion
+            //if a format hasn't been selected prompt user to select one and stop conversion start
             if (FormatComboBox.SelectedItem == null)
             {
                 if (Settings.Default.Language == "it")
@@ -288,6 +320,16 @@ namespace ImageConverter
                 }
                 return;
             }
+            //If one or more images aren't in their original folder anymore stop conversion start
+            foreach(var image in pathsOfImagesToConvert)
+            {
+                if(!Directory.GetFiles(Path.GetDirectoryName(pathsOfImagesToConvert[0])).Contains(image))
+                {
+                    if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error);  }
+                    if (Settings.Default.Language.ToLower() == "en") { MessageBox.Show(LanguageManager.EN_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                    return;
+                }
+            }
 
             #region Prepares GUI controls
             if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
@@ -299,7 +341,7 @@ namespace ImageConverter
             StartConversionBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
             #endregion
 
-            finishedConversions = new Dictionary<string, bool?>();
+            finishedConversions = new Dictionary<string, bool>();
 
             #region Take all the conversion parameters not already assigned to their corresponding variable
             //takes the selected format
@@ -307,7 +349,6 @@ namespace ImageConverter
             //takes the selected quality level
             qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' '));
             #endregion
-
 
             //adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
@@ -325,7 +366,7 @@ namespace ImageConverter
             ticker.Start();
             timer.Start();
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, gifDelayTimeinCs, qualityLevel));
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, gifDelayTimeinCs, qualityLevel, compressionAlgo));
 
             timer.Stop();
             #region counts the unsuccessful conversions
@@ -342,6 +383,7 @@ namespace ImageConverter
             #endregion
             ticker.Abort();
             #region displays the result(s) of the conversion(s)
+            //if there were no errors
             if (unsuccessfulConversions.Count == 0)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -359,7 +401,8 @@ namespace ImageConverter
                     ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedTxt;
                 }
                 ConversionResultTextBlock.Text += $" in {(int)timer.Elapsed.TotalMilliseconds}ms"; //time taken to convert the images in milliseconds
-            } //if there were no errors
+            }
+            //if there was any error
             else
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -379,13 +422,14 @@ namespace ImageConverter
                 {
                     ConversionResultTextBlock.Text += conversion + ", ";
                 }
-            } //if there was any error
+            }
             #endregion
             timer.Reset();
 
             StartConversionBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
-            Thread.Sleep(300); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
+            Thread.Sleep(500); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
         }
+
 
         /// <summary>
         /// Opens side menu
@@ -396,6 +440,8 @@ namespace ImageConverter
         {
             Menu.OpenMenu(Menu);
         }
+
+        #region Dropdowns methods
 
         /// <summary>
         /// Sets the format to convert the images to
@@ -410,8 +456,14 @@ namespace ImageConverter
 
             if (selectedValue == "GIF")
                 GifOptionsSP.Visibility = Visibility.Visible;
+            else if (selectedValue == "TIFF")
+                CompressionAlgoOptionSP.Visibility = Visibility.Visible;
             else
+            {
                 GifOptionsSP.Visibility = Visibility.Collapsed;
+                CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
+            }
+                
         }
 
         /// <summary>
@@ -453,6 +505,12 @@ namespace ImageConverter
             gifDelayTimeinCs = delayTimeInt / 10;
         }
 
+        private void CompressionTypesCB_DropDownClosed(object sender, EventArgs e)
+        {
+            compressionAlgo = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString().ToLower();
+        }
+        #endregion
+
         /// <summary>
         /// If there are images to convert enable the EmptyImgViewerMenuBttn in the context menu of the ImgViewer
         /// </summary>
@@ -482,8 +540,13 @@ namespace ImageConverter
             pathsOfImagesToConvert.Clear();
             droppedFilesToConvert.Clear();
             EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
-            GifOptionsSP.Visibility = Visibility.Collapsed;
-            ReplaceTransparencySP.Visibility = Visibility.Collapsed;
+            foreach(var control in OptionsStackPanel.Children)
+            {
+                if(((StackPanel)control).Name != "ChooseFormatSP")
+                {
+                    ((StackPanel)control).Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         /// <summary>
@@ -495,7 +558,7 @@ namespace ImageConverter
         {
             Image imageControl = sender as Image;
 
-            //Chande button option
+            //Chande button option when the user clicks it
             if ((string)imageControl.Tag == "Replace")
             {
                 imageControl.Tag = "Add";
@@ -512,10 +575,22 @@ namespace ImageConverter
             }
         }
 
+        /// <summary>
+        /// Sanitize text of QualityLevelTextBox if there are letters or other special characters present, if the value exceeds 100 or is lower than 1.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void QualityLevelTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //TODO: sanitize input and if the value exceeds 100 or is lower than 1 set it back to normal
+            string text = QualityLevelTextBox.Text;
+            int value;
+            if (int.TryParse(text.Trim('%'), out value) && value < 100 && value > 0 && text.Contains("%"))
+                return;
+            QualityLevelTextBox.Text = Regex.Replace(QualityLevelTextBox.Text, "[^0-9]", "") + "%";
+            if (value > 100) { QualityLevelTextBox.Text = "100%"; }
+            else if (value < 1) { QualityLevelTextBox.Text = "1%"; }
         }
+
 
 
         /// <summary>
@@ -523,18 +598,15 @@ namespace ImageConverter
         /// </summary>
         /// <param name="stackpanel"></param>
         /// <returns>Returns a list containing all the labels</returns>
-        private List<Label> FindLabels(StackPanel stackpanel)
+        private List<Label> FindLabelsInStackPanel(StackPanel stackpanel)
         {
             foreach (var control in stackpanel.Children)
             {
-                if (control == null)
-                    break;
-
-                if (control.GetType() == typeof(StackPanel))
+                if (control?.GetType() == typeof(StackPanel))
                 {
-                    FindLabels((StackPanel)control);
+                    FindLabelsInStackPanel((StackPanel)control);
                 }
-                else if (control.GetType() == typeof(Label))
+                else if (control?.GetType() == typeof(Label))
                 {
                     labels.Add(control as Label);
                 }
@@ -609,7 +681,6 @@ namespace ImageConverter
                 else { pathsOfImagesToConvert.Add(file); }
             }
 
-
             #region Adds name(s) of the image(s) to the textblock under ImgViewer
             if (pathsOfImagesToConvert.Count == 1) ImagesNameLabel.Text += Path.GetFileName(pathsOfImagesToConvert[0]);
             else
@@ -639,7 +710,7 @@ namespace ImageConverter
 
         {
             ImgViewer.Opacity = 1.0f; //sets ImgViewer opacity to 1(max)
-            //loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be eventually deleted
+            //loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be (in case) deleted
             using (var st = File.OpenRead(pathsOfImagesToConvert[0]))
             {
                 var imageToShow = new BitmapImage();
