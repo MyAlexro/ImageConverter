@@ -4,7 +4,9 @@ using System.Windows.Media;
 using System.Globalization;
 using ImageConverter.Properties;
 using System.Threading.Tasks;
-using System.Threading;
+using System.Drawing;
+using System.IO;
+using System.Collections.Generic;
 
 namespace ImageConverter
 {
@@ -13,11 +15,12 @@ namespace ImageConverter
     /// </summary>
     public partial class MainWindow : Window
     {
-        string[] droppedImage;
+        string[] droppedImages;
         ImageSourceConverter stringToImgSrcConverter;
-        string pathofImgToConvert;
+        string[] pathsOfImagesToConvert;
         ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
-        bool conversionFinished = false;
+        List<bool> finishedConversions;
+        List<string> unsuccessfulConversions;
 
         public MainWindow()
         {
@@ -36,14 +39,14 @@ namespace ImageConverter
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.IT_WarningLabelTxt;
-                ConversionResultLabel.Content = LanguageManager.IT_ConversionResultLabelRunningTxt;
+                ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelRunningTxt;
             }
             else if (Settings.Default.Language == "en")
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.EN_WarningLabelTxt;
-                ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelRunningTxt;
+                ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelRunningTxt;
             }
         }
 
@@ -55,7 +58,7 @@ namespace ImageConverter
                 {
                     Settings.Default.Language = "it";
                 }
-                else if (CultureInfo.CurrentCulture.ToString().Contains("en"))
+                else
                 {
                     Settings.Default.Language = "en";
                 }
@@ -67,13 +70,16 @@ namespace ImageConverter
             }
         }
 
-
-
         private void ImgViewer_DragOver(object sender, DragEventArgs e)
         {
-            if ((e.Data.GetData(DataFormats.FileDrop) as string[]).Length > 1) //se l'utente sta tentando di convertire più di un'immagine
+            string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //se l'utente sta tentando di convertire più di un'immagine
+            foreach (var file in droppingFiles)
             {
-                WarningLabel.Visibility = Visibility.Visible; //mostra l'avviso
+                if (ImageConversionHandler.IsImage(file) == false)
+                {
+                    WarningLabel.Visibility = Visibility.Visible;
+                    break;
+                }
             }
         }
 
@@ -82,43 +88,41 @@ namespace ImageConverter
             WarningLabel.Visibility = Visibility.Hidden; //nasconde l'avviso che appare se l'utente sta tentando di convertire più di un'immagine
         }
 
-
-
         private void ImgViewer_Drop(object sender, DragEventArgs e)
         {
-            #region resetta il ConversionResultLabel al suo stato iniziale (serve perchè se no dopo aver convertito un'altra immagine rimarrebbe con il testo da conversione finita)
+            #region resets controls
             ThemeManager.solidColorBrush = new SolidColorBrush();
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
             ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
-            if (Settings.Default.Language == "it") ConversionResultLabel.Content = LanguageManager.IT_ConversionResultLabelRunningTxt;
-            if (Settings.Default.Language == "en") ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelRunningTxt;
             ConversionResultLabel.Visibility = Visibility.Hidden;
+            ImageNameLabel.Text = string.Empty;
             #endregion
 
-            if (e.Data.GetData(DataFormats.FileDrop) != null)
+            droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (e.Data.GetData(DataFormats.FileDrop) != null) //if the warning label is visible, so if the file(s) is/are not image(s)
             {
-                droppedImage = e.Data.GetData(DataFormats.FileDrop) as string[]; //prende il file droppato dall'utente
-                pathofImgToConvert = droppedImage[0]; //prende la path del file dall'array e la mette in una stringa
-
-                if (!ImageConversionHandler.IsImage(pathofImgToConvert)) //se il file non è un'immagine
+                if (WarningLabel.Visibility == Visibility.Visible)
                 {
-                    pathofImgToConvert = string.Empty;
-                    if (Settings.Default.Language == "it")
-                    {
-                        MessageBox.Show(LanguageManager.IT_CantConvertThisFile, "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else if (Settings.Default.Language == "en")
-                    {
-                        MessageBox.Show(LanguageManager.EN_CantConvertThisFile, "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    WarningLabel.Visibility = Visibility.Hidden;
                     return;
                 }
-                //se invece è un immagine
-                ConversionResultLabel.Visibility = Visibility.Hidden;
+
+                //if it's an image
+                pathsOfImagesToConvert = droppedImages;
+                if (droppedImages.Length == 1) ImageNameLabel.Text += Path.GetFileName(droppedImages[0]);
+                else
+                {
+                    foreach (string imagePath in droppedImages) //shows the name of the image(s) under the image container
+                    {
+                        ImageNameLabel.Text += Path.GetFileName(imagePath + ", ");
+                    }
+                }
+                if (Settings.Default.Language == "it") ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelRunningTxt;
+                if (Settings.Default.Language == "en") ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelRunningTxt;
                 stringToImgSrcConverter = new ImageSourceConverter();
-                ImgViewer.Opacity = 1.0f; //rimette l'opacità delle immagini nell'ImgViewer a 1
-                ImgViewer.Source = stringToImgSrcConverter.ConvertFromInvariantString(pathofImgToConvert) as ImageSource; //converte la path in ImageSource e la mostra nell'ImgViewer
-                WarningLabel.Visibility = Visibility.Hidden; //nasconde il warningLabel in caso fosse stato messo visibile
+                ImgViewer.Opacity = 1.0f; //sets imageviewer opacity to 1
+                ImgViewer.Source = stringToImgSrcConverter.ConvertFromInvariantString(pathsOfImagesToConvert[0]) as ImageSource; //converts the path in ImageSource and shows it in ImgViewer
+                WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
         }
@@ -133,36 +137,72 @@ namespace ImageConverter
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 return;
-            } //se non è selezionato il formato in cui convertire l'immagine 
+            } //if a format hasn't been selected 
 
-            //se invece è stato selezionato
-            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //prende il selected format
-            ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
-            ConvertImgBttn.IsEnabled = false;
-            //Task.Run(() => ConversionLabelLoading());
-            conversionFinished = await Task.Run(()=>ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, pathofImgToConvert));
-            if (conversionFinished == true)
+            //else
+            finishedConversions = new List<bool>();
+            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
+            ConversionResultLabel.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
+            ConvertImgBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
+
+            foreach (string imagePath in pathsOfImagesToConvert)
+            {
+                finishedConversions.Add(await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, imagePath)));
+            } //executes the ConvertAndSaveAsync task for each image to convert
+
+            #region gets the unsuccessful conversions
+            unsuccessfulConversions = new List<string>();
+            int i = 0;
+            foreach (var conversion in finishedConversions)
+            {
+                if (conversion == true)
+                {
+                    unsuccessfulConversions.Add(Path.GetFileName(pathsOfImagesToConvert[i]));
+                }
+                i++;
+            }
+            #endregion
+
+            #region displays the result(s) of the conversion(s)
+            ConversionResultLabel.Visibility = Visibility.Visible;
+            if (unsuccessfulConversions.Count == 0)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush();
                 ThemeManager.solidColorBrush.Color = ThemeManager.CompletedConversionLabelColor;
                 ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    ConversionResultLabel.Content = LanguageManager.IT_ConversionResultLabelFinishedTxt;
+                    if (pathsOfImagesToConvert.Length == 1) ConversionResultLabel.Text = LanguageManager.IT_ConversionResultLabelFinishedTxt;
+                    else ConversionResultLabel.Text = LanguageManager.IT_MultipleConversionResultLabelFinishedTxt;
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelFinishedTxt;
+                    ConversionResultLabel.Text = LanguageManager.EN_ConversionResultLabelFinishedTxt;
                 }
             }
-            else 
+            else
             {
-                ConversionResultLabel.Visibility = Visibility.Hidden;
-                return;
+                ThemeManager.solidColorBrush = new SolidColorBrush();
+                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedWithErrorsConversionLabelColor;
+                ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
+                if (Settings.Default.Language == "it")
+                {
+                    ConversionResultLabel.Text = LanguageManager.IT_UnsuccConversionResultLabelFinishedTxt;
+                }
+                else if (Settings.Default.Language == "en")
+                {
+                    ConversionResultLabel.Text = LanguageManager.EN_UnsuccConversionResultLabelFinishedTxt;
+                }
+                foreach (var conversion in unsuccessfulConversions)
+                {
+                    ConversionResultLabel.Text += conversion + ", ";
+                }
             }
+            #endregion
+            ConvertImgBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
         }
 
         private void MenuBttn_MouseDown(object sender, MouseButtonEventArgs e)
@@ -170,30 +210,11 @@ namespace ImageConverter
             Menu.OpenMenu(Menu);
         }
 
-        private async Task ConversionLabelLoading()
-        {
-;
-            while (conversionFinished == false)
-            {
-                System.Diagnostics.Debug.WriteLine("running");
-                ConversionResultLabel.Content += ".";
-                Thread.Sleep(100);
-               /* if (!(ConversionResultLabel.Content as string).Contains("..."))
-                {
-
-                }
-                else
-                {
-                    ConversionResultLabel.Content = (ConversionResultLabel.Content as string).Replace("...", string.Empty);
-                }*/
-            }
-
-        }
-
         private void Button_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
-            ConversionResultLabel.Content += ".";
+            ConversionResultLabel.Text += ".";
         }
+
     }
 }
