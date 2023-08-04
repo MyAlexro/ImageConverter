@@ -8,7 +8,7 @@ A very customizable program to convert images to different image formats: jpeg, 
 
 
 # Minimum requirements:
-- 300MB of free Ram
-- ~400Kb of free disk space
+- 250MB of ram
+- 400Kb of free disk space
 - .NET framework 4.6 or higher
 
