@@ -41,6 +41,11 @@
         <!--Container of the image to convert-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
             <Image x:Name="ImgViewer" Height="330" Width="365" Margin="0,0,0,0" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave">
+                <Image.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem x:Name="EmptyImgViewerCntxtMenuBttn" Click="EmptyImgViewerCntxtMenuBttn_Click"/>
+                    </ContextMenu>
+                </Image.ContextMenu>
             </Image>
         </Border>
 

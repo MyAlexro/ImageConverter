@@ -29,15 +29,18 @@
 
         <!--Close menu button label-->
         <Label x:Name="CloseMenuBttn"  Content="×" FontSize="25" Margin="225,-12,0,0" MouseEnter="CloseMenuBttn_MouseEnter" MouseDown="CloseMenuBttn_MouseDown" MouseLeave="CloseMenuBttn_MouseLeave" Foreground="#FFCACCCF" Height="37"/>
-        <!--Impostazioni label-->
-        <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="22" Foreground="#FFDAA619">Impostazioni</Label>
 
-        <!-- Choose theme Stackpanels -->
+        <!--Impostazioni label-->
+        <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="26" Foreground="#FFDAA619">Impostazioni</Label>
+
+        <!--#region Color and theme options-->
+
+        <!-- Choose font color Stackpanels -->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,20,0,0">
             <!--Theme color label-->
-            <Label x:Name="FontColorLabel" FontFamily="Segoa UI" FontSize="20" Content="Colore Font:" Margin="0,0,0,0"/>
+            <Label x:Name="FontColorLabel" FontFamily="Segoa UI" FontSize="17" Content="Colore Font:" VerticalAlignment="Center"/>
             <!--Colors stackpanel-->
-            <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" Margin="0,8,0,0">
+            <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultFontCol" Fill="#FFDAA619" MouseDown="ThemeColRects_MouseDown"/>
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="GreenFontCol" Fill="#77e339" MouseDown="ThemeColRects_MouseDown"/>
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="RedFontCol" Fill="Red" MouseDown="ThemeColRects_MouseDown"/>
@@ -45,15 +48,37 @@
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="WhiteFontCol" Fill="White" MouseDown="ThemeColRects_MouseDown"/>
             </StackPanel>
         </StackPanel>
+
+        <!-- Choose theme type Stackpanel-->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,5,0,0">
             <!-- Label theme type-->
-            <Label x:Name="ThemeLabel" FontFamily="Segoa UI" FontSize="20" Content="Tema:" Margin="0,0,0,0"/>
+            <Label x:Name="ThemeLabel" FontFamily="Segoa UI" FontSize="17" Content="Tema:" VerticalAlignment="Center"/>
             <!--Theme type stackpanel-->
-            <StackPanel x:Name="ThemeTypeSP" Orientation="Horizontal" Margin="0,8,0,0">
+            <StackPanel x:Name="ThemeTypeSP" Orientation="Horizontal" VerticalAlignment="Center">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="LightTheme" Fill="White" MouseDown="ThemeType_MouseDown"/>
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DarkTheme" Fill=" #1d1d1d" Stroke="LightGray" MouseDown="ThemeType_MouseDown"/>
             </StackPanel>
         </StackPanel>
-        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" Margin="0,325"> Creatore: Alessandro Dinardo (MyAlexro)</Label>
+
+        <!--#endregion Color and theme options-->
+
+        <Separator Opacity="0.5" Height="5"/>
+
+        <!--#region Language option-->
+        
+        <!-- Language stackpanel-->
+        <StackPanel Orientation="Horizontal">
+            <Label x:Name="LanguageOptionLabel" FontFamily="Segoa UI" FontSize="17" Content="Lingua:" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" DropDownClosed="LanguageComboBox_DropDownClosed">
+                <Label x:Name="ItOption" Background="{x:Null}">It</Label>
+                <Label x:Name="EnOption" Background="{x:Null}">En</Label>
+            </ComboBox>
+        </StackPanel>
+
+        <!--#endregion Language option-->
+
+        <Separator Opacity="0.5" Height="5"/>
+
+        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" Margin="0,250,0,0" >Creatore: Alessandro Dinardo (MyAlexro)</Label>
     </StackPanel>
 </UserControl>

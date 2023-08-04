@@ -13,114 +13,180 @@ namespace ImageConverter
 {
     public class ImageConversionHandler
     {
-        private static List<bool> conversionsResults = new List<bool>();
+        private static List<bool> conversionsResults; //results of the conversion(s): if the conversion was sucessful or not
 
-        private static ImageCodecInfo imageCodecInfo;
-        private static Encoder imageEncoder;
-        private static EncoderParameter qualityParameter;
-        private static EncoderParameters encoderParametersArr;
-
+        private static PngBitmapEncoder pngEncoder;
+        private static JpegBitmapEncoder jpegOrJpgEncoder;
+        private static BmpBitmapEncoder bmpEncoder;
         private static GifBitmapEncoder gifEncoder;
 
-        private static Image imageToConvert; //image to convert
+        private static Uri imageUri; //uri of the image to convert
         private static string imageName; //name of the image to convert
         private static string directoryOfImageToConvert; //directory of the image to convert
-        private static string pathOfImageToConvert; //path of the image to convert
 
         public static bool IsImage(string pathOfFile)
         {
             string filePath = pathOfFile.ToLower();
-            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".tif") || filePath.Contains(".tiff"))
+            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".ico") || filePath.Contains(".tiff"))
             {
                 return true;
             }
             return false;
         }
 
-        public static async Task<bool> ConvertAndSaveAsync(string format, string imageToConvertPath)
+        public static async Task<List<bool>> StartConversion(string format, string[] pathsOfImagesToConvert, bool gifInLoop)
         {
-            try
+            conversionsResults = new List<bool>();
+            foreach (var imageToConvertPath in pathsOfImagesToConvert)
             {
-                System.Diagnostics.Debug.WriteLine($"Converting: {imageToConvertPath}");
-                #region  set up image to convert etc.
-                pathOfImageToConvert = imageToConvertPath;
-                imageName = Path.GetFileNameWithoutExtension(imageToConvertPath);
-                imageToConvert = Image.FromFile(imageToConvertPath);
-                directoryOfImageToConvert = Path.GetDirectoryName(imageToConvertPath);
-                #endregion
-
-                if (Path.GetExtension(imageToConvertPath) == ("." + format))
+                var imgToConvertExt = Path.GetExtension(imageToConvertPath).ToLower();
+                if (imgToConvertExt == ("." + format))
                 {
                     if (Settings.Default.Language == "it")
                     {
-                        MessageBox.Show(LanguageManager.IT_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(LanguageManager.IT_CantConvertImageToSameFormat, "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else if (Settings.Default.Language == "en")
                     {
-                        MessageBox.Show(LanguageManager.EN_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(LanguageManager.EN_CantConvertImageToSameFormat, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                    return false;
-                } //if converting image to same format return false because it causes an error
-
-                if (format == "ico" || format == "cur")
+                    conversionsResults.Add(false);
+                    return conversionsResults;
+                }
+            } //checks whether the user is trying to convert the image to the same format, converting an image to the same format causes an error because it will try to overwrite the image that is in use by the program
+            if (format == "png")
+            {
+                foreach (var imagePath in pathsOfImagesToConvert)
                 {
-                    Icon icon = await Task.Run(() => IconOrCurFromImage(imageToConvert, format));
-                    if (icon == null) { return false; }
-                    using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.{format}"))
-                    {
-                        icon.Save(st);
-                        icon.Dispose();
-                        st.Close();
-                    }
-                } //ico or cur
-                else
-                {
-                    #region set up encoder etc. to convert image
-                    if (format == "jpg") { imageCodecInfo = GetEncoderInfo("image/jpeg"); }
-                    else { imageCodecInfo = GetEncoderInfo($"image/{format}"); }//prende l'encoder in base al formato scelto
-                    imageEncoder = Encoder.Quality;
-                    encoderParametersArr = new EncoderParameters(1);
-                    qualityParameter = new EncoderParameter(imageEncoder, 100L);
-                    encoderParametersArr.Param[0] = qualityParameter;
-                    #endregion
-                    imageToConvert.Save($"{directoryOfImageToConvert}\\{imageName}.{format}", imageCodecInfo, encoderParametersArr);
-                    imageToConvert.Dispose();
-                }//if it's any other format
-
-                if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.{format}"))
-                {
-                    return true;
-                } //if the conversion was successful and the file of the converted image exists: return true
-                else
-                {
-                    return false;
-                } //otherwise: return false
+                    conversionsResults.Add(await Task.Run(() => ToPng(imagePath)));
+                }
             }
-            catch (Exception)//catch an eventual GDI+ generic error
+            else if (format == "jpeg" || format == "jpg")
+            {
+                foreach (var imagePath in pathsOfImagesToConvert)
+                {
+                    conversionsResults.Add(await Task.Run(() => ToJpegOrJpg(imagePath, format)));
+                }
+            }
+            else if (format == "bmp")
+            {
+                foreach (var imagePath in pathsOfImagesToConvert)
+                {
+                    conversionsResults.Add(await Task.Run(() => ToBmp(imagePath)));
+                }
+            }
+            else if (format == "gif")
+            {
+                conversionsResults.Add(await Task.Run(() => ImagesToGif(pathsOfImagesToConvert, gifInLoop)));
+            }
+            else if (format == "ico" || format == "cur")
+            {
+                foreach (var imagePath in pathsOfImagesToConvert)
+                {
+                    conversionsResults.Add(await Task.Run(() => ToIconOrCur(imagePath, format)));
+                }
+            }
+
+            return conversionsResults;
+        }
+
+        private static async Task<bool> ToPng(string pathOfImage)
+        {
+            #region  set up image infos to convert etc.
+            imageName = Path.GetFileNameWithoutExtension(pathOfImage);
+            directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
+            imageUri = new Uri(pathOfImage);
+            pngEncoder = new PngBitmapEncoder();
+            #endregion
+            pngEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+
+            #region saves the image and checks whether it was save correctly
+            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.png"))
+            {
+                pngEncoder.Save(st);
+                st.Close();
+            }
+            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.png"))
+            {
+                return true;
+            } //if the conversion was successful and the file of the converted image exists: return true
+            else
+            {
+                return false;
+            } //otherwise: return false
+            #endregion
+        }
+
+        private static async Task<bool> ToJpegOrJpg(string pathOfImage, string format)
+        {
+            #region  set up image infos to convert etc.
+            imageName = Path.GetFileNameWithoutExtension(pathOfImage);
+            directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
+            imageUri = new Uri(pathOfImage);
+            jpegOrJpgEncoder = new JpegBitmapEncoder();
+            #endregion
+            jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+
+            #region Saves image based on format(jpeg or jpg) and checks wether it was saved correctly
+            if (format == "jpeg")
+            {
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.jpeg"))
+                {
+                    jpegOrJpgEncoder.Save(st);
+                    st.Close();
+                }
+            }
+            else
+            {
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.jpg"))
+                {
+                    jpegOrJpgEncoder.Save(st);
+                    st.Close();
+                }
+            }
+            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpeg") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpg"))
+            {
+                return true;
+            }
+            else
             {
                 return false;
             }
+            #endregion
         }
 
-        private static ImageCodecInfo GetEncoderInfo(String mimeType) //gets the informations for the encoder based on the chosen format
+        private static async Task<bool> ToBmp(string pathOfImage)
         {
-            ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
-            for (int i = 0; i <= 4; i++) { encoders[i].MimeType.ToString(); }
+            #region  set up image infos to convert etc.
+            imageName = Path.GetFileNameWithoutExtension(pathOfImage);
+            directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
+            imageUri = new Uri(pathOfImage);
+            bmpEncoder = new BmpBitmapEncoder();
+            #endregion
+            bmpEncoder.Frames.Add(BitmapFrame.Create(imageUri));
 
-            for (int i = 0; i < encoders.Length; i++)
+            #region saves bmp image and checkes whether it was saved correctly
+            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.bmp"))
             {
-                if (encoders[i].MimeType == mimeType)
-                    return encoders[i];
+                bmpEncoder.Save(st);
+                st.Close();
             }
-            return null;
+            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.bmp"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            #endregion
         }
 
-        public static async Task<bool> GifFromImages(string[] imagesPaths, bool inLoop)
+        private static async Task<bool> ImagesToGif(string[] imagesPaths, bool inLoop)
         {
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(imagesPaths[0]);
             directoryOfImageToConvert = Path.GetDirectoryName(imagesPaths[0]);
-            Uri imageUri;
             gifEncoder = new GifBitmapEncoder();
             #endregion
 
@@ -171,9 +237,9 @@ namespace ImageConverter
             } //otherwise: return false
         }
 
-        private static async Task<Icon> IconOrCurFromImage(Image imgToConvert, string format)
+        private static async Task<bool> ToIconOrCur(string imgToConvertPath, string format)
         {
-            var ext = Path.GetExtension(pathOfImageToConvert).ToLower();
+            var ext = Path.GetExtension(imgToConvertPath).ToLower();
             #region if the image to convert isn't a png or bmp image it can't be converterd: return null
             if (ext != ".png" && ext != ".bmp")
             {
@@ -185,59 +251,96 @@ namespace ImageConverter
                 {
                     MessageBox.Show(LanguageManager.EN_CantConvertThisImageToIco, "", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                return null;
+                return false;
             }
             #endregion
 
-
+            #region  set up image infos to convert etc.
+            imageName = Path.GetFileNameWithoutExtension(imgToConvertPath);
+            directoryOfImageToConvert = Path.GetDirectoryName(imgToConvertPath);
+            Image imgToConvert = Image.FromFile(imgToConvertPath);
             var memStream = new MemoryStream();
             var binWriter = new BinaryWriter(memStream);
-
-            binWriter.Write((short)0);   //offset #1: reserved
-            #region offset #2: ico or cur 
-            byte type;
-            if (format == "ico") type = 1;
-            else type = 2;
-            binWriter.Write((short)type);
-            #endregion
-            binWriter.Write((short)1);   //offset #3: number of resolutions in the final icon  
-            #region offset #4 and #5: width and height of image, the value 0 is equal to 256
-            var w = imgToConvert.Width;
-            if (w >= 256) w = 0;
-            binWriter.Write((byte)w);
-            var h = imgToConvert.Height;
-            if (h >= 256) h = 0;
-            binWriter.Write((byte)h);
-            #endregion
-            binWriter.Write((byte)0);    // offset #6: number of colors in palette
-            binWriter.Write((byte)0);    // offset #7: reserved
-            binWriter.Write((short)0);   // offset #8: number of color planes(ico), horizontal coordinates of hotspot,in pixels, from the left(cur)
-            binWriter.Write((short)0);   // offset #9: bits per pixel(ico), vertical coordinates of hotspot,in pixels, from the left(cur)
-            #region offset #10: size of image data
-            var size = memStream.Position;
-            binWriter.Write((int)0);
-            #endregion
-            #region offset of image data from the beginning of the ico/cur file
-            var start = (int)memStream.Position + 4;
-            binWriter.Write(start);
             #endregion
 
             try
             {
-                if (ext == ".png") { imgToConvert.Save(memStream, ImageFormat.Png); }
-                else { imgToConvert.Save(memStream, ImageFormat.Bmp); }
+                #region Icon header
+                binWriter.Write((short)0);   //offset #0: reserved
+
+                byte type;
+                if (format == "ico") type = 1;
+                else type = 2;
+                binWriter.Write((short)type); //offset #2: specify ico or cur file
+
+                binWriter.Write((short)1);   //offset #4: number of resolutions of the image in the final icon  
+                #endregion
+                #region Structure of image directory
+                var w = imgToConvert.Width;
+                if (w >= 256) w = 0;
+                binWriter.Write((byte)w); //offset #0: image width
+
+                var h = imgToConvert.Height;
+                if (h >= 256) h = 0;
+                binWriter.Write((byte)h); //offset #1: image height
+
+                binWriter.Write((byte)0);    //offset #2: number of colors in palette
+                binWriter.Write((byte)0);    //offset #3: reserved
+
+                if (format == "ico") binWriter.Write((short)0); //offset #4: (if ico) number of color planes
+                else binWriter.Write((short)1); //offset #4: (if cur) horizontal coordinates of hotspot,in pixels, from the left
+
+                if (format == "ico") binWriter.Write((short)0); //offset #6: (if ico) bits per pixel
+                else binWriter.Write((short)1); //offset #6: (if cur) vertical coordinates of hotspot,in pixels, from the left
+
+                var sizeHere = memStream.Position;
+                binWriter.Write((int)0);    //offset #8: size of image data
+
+                var start = (int)memStream.Position + 4;
+                binWriter.Write(start); //offset #12: of image data from the beginning of the ico/cur file
+                #endregion
+                #region Image data
+                if (ext == ".png") imgToConvert.Save(memStream, ImageFormat.Png);
+                else imgToConvert.Save(memStream, ImageFormat.Bmp);
                 var imageSize = (int)memStream.Position - start;
-                memStream.Seek(size, SeekOrigin.Begin);
+                memStream.Seek(sizeHere, SeekOrigin.Begin);
                 binWriter.Write(imageSize);
                 memStream.Seek(0, SeekOrigin.Begin);
-
-                return new Icon(memStream);
+                #endregion
             }
-            catch (Exception)
+            catch(Exception)
             {
-                return null;
+                return false;
             }
 
+            #region saves icon or cur and checkes whether it was saved correctly
+            Icon convertedIcon = new Icon(memStream);
+            if (format == "ico")
+            {
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.ico"))
+                {
+                    convertedIcon.Save(st);
+                    st.Close();
+                }
+            }
+            else if (format == "cur")
+            {
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.cur"))
+                {
+                    convertedIcon.Save(st);
+                    st.Close();
+                }
+            }
+
+            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.ico") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.cur"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            #endregion
         }
     }
 }
