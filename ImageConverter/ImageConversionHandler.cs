@@ -326,7 +326,7 @@ namespace ImageConverter
             foreach (var compressionParam in compressionsParameters)
             {
                 //Execute task and when it finishes add its value to the list
-                compressionsTasks.Add(Task.Run(() => CompressImageAsync(compressionParam)));
+                compressionsTasks.Add(CompressImageAsync(compressionParam));
             }
             //When the list of all the tasks completes, return the list containing all the results of the compressions
             return (await Task.WhenAll(compressionsTasks)).ToList();
