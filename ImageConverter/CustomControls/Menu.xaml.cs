@@ -25,7 +25,7 @@ namespace ImageConverter
         public Menu()
         {
             InitializeComponent();
-            MenuSP.Background = ThemeManager.SelectedThemeType();//apply the chosen theme when initialized
+            MenuSP.Background = ThemeManager.SelectedThemeMode();//apply the chosen theme when initialized
             SettingsLabel.Foreground = ThemeManager.SelectedThemeColor();
             if (Settings.Default.Language == "it")
             {
@@ -65,12 +65,12 @@ namespace ImageConverter
 
             foreach (Rectangle rect in ThemeColorsSP.Children) //sets the width of the border of the rects in ThemeColorSP
             {
-                if (Settings.Default.ThemeColor == rect.Name) //if the name of the rect is the same as the chosen font color
+                if (Settings.Default.ThemeColor == rect.Name) //if the name of the rect is the same as the chosen theme color
                 {
                     rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
                 }
             }
-            foreach (Rectangle rect in ThemeModesSP.Children) //sets the width of the border of the rects in ThemeTypeSP
+            foreach (Rectangle rect in ThemeModesSP.Children) //sets the width of the border of the rects in ThemeModeSP
             {
                 if (Settings.Default.ThemeMode == rect.Name) //if the name of the rect is the same as the chosen theme type
                 {
@@ -161,7 +161,7 @@ namespace ImageConverter
                 return;
 
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
-            Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the font color
+            Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the theme color
             Settings.Default.Save();
             Settings.Default.Reload();
             foreach(Rectangle rect in ThemeColorsSP.Children) //set to all the other rects a non selected-rect border width
@@ -201,7 +201,7 @@ namespace ImageConverter
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
 
             Settings.Default.ThemeMode = ((Rectangle)sender).Name;
-            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.ThemeColor == "WhiteThemeColor") //if the selected theme mode is Light but the font color is White
+            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.ThemeColor == "WhiteThemeColor") //if the selected theme mode is Light but the theme color is White
             {
                 Settings.Default.ThemeColor = "DefaultThemeColor"; //set the theme color to default to prevent readability issues
             }

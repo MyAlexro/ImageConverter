@@ -34,7 +34,7 @@ namespace ImageConverter
         public static SolidColorBrush solidColorBrush;
 
 
-        public static SolidColorBrush SelectedThemeType() //THEME OF THE APPLICATION (LIGHT,DARK)
+        public static SolidColorBrush SelectedThemeMode() //THEME OF THE APPLICATION (LIGHT,DARK)
         {
             solidColorBrush = new SolidColorBrush();
 
