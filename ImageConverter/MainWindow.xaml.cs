@@ -142,7 +142,7 @@ namespace ImageConverter
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //prende il selected format
             ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
             ConvertImgBttn.IsEnabled = false;
-            Task.Run(() => ConversionLabelLoading());
+            //Task.Run(() => ConversionLabelLoading());
             conversionFinished = await Task.Run(()=>ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, pathofImgToConvert));
             if (conversionFinished == true)
             {
@@ -188,6 +188,12 @@ namespace ImageConverter
                 }*/
             }
 
+        }
+
+        private void Button_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
+            ConversionResultLabel.Content += ".";
         }
     }
 }
