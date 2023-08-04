@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-
-namespace ImageConverter
+﻿namespace ImageConverter
 {
     public class LanguageManager
     {

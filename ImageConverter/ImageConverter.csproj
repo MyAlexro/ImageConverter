@@ -120,7 +120,7 @@
       <DependentUpon>RoundBttn.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageConversionHandler.cs" />
-    <Compile Include="ImageConversionParametersModel.cs" />
+    <Compile Include="Models\ImageConversionParametersModel.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -235,5 +235,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

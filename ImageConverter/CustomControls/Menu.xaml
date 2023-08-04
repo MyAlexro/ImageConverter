@@ -34,7 +34,7 @@
         <Label x:Name="CloseMenuBttn"  Content="×" FontSize="25" Margin="225,-12,0,0" MouseEnter="CloseMenuBttn_MouseEnter" MouseDown="CloseMenuBttn_MouseDown" MouseLeave="CloseMenuBttn_MouseLeave" Foreground="#FFCACCCF" Height="37"/>
 
         <!--Impostazioni label-->
-        <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="26" Foreground="#FFDAA619">Impostazioni</Label>
+        <Label x:Name="SettingsLabel" FontFamily="Arial Rounded MT Bold" FontSize="26" Foreground="#FFDAA619">Settings</Label>
 
         <!--#region Theme options-->
 
