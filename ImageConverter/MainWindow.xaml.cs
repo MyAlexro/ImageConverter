@@ -158,7 +158,7 @@ namespace ImageConverter
             int i = 0;
             foreach (var conversion in finishedConversions)
             {
-                if (conversion == true)
+                if (conversion == false)
                 {
                     unsuccessfulConversions.Add(Path.GetFileName(pathsOfImagesToConvert[i]));
                 }

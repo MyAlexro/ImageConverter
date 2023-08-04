@@ -54,7 +54,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\ImageConverterWindowIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\ImageConverterIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>A9E61383DF0AE7D2D8EB5A966458BE49B73F421D</ManifestCertificateThumbprint>
@@ -183,7 +183,7 @@
     <Resource Include="Resources\ImageConverterWindowIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ImageConverterWindowIcon.ico" />
+    <None Include="Resources\ImageConverterIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
