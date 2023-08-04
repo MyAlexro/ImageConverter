@@ -228,5 +228,8 @@
   <ItemGroup>
     <Resource Include="Resources\ImageConverterDragAndDropIT.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\License.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

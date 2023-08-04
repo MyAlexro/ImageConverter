@@ -33,7 +33,7 @@
          IT_LanguageLabelText = "Lingua:",
          IT_SaveBothImagesTextBlockText = "Salva sia l'immagine con qualità ridotta che quella normale",
          IT_CreditsLabelText = "Creatore: Alessandro Dinardo(MyAlexro)",
-         IT_License = "Licenza",
+         IT_LicenseLabelText = "Leggi licenza",
 
         //MessageBoxes, dialogs etc
          IT_ApplyThemeModeMsgBoxCaption = "Applica modalità tema",
@@ -83,7 +83,7 @@
          EN_LanguageLabelText = "Language:",
          EN_SaveBothImagesTextBlockText = "Save both the image with reduced quality and normal quality",
          EN_CreditsLabelText = "Creator: Alessandro Dinardo(MyAlexro)",
-         EN_License = "License",
+         EN_LicenseLabelText = "Read license",
 
          //MessageBoxes, dialogs etc
          EN_ApplyThemeModeMsgBoxCaption = "Apply theme mode",

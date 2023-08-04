@@ -89,7 +89,7 @@
         <Separator Opacity="0.5" Height="5"/>
 
         <!-- Save both the converted and compressed images stackpanel -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" MaxWidth="{Binding ElementName=MenuSP, Path=Width}" Width="255">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="255">
             <TextBlock x:Name="SaveBothImagesTextBlock"  Text="Save both the image with reduced quality and normal quality" 
                        Style="{StaticResource TextBlockStyle}" Width="178" Foreground="Black"/>
             <CustomControls:ToggleSwitch x:Name="SaveBothImagesToggleSwitch" Height="25" Width="55" Margin="0" StateChanged="ToggleSwitch_StateChanged"/>

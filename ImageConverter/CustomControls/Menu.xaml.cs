@@ -9,6 +9,8 @@ using ImageConverter.Properties;
 using ImageConverter.HelperClasses;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
+using System.IO;
+using System.Reflection;
 
 namespace ImageConverter
 {
@@ -68,6 +70,7 @@ namespace ImageConverter
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "it");
                 LanguageOptionTextBlock.Text = LanguageManager.IT_LanguageLabelText;
                 SaveBothImagesTextBlock.Text = LanguageManager.IT_SaveBothImagesTextBlockText;
+                LicenseLabel.Content = LanguageManager.IT_LicenseLabelText;
             }
             else if (Settings.Default.Language == "en")
             {
@@ -78,6 +81,7 @@ namespace ImageConverter
                 LanguageComboBox.SelectedIndex = Array.IndexOf(LanguageManager.languages, "en");
                 LanguageOptionTextBlock.Text = LanguageManager.EN_LanguageLabelText;
                 SaveBothImagesTextBlock.Text = LanguageManager.EN_SaveBothImagesTextBlockText;
+                LicenseLabel.Content = LanguageManager.EN_LicenseLabelText;
             }
             #endregion
 
@@ -319,7 +323,12 @@ namespace ImageConverter
 
         private void LicenseLabel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
+            using (StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("ImageConverter.Resources.License.txt")))
+            {
+                MessageBox.Show(reader.ReadToEnd(), "License", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }
