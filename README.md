@@ -5,3 +5,9 @@ A very customizable program to convert images to different image formats: jpeg, 
 Convert multiple images at once
 Convert multiple images to a gif
 More options(where to save images etc.)
+
+
+#Minimum requirements:
+300MB of free Ram
+~400Kb of free disk space
+
