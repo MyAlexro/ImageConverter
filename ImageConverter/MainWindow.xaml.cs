@@ -471,7 +471,7 @@ namespace ImageConverter
         /// <param name="e"></param>
         private void FormatComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            /* The null coalescing operator (?.) is needed beacause if the user closes the combobox menu without 
+            /* The null conditional operator (?.) is needed beacause if the user closes the combobox menu without 
              * selecting a format the selected item would be null and its content can't be accessed, casuing a NullReferenceException */
             var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
             if (selectedValue == null)
@@ -925,7 +925,7 @@ namespace ImageConverter
                 previewImage.StreamSource = previewImageStream;
                 previewImage.CacheOption = BitmapCacheOption.OnLoad;
                 //Reduce height resolution of image
-                previewImage.DecodePixelHeight = (int)ImgViewer.Height;
+                previewImage.DecodePixelHeight = 0;// (int)ImgViewer.Height;
                 previewImage.EndInit();
 
                 ImgViewer.Source = previewImage;

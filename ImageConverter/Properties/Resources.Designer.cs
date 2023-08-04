@@ -19,7 +19,7 @@ namespace ImageConverter.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -122,7 +122,7 @@ namespace ImageConverter.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to The software &quot;ImageConverter&quot; is licensed under the MIT License.
-        ///Images and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
+        ///Images, icons and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
         ///
         ///MIT License
         ///Copyright (c) 2021 Alessandro Dinardo
@@ -130,7 +130,7 @@ namespace ImageConverter.Properties {
         ///Permission is hereby granted, free of charge, to any person obtaining a copy
         ///of this software and associated documentation files (the &quot;Software&quot;), to deal
         ///in the Software without restriction, including without limitation the rights
-        ///to use, copy, m [rest of string was truncated]&quot;;.
+        ///to use,  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string License {
             get {
