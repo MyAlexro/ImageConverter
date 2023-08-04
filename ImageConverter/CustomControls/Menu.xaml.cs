@@ -85,9 +85,9 @@ namespace ImageConverter
         /// <param name="menuElement"> Menu element used in the MainWindow</param>
         public void OpenMenu(FrameworkElement menuElement)
         {
-            nameOfMenu = menuElement; //name of the menu that you want to move
+            nameOfMenu = menuElement; //Name of the menu that you want to move
             storyboard = new Storyboard();
-            thicknessAnimation = new ThicknessAnimation() //set animation properties
+            thicknessAnimation = new ThicknessAnimation() //Set animation properties
             {
                 From = closedPos,
                 To = openedPos,
@@ -95,24 +95,24 @@ namespace ImageConverter
                 Duration = new Duration(TimeSpan.FromMilliseconds(600)),
             };
 
-            foreach (Rectangle rect in ThemeColorsSP.Children) //sets the width of the border of the rects in ThemeColorSP
+            foreach (Rectangle rect in ThemeColorsSP.Children) //Sets the width of the border of the rects in ThemeColorSP
             {
-                if (Settings.Default.ThemeColor == rect.Name) //if the name of the rect is the same as the chosen theme color
+                if (Settings.Default.ThemeColor == rect.Name) //If the name of the rect is the same as the chosen theme color
                 {
-                    rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
+                    rect.StrokeThickness = selectedRectStrokeThickness; //Set the chosen-rect width border
                 }
             }
-            foreach (Rectangle rect in ThemeModesSP.Children) //sets the width of the border of the rects in ThemeModeSP
+            foreach (Rectangle rect in ThemeModesSP.Children) //Sets the width of the border of the rects in ThemeModeSP
             {
-                if (Settings.Default.ThemeMode == rect.Name) //if the name of the rect is the same as the chosen theme type
+                if (Settings.Default.ThemeMode == rect.Name) //If the name of the rect is the same as the chosen theme type
                 {
-                    rect.StrokeThickness = selectedRectStrokeThickness; //set the chosen-rect width border
+                    rect.StrokeThickness = selectedRectStrokeThickness; //Set the chosen-rect width border
                 }
             }
             storyboard.Children.Add(thicknessAnimation);
             Storyboard.SetTargetProperty(thicknessAnimation, new PropertyPath(Grid.MarginProperty));
             Storyboard.SetTarget(thicknessAnimation, menuElement);
-            storyboard.Begin(); //start animation of opening
+            storyboard.Begin(); //Start animation of opening
         }
 
         /// <summary>
@@ -139,25 +139,25 @@ namespace ImageConverter
 
         private void CloseMenuBttn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ThemeManager.solidColorBrush = new SolidColorBrush() //if the mouse gets over the bttn to close the menu
+            ThemeManager.solidColorBrush = new SolidColorBrush()//If the mouse gets over the bttn to close the menu
             {
-                Color = Color.FromArgb(255, 0, 0, 0), //darken it 
+                Color = Color.FromArgb(255, 0, 0, 0), //Darken it 
             };
             CloseMenuBttn.Foreground = ThemeManager.solidColorBrush;
         }
 
         private void CloseMenuBttn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ThemeManager.solidColorBrush = new SolidColorBrush() //if the mouse gets out the bttn to close the menu
+            ThemeManager.solidColorBrush = new SolidColorBrush() //If the mouse gets out the bttn to close the menu
             {
-                Color = Color.FromArgb(255, 202, 204, 207), //set normal color
+                Color = Color.FromArgb(255, 202, 204, 207), //Set normal color
             };
             CloseMenuBttn.Foreground = ThemeManager.solidColorBrush;
         }
 
         private void CloseMenuBttn_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CloseMenu(nameOfMenu); //close the menu
+            CloseMenu(nameOfMenu); //Close the menu
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace ImageConverter
         /// <param name="e"></param>
         private void Rectangles_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //sets the width of the rect, over which the mouse is, the selected-rect border width
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //Sets the width of the rect, over which the mouse is, the selected-rect border width
         }
 
         /// <summary>
@@ -177,9 +177,9 @@ namespace ImageConverter
         /// <param name="e"></param>
         private void Rectangles_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if ((sender as Rectangle).Name != Settings.Default.ThemeColor && (sender as Rectangle).Name != Settings.Default.ThemeMode) //if the mouse gets out the theme-select rects(unless it's the already chosen theme type)
+            if ((sender as Rectangle).Name != Settings.Default.ThemeColor && (sender as Rectangle).Name != Settings.Default.ThemeMode) //If the mouse gets out the theme-select rects(unless it's the already chosen theme type)
             {
-                (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //set normal border width
+                (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //Set normal border width
             }
         }
 
@@ -193,11 +193,11 @@ namespace ImageConverter
             if (((FrameworkElement)sender).Name == Settings.Default.ThemeColor)
                 return;
 
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
-            Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //set the name of the rect as the option of the theme color
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //If a rect gets clicked set its border width as the selected one
+            Settings.Default.ThemeColor = ((FrameworkElement)sender).Name; //Set the name of the rect as the option of the theme color
             Settings.Default.Save();
             Settings.Default.Reload();
-            foreach(Rectangle rect in ThemeColorsSP.Children) //set to all the other rects a non selected-rect border width
+            foreach(Rectangle rect in ThemeColorsSP.Children) //Set to all the other rects a non selected-rect border width
             {
                 if (rect.Name != Settings.Default.ThemeColor)
                 {
@@ -218,7 +218,7 @@ namespace ImageConverter
             {
                 return;
             }
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //Restart the application
             Application.Current.Shutdown(0);
         }
 
@@ -231,12 +231,12 @@ namespace ImageConverter
         {
             if (((FrameworkElement)sender).Name == Settings.Default.ThemeMode)
                 return;
-            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
+            (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //If a rect gets clicked set its border width as the selected one
 
             Settings.Default.ThemeMode = ((Rectangle)sender).Name;
-            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.ThemeColor == "WhiteThemeColor") //if the selected theme mode is Light but the theme color is White
+            if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.ThemeColor == "WhiteThemeColor") //If the selected theme mode is Light but the theme color is White
             {
-                Settings.Default.ThemeColor = "DefaultThemeColor"; //set the theme color to default to prevent readability issues
+                Settings.Default.ThemeColor = "DefaultThemeColor"; //Set the theme color to default to prevent readability issues
             }
             if(((Rectangle)sender).Name == "DarkTheme" && Settings.Default.ThemeColor != "WhiteThemeColor") //If the user selectes the dark theme and the theme color isn't already white
             {
@@ -245,7 +245,7 @@ namespace ImageConverter
             Settings.Default.Save();
             Settings.Default.Reload();
 
-            // set to all the other rects a non selected-rect border width
+            //Set to all the other rects a non selected-rect border width
             foreach (Rectangle rect in ThemeModesSP.Children)
             {
                 if (rect.Name != Settings.Default.ThemeMode)
@@ -266,14 +266,14 @@ namespace ImageConverter
             {
                 return;
             }
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //Restart the application
             Application.Current.Shutdown(0);
         }
 
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
         {
             var previousLanguage = Settings.Default.Language;
-            //if the user closes the dropdown menu without changing option
+            //If the user closes the dropdown menu without changing option
             if ((LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower() == previousLanguage)
             {
                 return;
@@ -293,7 +293,7 @@ namespace ImageConverter
             }
             if (response == MessageBoxResult.Yes)
             {
-                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //restart the application
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //Restart the application
                 Application.Current.Shutdown(0);
             }
         }

@@ -72,7 +72,7 @@ namespace ImageConverter
                 Settings.Default.Language = "en";
                 Settings.Default.Save();
                 Settings.Default.Reload();
-                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Process.Start(Application.ResourceAssembly.Location); //Restart the application
                 Application.Current.Shutdown(0);
             }
             if(ThemeManager.ThemeColors.Contains(Settings.Default.ThemeColor) == false)
@@ -80,7 +80,7 @@ namespace ImageConverter
                 Settings.Default.ThemeColor = ThemeManager.ThemeColors[0];
                 Settings.Default.Save();
                 Settings.Default.Reload();
-                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Process.Start(Application.ResourceAssembly.Location); //Restart the application
                 Application.Current.Shutdown(0);
             }
             if (ThemeManager.ThemeModes.Contains(Settings.Default.ThemeMode) == false)
@@ -88,7 +88,7 @@ namespace ImageConverter
                 Settings.Default.ThemeMode = ThemeManager.ThemeModes[0];
                 Settings.Default.Save();
                 Settings.Default.Reload();
-                Process.Start(Application.ResourceAssembly.Location); //restart the application
+                Process.Start(Application.ResourceAssembly.Location); //Restart the application
                 Application.Current.Shutdown(0);
             }
             if(Settings.Default.TempFolderPath == "" || Directory.Exists(Settings.Default.TempFolderPath) == false)
@@ -222,7 +222,7 @@ namespace ImageConverter
         {
             if (Settings.Default.FirstRun == true)
             {
-                //set app language based off the default pc language 
+                //Set app language based off the default pc language 
                 if (CultureInfo.CurrentCulture.ToString().Contains("it"))
                 {
                     Settings.Default.Language = "it";
@@ -275,15 +275,15 @@ namespace ImageConverter
         private void ImgViewer_DragLeave(object sender, DragEventArgs e)
         {
             droppedFileisValidDirectory = false;
-            WarningLabel.Content = String.Empty; //nasconde l'avviso che appare se l'utente sta tentando di convertire più di un'immagine
+            WarningLabel.Content = String.Empty; //Hides warning label by emptying it
         }
 
         private void ImgViewer_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                //---if the warning label content is NOT empty the dropped file there must be a problem with the dropped files, so ignore the dropped files---
-                if ((string)WarningLabel.Content != String.Empty)
+                //---if the warning label content is NOT empty there must be a problem with the file(s) the user wants to convert, so ignore the dropped files---
+                if ((string)WarningLabel.Content != String.Empty || WarningLabel.Visibility != Visibility.Hidden)
                 {
                     WarningLabel.Content = String.Empty;
                     return;
@@ -323,7 +323,7 @@ namespace ImageConverter
 
         private async void StartConversionBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //if a format hasn't been selected prompt user to select one and stop conversion start
+            //If a format hasn't been selected prompt user to select one and stop conversion start
             if (FormatComboBox.SelectedItem == null)
             {
                 if (Settings.Default.Language == "it")
@@ -350,16 +350,16 @@ namespace ImageConverter
             #region Prepares GUI controls
             if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
             if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunning;
-            ConversionResultTextBlock.Visibility = Visibility.Collapsed; //necessary because if the user converts one image two times in a row it would seem like the conversion didn't start
+            ConversionResultTextBlock.Visibility = Visibility.Collapsed; //Necessary because if the user converts one image two times in a row it would seem like the conversion didn't start
             ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionTextBlockColor;
-            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //sets the color of the textblock
-            ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
-            StartConversionBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
+            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //Sets the color of the textblock
+            ConversionResultTextBlock.Visibility = Visibility.Visible; //Makes the label of the state of the conversion visible
+            StartConversionBttn.IsEnabled = false; //While a conversion is ongoing the convertbttn gets disabled
             #endregion
 
             finishedConversions = new Dictionary<string, bool>();
 
-            // Prepare image conversion parameters
+            //Prepare image conversion parameters
             ImageConversionParametersModel conversionParameters = new ImageConversionParametersModel()
             {
                 format = ((FormatComboBox.SelectedItem as Label).Content as string).ToLower(),
@@ -371,7 +371,7 @@ namespace ImageConverter
                 compressionAlgo = (FormatComboBox.SelectedItem as Label)?.Content.ToString().ToLower(),
             };
 
-            //adds a dot each 500ms during conversion
+            //Adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
             {
                 while (true)
@@ -404,7 +404,7 @@ namespace ImageConverter
             #endregion
             ticker.Abort();
             #region Displays the result(s) of the conversion(s)
-            //if there were no errors
+            //If there were no errors
             if (unsuccessfulConversions.Count == 0)
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -421,9 +421,9 @@ namespace ImageConverter
                 {
                     ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedText;
                 }
-                ConversionResultTextBlock.Text += $" in {(int)timer.Elapsed.TotalMilliseconds}ms"; //time taken to convert the images in milliseconds
+                ConversionResultTextBlock.Text += $" in {(int)timer.Elapsed.TotalMilliseconds}ms"; //Time taken to convert the images in milliseconds
             }
-            //if there was any error
+            //If there was any error
             else
             {
                 ThemeManager.solidColorBrush = new SolidColorBrush
@@ -448,7 +448,7 @@ namespace ImageConverter
             timer.Reset();
 
             Thread.Sleep(500); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
-            StartConversionBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
+            StartConversionBttn.IsEnabled = true; //Re-enables the convertbttn to convert another image
         }
 
 
@@ -561,7 +561,7 @@ namespace ImageConverter
         {
             Image imageControl = sender as Image;
 
-            //Chande button option when the user clicks it
+            //Change button option when the user clicks it
             if ((string)imageControl.Tag == "Replace")
             {
                 imageControl.Tag = "Add";
@@ -626,7 +626,7 @@ namespace ImageConverter
             foreach (var file in files)
             {
                 FileAttributes attr = File.GetAttributes(file);
-                //check if the file is a folder and check if it contains any image, if yes then the files are ok to convert
+                //Check if the file is a folder and check if it contains any image, if yes then the files are ok to convert
                 if (attr.HasFlag(FileAttributes.Directory))
                 {
                     string[] filesInDir = Directory.GetFiles(file);
@@ -643,10 +643,10 @@ namespace ImageConverter
                         }
                     }
                 }
-                //if it's not a folder or it doesn't contain any images
+                //If it's not a folder or it doesn't contain any images
                 else { droppedFileisValidDirectory = false; }
 
-                //if the file isn't an image
+                //If the file isn't an image
                 if (!ImageConversionHandler.IsImage(file) && !droppedFileisValidDirectory)
                 {
                     return false;
@@ -679,7 +679,7 @@ namespace ImageConverter
                         local_pathsOfImagesToConvert.Add(image);
                     }
                 }
-                //add the image
+                //Add the image
                 else { local_pathsOfImagesToConvert.Add(file); }
             }
 
@@ -691,7 +691,7 @@ namespace ImageConverter
                 {
                     ImagesNameLabel.Text += Path.GetFileName(imagePath + ", ");
                 }
-            } //shows the name(s) of the image(s) under the ImgViewer
+            } //Shows the name(s) of the image(s) under the ImgViewer
             #endregion
 
             //Checks if any image is a png, if so enable the option to replace its transparency
@@ -715,8 +715,8 @@ namespace ImageConverter
             previewImageStream?.Close();
             previewImage = null;
 
-            ImgViewer.Opacity = 1.0f; //sets ImgViewer opacity to 1(max)
-            //loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be (in case) deleted
+            ImgViewer.Opacity = 1.0f; //Sets ImgViewer opacity to 1(max)
+            //Loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be (in case) deleted
             using (previewImageStream = File.OpenRead(pathsOfImagesToConvert[0]))
             {
                 previewImage = new BitmapImage();
