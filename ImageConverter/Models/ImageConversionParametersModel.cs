@@ -12,7 +12,7 @@ namespace ImageConverter
         /// <summary>
         /// Available formats to convert the image(s) to
         /// </summary>
-        public readonly List<string> availableFormats = new List<string> { "PNG", "JPG", "JPEG", "BMP", "GIF", "ICO", "CUR", "TIFF" };
+        public static readonly List<string> availableFormats = new List<string> { "PNG", "JPG", "JPEG", "BMP", "GIF", "ICO", "CUR", "TIFF" };
 
         private string _format;
         /// <summary>
