@@ -362,7 +362,14 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        //TODO: Fix conversion to gif, sometimes the final gifs are buggy, when images are pngs the delay doesn't work 
+        //TODO: Fix conversion to gif, sometimes the final gifs are buggy
+        /// <summary>
+        /// Convert a group of images into a gif
+        /// </summary>
+        /// <param name="imagesToConvertPaths">List containing the paths of the images to convert</param>
+        /// <param name="repeatTimes"> Times the gif will be repeated(loop(0), 1-10)</param>
+        /// <param name="delayTime"> Delay between two frames in centiseconds</param>
+        /// <returns></returns>
         private async Task<bool> ImagesToGifAsync(List<String> imagesToConvertPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
@@ -371,7 +378,15 @@ namespace ImageConverter
             imageEncoder = new GifBitmapEncoder();
             string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
+            bool oneOfImagesIsgPng = false;
+            foreach (var path in imagesToConvertPaths)
+            {
+                oneOfImagesIsgPng = Path.GetExtension(path).Trim('.').ToLower().Contains("png");
+                if (oneOfImagesIsgPng)
+                    break;
+            }
             #endregion
+
 
             //Adds each image to the encoder, (after replacing the transparency in case the image is a png)
             foreach (var image in imagesToConvertPaths)
@@ -419,23 +434,47 @@ namespace ImageConverter
                 // This is the NETSCAPE2.0 Application Extension to set the repeat times of the gif
                 var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, (byte)repeatTimes, 0, 0 };
                 // This is the graphic control extension block to set the delay time between two frames
-                var graphicExtension = new byte[] { 33, 249, 4, 0, (byte)delayTime, 0, 0, 0 };
+                var graphicControlExtension = new byte[] { 33, 249, 4, 0, (byte)delayTime, 0, 0, 0 };
 
                 //Get the list of the bytes of the gif from its previous array, it's a copy of the gif
                 var gifBytesList = gifBytesArr.ToList();
 
-                #region Add graphic control extension block to the bytes list
+                #region Add one graphic control extension block for each image to the bytes list
                 int a = 1;
-                for (int i = 0; i < gifBytesList.Count; i++)
+
+                /* If one of the images is a png, the encoder will automatically add the GCE block because the it needs to set the 
+                 * Transparency Color Flag since the png may have some transparency, so the program just needs to modify the Delay Time byte */
+                if (oneOfImagesIsgPng)
                 {
-                    if (gifBytesList[i] == 44 && gifBytesList[i + 1] == 0 && gifBytesList[i + 2] == 0 && gifBytesList[i + 3] == 0 && gifBytesList[i + 4] == 0)
+                    Debug.WriteLine("One or more images is a png, proceeding to only modify the Delay Time byte");
+                    for (int i = 0; i < gifBytesList.Count; i++)
                     {
-                        Debug.WriteLine($"Found start of image descriptor block at index: {i}.\nImage descriptor n°{a}");
-                        //insert new graphic extension
-                        gifBytesList.InsertRange(i, graphicExtension);
-                        Debug.WriteLine($"Added graphic control extension block at index {i}\n");
-                        i += 18;//skip lenght of an image descriptor block to prevent an infinite loop
-                        a++;
+                        //The fourth byte can be a value between 1-6, indicating the disposal method
+                        if (gifBytesList[i] == 33 && gifBytesList[i + 1] == 249 && gifBytesList[i + 2] == 4 && 1 <= gifBytesList[i + 3] && gifBytesList[i + 3] <= 6)
+                        {
+                            Debug.Write($"Found GCE block n°{a}, at index {i}. ");
+                            //Modify Delay Time byte with the chosen value
+                            gifBytesList[i+4] = (byte)delayTime;
+                            Debug.WriteLine($"Modified Delay Time byte at index {i+4}.");
+                            a++;
+                        }
+                    }
+                }
+                //If none of the images are a png, then the GCE block needs to be entirely added
+                else
+                {
+                    Debug.WriteLine("None of the images is a png, proceeding to add the GCE block for each image");
+                    for (int i = 0; i < gifBytesList.Count; i++)
+                    {
+                        if (gifBytesList[i] == 44 && gifBytesList[i + 1] == 0 && gifBytesList[i + 2] == 0 && gifBytesList[i + 3] == 0 && gifBytesList[i + 4] == 0)
+                        {
+                            Debug.WriteLine($"Found start of image descriptor block at index: {i}.\nImage descriptor n°{a}");
+                            //Insert new graphic extension
+                            gifBytesList.InsertRange(i, graphicControlExtension);
+                            Debug.WriteLine($"Added graphic control extension block at index {i}\n");
+                            i += 18;//Skip lenght of an image descriptor block to prevent an infinite loop
+                            a++;
+                        }
                     }
                 }
                 #endregion
@@ -448,7 +487,8 @@ namespace ImageConverter
                 //Adds the rest of the basic gif with the added graphic extensions(skipping the first 13 bytes, which are the header block etc.)
                 finalGifBytesList.AddRange(gifBytesList.Skip(13));
                 #endregion
-                //Write changes to the already created initial gif
+
+                //Write changes to the already created initial gif, gif finished
                 File.WriteAllBytes($"{savePath}\\{imageToConvertName}_{chosenFormat}.gif", finalGifBytesList.ToArray());
                 ms.Close();
             }

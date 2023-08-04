@@ -152,6 +152,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Docs\GifBytesExamination.rtf" />
+    <None Include="Docs\Graphics Interchange Format Version 89a.pdf" />
     <None Include="Docs\What%27s In A GIF - Animation and Transparency.pdf" />
     <None Include="Docs\What%27s In A GIF - Bits and Bytes.pdf" />
     <None Include="Docs\What%27s In A GIF - LZW Image Data.pdf" />
