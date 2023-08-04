@@ -319,8 +319,8 @@ namespace ImageConverter
 
         private void ReplTranspColCB_DropDownClosed(object sender, EventArgs e)
         {
-            var selectedIndex = ((ComboBox)sender).SelectedIndex;
-            replTranspWithCol = selectedIndex;
+            var selectedColor = ((ComboBox)sender).SelectedIndex;
+            replTranspWithCol = selectedColor;
         }
 
         private void GifRepTimesCB_DropDownClosed_1(object sender, EventArgs e)
