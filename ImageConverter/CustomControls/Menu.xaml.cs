@@ -25,19 +25,21 @@ namespace ImageConverter
         public Menu()
         {
             InitializeComponent();
-            MenuSP.Background = ThemeManager.SelectedThemeType();
-            ImpostazioniLabel.Foreground = ThemeManager.SelectedThemeColor(); //applica il tema quando il menu viene inizializzato 
+            MenuSP.Background = ThemeManager.SelectedThemeType();//applica il tema quando il menu viene inizializzato
+            ImpostazioniLabel.Foreground = ThemeManager.SelectedFontColor();
             if (Settings.Default.Language == "it")
             {
                 ImpostazioniLabel.Content = "Impostazioni";
-                ThemeColorLabel.Content = "Colore Tema:";
+                FontColorLabel.Content = "Colore Font:";
                 ThemeLabel.Content = "Tema:";
+                CreditsLabel.Content = "Creatore: Alessandro Dinardo (MyAlexro)";
             }
             else if (Settings.Default.Language == "en")
             {
                 ImpostazioniLabel.Content = "Settings";
-                ThemeColorLabel.Content = "Theme Color:";
+                FontColorLabel.Content = "Font Color:";
                 ThemeLabel.Content = "Theme:";
+                CreditsLabel.Content = "Creator: Alessandro Dinardo (MyAlexro)";
             }
         }
 
@@ -55,7 +57,7 @@ namespace ImageConverter
 
             foreach (Rectangle rect in ThemeColorsSP.Children) // carica lo spessore del bordo dei rettangoli
             {
-                if (Settings.Default.ThemeCol == rect.Name) //se il nome del rettangolo è uguale al colore del tema selezionato
+                if (Settings.Default.FontCol == rect.Name) //se il nome del rettangolo è uguale al colore del tema selezionato
                 {
                     rect.StrokeThickness = selectedRectStrokeThickness; //gli mette il lo spessore da rect selezionato
                 }
@@ -120,7 +122,7 @@ namespace ImageConverter
 
         private void ThemeRects_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if ((sender as Rectangle).Name != Settings.Default.ThemeCol) //se il mouse se ne va da sopra i rect per selezionare il colore del menu(a meno che non sia il rect con il nome del tema selezionato)
+            if ((sender as Rectangle).Name != Settings.Default.FontCol) //se il mouse se ne va da sopra i rect per selezionare il colore del menu(a meno che non sia il rect con il nome del tema selezionato)
             {
                 (sender as Rectangle).StrokeThickness = unselectedRectStrokeThickness; //gli mette il bordo da rect non selezionato
             }
@@ -129,12 +131,12 @@ namespace ImageConverter
         private void ThemeColRects_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
-            Settings.Default.ThemeCol = ((FrameworkElement)sender).Name; //modifica l'opzione del colore del tema con il nome del rect
+            Settings.Default.FontCol = ((FrameworkElement)sender).Name; //modifica l'opzione del colore del tema con il nome del rect
             Settings.Default.Save();
             Settings.Default.Reload();
             foreach(Rectangle rect in ThemeColorsSP.Children) //rimette a tutti gli altri rect il bordo di un rect non selezionato
             {
-                if (rect.Name != Settings.Default.ThemeCol)
+                if (rect.Name != Settings.Default.FontCol)
                 {
                     rect.StrokeThickness = unselectedRectStrokeThickness;
                 }
@@ -152,6 +154,10 @@ namespace ImageConverter
         {
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //se un rect è cliccato gli mette lo spessore del bordo come quello di un rect selezionato
             Settings.Default.ThemeType = ((Rectangle)sender).Name; ////modifica l'opzione del tipo di tema con il nome del rect
+            if (((Rectangle)sender).Name == "LightTheme")
+            {
+                Settings.Default.FontCol = "DefaultFontCol";
+            }
             Settings.Default.Save();
             Settings.Default.Reload();
 
