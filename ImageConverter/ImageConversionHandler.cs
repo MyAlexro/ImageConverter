@@ -11,8 +11,10 @@ using System.Linq;
 
 namespace ImageConverter
 {
-    class ImageConversionHandler
+    public class ImageConversionHandler
     {
+        private static List<bool> conversionsResults = new List<bool>();
+
         private static ImageCodecInfo imageCodecInfo;
         private static Encoder imageEncoder;
         private static EncoderParameter qualityParameter;
@@ -58,7 +60,7 @@ namespace ImageConverter
                         MessageBox.Show(LanguageManager.EN_CantConvertImageToSameFormat, "", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     return false;
-                } //if converting image to same format return false
+                } //if converting image to same format return false because it causes an error
 
                 if (format == "ico" || format == "cur")
                 {
@@ -67,10 +69,10 @@ namespace ImageConverter
                     using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.{format}"))
                     {
                         icon.Save(st);
+                        icon.Dispose();
                         st.Close();
                     }
                 } //ico or cur
-
                 else
                 {
                     #region set up encoder etc. to convert image
@@ -82,6 +84,7 @@ namespace ImageConverter
                     encoderParametersArr.Param[0] = qualityParameter;
                     #endregion
                     imageToConvert.Save($"{directoryOfImageToConvert}\\{imageName}.{format}", imageCodecInfo, encoderParametersArr);
+                    imageToConvert.Dispose();
                 }//if it's any other format
 
                 if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.{format}"))
