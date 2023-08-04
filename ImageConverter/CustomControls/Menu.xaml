@@ -84,7 +84,7 @@
 
         <Rectangle Height="250" x:Name="Empty"/>
 
-        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" DockPanel.Dock="Bottom">Creatore: Alessandro Dinardo (MyAlexro)</Label>
+        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" DockPanel.Dock="Bottom">Creator: Alessandro Dinardo (MyAlexro)</Label>
 
     </StackPanel>
 

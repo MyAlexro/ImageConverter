@@ -111,14 +111,14 @@ namespace ImageConverter
             if (Settings.Default.Language == "it")
             {
                 ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg"));
-                StartConversionBttn.ButtonText = LanguageManager.IT_StartConversionLabelTxt;
-                ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
+                StartConversionBttn.ButtonText = LanguageManager.IT_StartConversionBttnText;
+                ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelText;
                 ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
-                GifRepeatTimes.Content = LanguageManager.IT_GifLoopsOptionText;
-                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_EmpyBttnCntxtMenu;
-                GifFramesDelayTimeLabel.Content = LanguageManager.IT_DelayTimeLabelTxt;
+                GifRepeatTimes.Content = LanguageManager.IT_GifRepeatTimesLabelText;
+                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_ImageViewerContextMenuText;
+                GifFramesDelayTimeLabel.Content = LanguageManager.IT_GifFramesDelayTimeLabelText;
                 AddOrReplaceDroppedImagesBttn.ToolTip = LanguageManager.IT_ReplaceExistingImagesToolTip;
-                ReplacePngTransparencyLabel.Content = LanguageManager.IT_ReplacePngTransparencyLabelTxt;
+                ReplacePngTransparencyLabel.Content = LanguageManager.IT_ReplacePngTransparencyLabelText;
                 QualityLabel.Content = LanguageManager.IT_QualityLabelText;
                 CompressionAlgoLabel.Content = LanguageManager.IT_CompressionAlgoLabelText;
                 NoneAlgoLabel.Content = LanguageManager.IT_NoneAlgoLabelText;
@@ -144,14 +144,14 @@ namespace ImageConverter
             else if (Settings.Default.Language == "en")
             {
                 ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png"));
-                StartConversionBttn.ButtonText = LanguageManager.EN_StartConversionLabelTxt;
-                ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
+                StartConversionBttn.ButtonText = LanguageManager.EN_StartConversionBttnText;
+                ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelText;
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunning;
-                GifRepeatTimes.Content = LanguageManager.EN_GifLoopsOptionText;
-                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_EmpyBttnCntxtMenu;
-                GifFramesDelayTimeLabel.Content = LanguageManager.EN_DelayTimeLabelTxt;
+                GifRepeatTimes.Content = LanguageManager.EN_GifRepeatTimesLabelText;
+                EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_ImageViewerContextMenuText;
+                GifFramesDelayTimeLabel.Content = LanguageManager.EN_GifRepeatTimesLabelText;
                 AddOrReplaceDroppedImagesBttn.ToolTip = LanguageManager.EN_ReplaceExistingImagesToolTip;
-                ReplacePngTransparencyLabel.Content = LanguageManager.EN_ReplacePngTransparencyLabelTxt;
+                ReplacePngTransparencyLabel.Content = LanguageManager.EN_ReplacePngTransparencyLabelText;
                 QualityLabel.Content = LanguageManager.EN_QualityLabelText;
                 CompressionAlgoLabel.Content = LanguageManager.EN_CompressionAlgoLabelText;
                 NoneAlgoLabel.Content = LanguageManager.EN_NoneAlgoLabelText;
@@ -382,12 +382,12 @@ namespace ImageConverter
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    if (pathsOfImagesToConvert.Count == 1) ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockFinishedTxt;
-                    else ConversionResultTextBlock.Text = LanguageManager.IT_MultipleConversionResultTextBlockFinishedTxt;
+                    if (pathsOfImagesToConvert.Count == 1) ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockFinishedText;
+                    else ConversionResultTextBlock.Text = LanguageManager.IT_MultipleConversionResultTextBlockFinishedText;
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedText;
                 }
                 ConversionResultTextBlock.Text += $" in {(int)timer.Elapsed.TotalMilliseconds}ms"; //time taken to convert the images in milliseconds
             }
@@ -401,11 +401,11 @@ namespace ImageConverter
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
-                    ConversionResultTextBlock.Text = LanguageManager.IT_UnsuccConversionResultTextBlockFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.IT_UnsuccConversionResultTextBlockFinishedText;
                 }
                 else if (Settings.Default.Language == "en")
                 {
-                    ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedTxt;
+                    ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedText;
                 }
                 foreach (var conversion in unsuccessfulConversions)
                 {
@@ -415,8 +415,8 @@ namespace ImageConverter
             #endregion
             timer.Reset();
 
-            StartConversionBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
             Thread.Sleep(500); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
+            StartConversionBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
         }
 
 
@@ -441,16 +441,22 @@ namespace ImageConverter
             /* The null coalescing operator (?.) is needed beacause if the user closes the combobox menu without 
              * selecting a format the selected item would be null and its content can't be accessed, casuing a NullReferenceException */
             var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
+            if (selectedValue == null)
+                return;
 
             if (selectedValue == "GIF")
-                GifOptionsSP.Visibility = Visibility.Visible;
-            else if (selectedValue == "TIFF")
-                CompressionAlgoOptionSP.Visibility = Visibility.Visible;
-            else
             {
-                GifOptionsSP.Visibility = Visibility.Collapsed;
-                CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
+                GifOptionsSP.Visibility = Visibility.Visible;
             }
+            else
+                GifOptionsSP.Visibility = Visibility.Collapsed;
+
+            if (selectedValue == "TIFF")
+            {
+                CompressionAlgoOptionSP.Visibility = Visibility.Visible;
+            }
+            else
+                CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
 
         }
 
