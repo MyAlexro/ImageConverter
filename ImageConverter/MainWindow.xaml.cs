@@ -20,7 +20,6 @@ namespace ImageConverter
     public partial class MainWindow : Window
     {
         string[] droppedImages;
-        ImageSourceConverter stringToImgSrcConverter;
         string[] pathsOfImagesToConvert;
         ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
         List<bool> finishedConversions;
@@ -35,14 +34,16 @@ namespace ImageConverter
             InitializeComponent();
             MainWindowGrid.Background = ThemeManager.SelectedThemeType();
             TitleTextBox.Foreground = ThemeManager.SelectedFontColor();
-            ThemeManager.solidColorBrush = new SolidColorBrush();
-            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
+            ThemeManager.solidColorBrush = new SolidColorBrush()
+            {
+                Color = ThemeManager.RunningOrStaticConversionTextBlockColor,
+            };
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             foreach (System.Windows.Controls.Label element in FormatComboBox.Items)
             {
                 element.Background = ThemeManager.SelectedFontColor();
-            }
-            if (Settings.Default.Language == "it") //applies translation to all the visible controls
+            } //applies the selected font color to every label in the format combobox
+            if (Settings.Default.Language == "it") 
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
@@ -51,7 +52,7 @@ namespace ImageConverter
                 GifRepeatTimes.Content = LanguageManager.IT_GifLoopsOptionText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_EmpyBttnCntxtMenu;
                 DelayTimeLabel.Content = LanguageManager.IT_DelayTimeLabelTxt;
-            }
+            }//applies translation to all the visible controls
             else if (Settings.Default.Language == "en")
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png") as ImageSource;
@@ -116,8 +117,10 @@ namespace ImageConverter
                 } //if the warning label IS visible the dropped file is not an image, so ignore the drop
 
                 #region resets controls
-                ThemeManager.solidColorBrush = new SolidColorBrush();
-                ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
+                ThemeManager.solidColorBrush = new SolidColorBrush
+                {
+                    Color = ThemeManager.RunningOrStaticConversionTextBlockColor
+                };
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 ConversionResultTextBlock.Visibility = Visibility.Hidden;
                 ImagesNameLabel.Text = string.Empty;
@@ -152,7 +155,6 @@ namespace ImageConverter
                 } // If the image is a png enable the option to replace transparency
                 if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
                 if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
-                stringToImgSrcConverter = new ImageSourceConverter();
                 ImgViewer.Opacity = 1.0f; //sets imageviewer opacity to 1
                 using (var st = File.OpenRead(pathsOfImagesToConvert[0]))
                 {
@@ -188,7 +190,7 @@ namespace ImageConverter
             ConversionResultTextBlock.Visibility = Visibility.Hidden; //necessary because if the user converts one image two times in a row it would seem like the conversion didn't start
             finishedConversions = new List<bool>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
-            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
+            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionTextBlockColor;
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //sets
             ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
             ConvertImgBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
@@ -236,8 +238,10 @@ namespace ImageConverter
             ConversionResultTextBlock.Visibility = Visibility.Visible;
             if (unsuccessfulConversions.Count == 0)
             {
-                ThemeManager.solidColorBrush = new SolidColorBrush();
-                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedConversionTextBlockColor;
+                ThemeManager.solidColorBrush = new SolidColorBrush
+                {
+                    Color = ThemeManager.CompletedConversionTextBlockColor
+                };
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
@@ -252,8 +256,10 @@ namespace ImageConverter
             } //if there were no errors
             else
             {
-                ThemeManager.solidColorBrush = new SolidColorBrush();
-                ThemeManager.solidColorBrush.Color = ThemeManager.CompletedWithErrorsConversionTextBlockColor;
+                ThemeManager.solidColorBrush = new SolidColorBrush
+                {
+                    Color = ThemeManager.CompletedWithErrorsConversionTextBlockColor
+                };
                 ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
                 if (Settings.Default.Language == "it")
                 {
@@ -326,12 +332,10 @@ namespace ImageConverter
             ImgViewer.Source = null;
             if (Settings.Default.Language == "it") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg")); }
             else if (Settings.Default.Language == "en") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png")); }
-            stringToImgSrcConverter = null;
             ConvertImgBttn.IsEnabled = false;
             ImagesNameLabel.Text = string.Empty;
             ImgViewer.Opacity = 0.3f;
             droppedImages = null;
-            stringToImgSrcConverter = null;
             pathsOfImagesToConvert = null;
             imgSourceConverter = null;
             EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
