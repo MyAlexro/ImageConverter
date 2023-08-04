@@ -25,7 +25,7 @@ namespace ImageConverter.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DefaultTheme")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DefaultFontCol")]
         public string FontCol {
             get {
                 return ((string)(this["FontCol"]));

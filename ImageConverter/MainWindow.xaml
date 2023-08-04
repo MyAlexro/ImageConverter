@@ -18,17 +18,18 @@
 
 
         <!-- Bottone per cominciare a convertire l'immagine-->
-        <local:ConvertRoundBttn x:Name="ConvertBttn" HorizontalAlignment="Left" Height="54" Margin="463,401,0,0" VerticalAlignment="Top" Width="174" MouseDown="ConvertBttn_MouseDown"/>
+        <local:ConvertRoundBttn x:Name="ConvertImgBttn" HorizontalAlignment="Left" Height="36" Margin="468,398,0,0" VerticalAlignment="Top" Width="129" MouseDown="ConvertRoundBttn_MouseDown" IsEnabled="False"/>
 
+        <!--Label che dice di scegliere un formato-->
         <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
 
         <!-- ComboBox per scegliere in che formato convertire l'immagine-->
         <ComboBox x:Name="FormatComboBox" Text="Sel " HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True">
-            <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG" MouseDown="Label_MouseDown"/>
-            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPG" MouseDown="Label_MouseDown"/>
-            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPEG" MouseDown="Label_MouseDown"/>
-            <Label Height="26" Width="76" Background="#FFDAA619" Content="ICO" MouseDown="Label_MouseDown"/>
-            <Label Height="26" Width="76" Background="#FFDAA619" Content="GIF" MouseDown="Label_MouseDown"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPG"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="JPEG"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="ICO"/>
+            <Label Height="26" Width="76" Background="#FFDAA619" Content="GIF"/>
         </ComboBox>
 
         <!--Contenitore dell'immagine da convertire-->
