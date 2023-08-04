@@ -32,7 +32,7 @@
     <ProductName>ImageConverter</ProductName>
     <PublisherName>Alessandro Dinardo</PublisherName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -127,8 +127,8 @@
       <DependentUpon>ToggleSwitch.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageConversionHandler.cs" />
-    <Compile Include="Models\CompressionParametersModel.cs" />
-    <Compile Include="Models\ImageConversionParametersModel.cs" />
+    <Compile Include="Models\QualityReductionParamsModel.cs" />
+    <Compile Include="Models\ConversionParametersModel.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -195,7 +195,7 @@
     <None Include="Resources\ImageConverterIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Docs\Online docs links.txt" />
+    <None Include="Docs\Online resources.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddImages.png" />

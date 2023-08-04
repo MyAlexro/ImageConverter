@@ -51,7 +51,7 @@ namespace ImageConverter
             #region Apply theme mode and color
             MenuSP.Background = ThemeManager.SolidColorBrushOfThemeMode();
             SettingsLabel.Foreground = ThemeManager.SolidColorBrushOfThemeColor();
-            labels = UtilityMethods.FindLabelsInStackPanel(MenuSP);
+            labels = UtilityMethods.FindAllLabelsInPanelOrDerivedObjs(MenuSP);
             //If the selected ThemeMode is DarkTheme the ThemeColor will be applied to the text of all the labels and textblocks and the github mark must be white
             if (Settings.Default.ThemeMode == "DarkTheme")
             {

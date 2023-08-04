@@ -42,12 +42,12 @@
                     <TextBlock x:Name="WarningTextBlock" Text="Error text" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Height="28" MaxWidth="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="11" />
 
                     <!-- Button that determines if the dropped images replace the images to convert or add up to them-->
-                    <Image Tag="Replace" x:Name="AddOrReplaceDroppedImagesBttn" Source="Resources/ReplaceImages.png" Stretch="Uniform" Width="Auto" Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImagesBttn_MouseDown"/>
+                    <Image Tag="Replace" x:Name="InsertNewImagesModeBttn" Source="Resources/ReplaceImages.png" Stretch="Uniform" Width="Auto" Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImagesBttn_MouseDown"/>
 
                     <!--Container of the images to convert ImgViewer-->
                     <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1">
                         <Image x:Name="ImgViewer" Height="330" Width="365" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/ImageConverterDragAndDropEN.png" Opacity="0.3" 
-                               DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave" MouseDown="ImgViewerSelectImages_MouseDown">
+                               DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave" MouseDown="ImgViewer_MouseDown_SelectImages" MouseEnter="ImgViewer_MouseEnter">
                             <Image.ContextMenu>
                                 <ContextMenu x:Name="ImageViewerContextMenu" Opened="ImageViewerContextMenu_Opened">
                                     <MenuItem x:Name="EmptyImgViewerCntxtMenuBttn" Click="EmptyImgViewerCntxtMenuBttn_Click" IsEnabled="False"/>
@@ -69,11 +69,12 @@
                     <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
 
                         <!-- Format to convert images to stackpanel-->
-                        <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,0">
+                        <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,4">
                             <!--Label that says to choose a format-->
                             <Label x:Name="ChooseFormatLabel" Content="Choose the format &#xA;to convert the images to:" FontFamily="Segoa UI" FontSize="14" Height="50" VerticalAlignment="Top"/>
                             <!-- ComboBox to choose the format to which convert the image-->
-                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="Auto" Height="Auto" DropDownClosed="FormatComboBox_DropDownClosed">
+                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="Auto" Height="Auto" 
+                                      DropDownClosed="FormatComboBox_DropDownClosed">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="PNG"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="JPG"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="JPEG"/>
@@ -86,7 +87,7 @@
                         </StackPanel>
 
                         <!-- PNG image options: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
-                        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal" Visibility="Visible" Margin="0,8">
+                        <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal">
                             <Label x:Name="ReplacePngTransparencyLabel" Content="Replace the transparency of png images with:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" SelectedIndex="0">
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="Nothing" Content="Nothing"/>
@@ -95,10 +96,10 @@
                             </ComboBox>
                         </StackPanel>
 
-                        <!-- TIFF images option-->
-                        <StackPanel x:Name="CompressionAlgoOptionSP" Orientation="Horizontal" Margin="0,8">
+                        <!-- TIFF format option-->
+                        <StackPanel x:Name="TiffOptionsSP" Orientation="Horizontal">
                             <Label Content="Compression algorithm:" x:Name="CompressionAlgoLabel"/>
-                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left"  VerticalAlignment="Bottom">
+                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Default"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt3"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt4"/>
@@ -108,8 +109,42 @@
                             </ComboBox>
                         </StackPanel>
 
+                        <!-- ICO format options-->
+                        <StackPanel x:Name="IcoOptionsSP" Orientation="Vertical"  Visibility="Visible" Margin="5,4,0,0">
+                            <Grid x:Name="IconSizesOptionGrid" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="IconSizesTextBlock" Grid.Column="0" Text="Sizes(px) of the image available in the icon:" TextWrapping="Wrap"/>
+                                <Grid x:Name="IconSizesMatrixGrid" Grid.Column="1" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <CheckBox Grid.Column="0" Grid.Row="0" Content="16x16" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="0" Grid.Row="1" Content="24x24" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="0" Grid.Row="2" Content="32x32" Margin="0,3,5,0"/>
+
+                                    <CheckBox IsChecked="True" Grid.Column="1" Grid.Row="0" Content="48x48" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="1" Grid.Row="1" Content="64x64" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="1" Grid.Row="2" Content="96x96" Margin="0,3,5,0"/>
+
+                                    <CheckBox Grid.Column="2" Grid.Row="0" Content="128x128" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="2" Grid.Row="1" Content="192x192" Margin="0,3,5,0"/>
+                                    <CheckBox Grid.Column="2" Grid.Row="2" Content="256x256" Margin="0,3,5,0"/>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+
                         <!-- GIF format options-->
-                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}" Height="Auto" Margin="0,8,0,0">
+                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}" Height="Auto" Margin="0,4,0,0">
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
@@ -129,38 +164,36 @@
                             </StackPanel>
 
                             <!-- Option that indicates the delay between frames-->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="26" Margin="0,8">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="26">
                                 <Label Content="Delay time between two frames(1-2500ms):" x:Name="GifFramesDelayTimeLabel"/>
                                 <TextBox x:Name="GifFramesDelayOptionTextBox" Text="2500" VerticalAlignment="Center" TextChanged="GifFramesDelayOptionTextBox_TextChanged" MaxWidth="32"/>
                                 <Label Content="ms" HorizontalAlignment="Left" FontSize="10" VerticalAlignment="Bottom"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Quality compression options -->
-                        <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
-                            <Label Content="Final quality:" x:Name="QualityLabel"/>
-                            <Border>
-                                <TextBox x:Name="QualityLevelTextBox" Text="100%" MaxWidth="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        <!-- Quality reduction options -->
+                        <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="Final image(s) quality:" x:Name="QualityLabel"/>
+                            <TextBox x:Name="QualityLevelTextBox" Text="100%" MaxWidth="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                          TextChanged="QualityLevelTextBox_TextChanged"/>
-                            </Border>
                         </StackPanel>
 
                         <!-- Choose where to save image(s) option-->
-                        <StackPanel x:Name="SavePathOptionSP" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8" Height="28">
-                            <Label x:Name="ImageSavePathLabel">Salva in:</Label>
-                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="210" Text="Path where the image(s) will be saved"/>
-                            <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click" Content="Choose folder"/>
+                        <StackPanel x:Name="SavePathOptionSP" Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Label x:Name="ImageSavePathLabel">Save path:</Label>
+                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="210" Text="Path where the image(s) will be saved"/>
+                            <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click" Content="Choose folder" VerticalAlignment="Center"/>
                         </StackPanel>
 
                     </StackPanel>
 
                     <!-- Button to start the conversion of the image-->
                     <CustomControls:RoundBttn x:Name="StartConversionBttn" ButtonText="Start Conversion" FontSize="12" HorizontalAlignment="Left"  VerticalAlignment="Top" 
-                                              Height="36" Width="129" IsEnabled="False" Focusable="True" Margin="4,340,0,0"
+                                              Height="36" Width="129" IsEnabled="False" Focusable="True" Margin="4,346,0,0"
                                               MouseDown="StartConversionBttn_MouseDown" KeyDown="StartConversionBttn_KeyDown"/>
 
                     <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
-                    <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="140,350,0,0"/>
+                    <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="140,355,0,0"/>
 
                 </Grid>
             </StackPanel>
