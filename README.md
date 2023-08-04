@@ -3,9 +3,9 @@ A very customizable program to convert images to different image formats: jpeg, 
 
 ## Incoming features
 - [ ] Option to resize images when converting them to another format
-- [ ] Option to replace the transparency of PNG images when converting them to a GIF
+- [X] Option to replace the transparency of PNG images when converting them to a GIF
 - [ ] Add more colors for the replacement of the transparency of a PNG image
-- [ ] Porting to .NET Core 3.0
+- [ ] Preview all the images to convert
 - and more
 
 
