@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_4D02E68DC9EF489293C61AC73A2AE71F"
+        "MsmKey" = "8:_3F8F5733279440DE91BDF74B393C7EE9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5E567D9BF5EC209E51E95C2E8040A9A0"
+        "OwnerKey" = "8:_8481526AF4C14B1D9745B2B8E091B00A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8481526AF4C14B1D9745B2B8E091B00A"
+        "OwnerKey" = "8:_5E567D9BF5EC209E51E95C2E8040A9A0"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -67,6 +67,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -83,6 +91,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -112,10 +136,10 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4D02E68DC9EF489293C61AC73A2AE71F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3F8F5733279440DE91BDF74B393C7EE9"
             {
-            "SourcePath" = "8:..\\Icons\\Sizes\\MultiSizeIcon.ico"
-            "TargetName" = "8:MultiSizeIcon.ico"
+            "SourcePath" = "8:C:\\Users\\Utente\\Desktop\\Multisizeicon.ico"
+            "TargetName" = "8:Multisizeicon.ico"
             "Tag" = "8:"
             "Folder" = "8:_8150E715FDF84D0DA6DAB8EE2A59AC4D"
             "Condition" = "8:"
@@ -215,7 +239,7 @@
             "{1525181F-901A-416C-8A58-119130FE478E}:_E032EA8C21AE49D4A9B679A4C526B11B"
             {
             "Name" = "8:#1916"
-            "AlwaysCreate" = "11:FALSE"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Property" = "8:DesktopFolder"
@@ -240,7 +264,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ImageConverter"
         "ProductCode" = "8:{46CA3332-3217-4289-B3EE-795E6B52F061}"
-        "PackageCode" = "8:{04496E2D-F406-4A4D-A11D-B95883B5E5E1}"
+        "PackageCode" = "8:{F872562E-0800-4C7E-A2DA-A1CCD868D6D8}"
         "UpgradeCode" = "8:{39A4A0E5-EDF8-4FE6-A2B0-E4FA6BAD2FDD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -248,7 +272,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.2"
-        "Manufacturer" = "8:Alessandro Dinardo"
+        "Manufacturer" = "8:ImageConverter"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/MyAlexro/ImageConverter/issues"
         "Title" = "8:ImageConverterSetup"
@@ -360,7 +384,21 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D8FCD61B0FDC4A849DFFB87FAC0085D8"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_02CE393C40BC4A0FAF563D6BF38BCE51"
+            {
+            "Name" = "8:ImageConverter"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_8481526AF4C14B1D9745B2B8E091B00A"
+            "Folder" = "8:_09B5DAB227274716B3131E4AE6279C6A"
+            "WorkingFolder" = "8:_8150E715FDF84D0DA6DAB8EE2A59AC4D"
+            "Icon" = "8:_3F8F5733279440DE91BDF74B393C7EE9"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_BF1CFCDB96BE42A0919D7029EC801136"
             {
             "Name" = "8:ImageConverter"
             "Arguments" = "8:"
@@ -371,7 +409,7 @@
             "Target" = "8:_8481526AF4C14B1D9745B2B8E091B00A"
             "Folder" = "8:_E032EA8C21AE49D4A9B679A4C526B11B"
             "WorkingFolder" = "8:_8150E715FDF84D0DA6DAB8EE2A59AC4D"
-            "Icon" = "8:_4D02E68DC9EF489293C61AC73A2AE71F"
+            "Icon" = "8:_3F8F5733279440DE91BDF74B393C7EE9"
             "Feature" = "8:"
             }
         }
