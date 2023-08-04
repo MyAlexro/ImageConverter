@@ -20,6 +20,7 @@ namespace ImageConverter
         private static BmpBitmapEncoder bmpEncoder;
         private static GifBitmapEncoder gifEncoder;
 
+        private static string chosenFormat;
         private static string tempImgPath = null;
         private static string imageName; //name of the image to convert
         private static string directoryOfImageToConvert; //directory of the image to convert
@@ -46,6 +47,7 @@ namespace ImageConverter
         /// <returns></returns>
         public static async Task<List<bool>> StartConversion(string format, string[] pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime)
         {
+            chosenFormat = format;
             color = colorToReplTheTranspWith;
             conversionsResults = new List<bool>();
             foreach (var imageToConvertPath in pathsOfImagesToConvert)
@@ -88,7 +90,7 @@ namespace ImageConverter
                 {
                     conversionsResults.Add(await Task.Run(() => ToIconOrCur(imageToConvertPath, format)));
                 }
-            }
+            } //initialize the conversion of each image
 
             return conversionsResults;
         }
@@ -112,19 +114,13 @@ namespace ImageConverter
             }//loads image to convert from a stream and converts it
 
             #region saves the image and checks whether it was save correctly
-            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.png"))
+            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.png"))
             {
                 pngEncoder.Save(st);
                 st.Close();
             }
-            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.png"))
-            {
-                return true;
-            } //if the conversion was successful and the file of the converted image exists: return true
-            else
-            {
-                return false;
-            } //otherwise: return false
+
+            return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
             #endregion
         }
 
@@ -164,7 +160,7 @@ namespace ImageConverter
             #region Saves image based on format(jpeg or jpg), eventually deletes temp file, and checks wether it was saved correctly
             if (format == "jpeg")
             {
-                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.jpeg"))
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.jpeg"))
                 {
                     jpegOrJpgEncoder.Save(st);
                     st.Close();
@@ -172,7 +168,7 @@ namespace ImageConverter
             }
             else
             {
-                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.jpg"))
+                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.jpg"))
                 {
                     jpegOrJpgEncoder.Save(st);
                     st.Close();
@@ -182,14 +178,7 @@ namespace ImageConverter
             if (tempImgPath != null) //deletes the temporary file in the temp folder(the image with the transparency replaced but still not converted)
                 File.Delete(tempImgPath);
 
-            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpeg") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.jpg"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
             #endregion
         }
 
@@ -228,19 +217,13 @@ namespace ImageConverter
             }//loads image to convert from a stream, eventually replace the transparency, and converts it
 
             #region saves bmp image and checkes whether it was saved correctly
-            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.bmp"))
+            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.bmp"))
             {
                 bmpEncoder.Save(st);
                 st.Close();
             }
-            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.bmp"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
             #endregion
         }
 
@@ -300,19 +283,12 @@ namespace ImageConverter
                 newBytes.AddRange(fileBytes.Skip(13));
                 #endregion
 
-                File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_Gif.gif", newBytes.ToArray());
+                File.WriteAllBytes($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.gif", newBytes.ToArray());
                 ms.Close();
 
             }//add the application extensions and graphic control extension blocks
 
-            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}_Gif.gif"))
-            {
-                return true;
-            } //if the conversion was successful and the file of the converted image exists: return true
-            else
-            {
-                return false;
-            } //otherwise: return false
+            return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
         }
 
         private static async Task<bool> ToIconOrCur(string imgToConvertPath, string format) //TODO: Fix conversion of bmp images to ico or cur
@@ -431,22 +407,12 @@ namespace ImageConverter
             Icon convertedIcon;
             convertedIcon = new Icon(memStream);
             memStream.Close();
-            if (format == "ico")
-            {
-                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.ico"))
+            using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}"))
                 {
                     convertedIcon.Save(st);
                     st.Close();
                 }
-            }
-            else if (format == "cur")
-            {
-                using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.cur"))
-                {
-                    convertedIcon.Save(st);
-                    st.Close();
-                }
-            }
+
 
             #region dispose objects
             binWriter.Dispose();
@@ -455,15 +421,21 @@ namespace ImageConverter
             imgToConvert.Dispose();
             #endregion
 
-            if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.ico") || File.Exists($"{directoryOfImageToConvert}\\{imageName}.cur"))
+            return await Task.Run(() => CheckIfSavedCorrectly(directoryOfImageToConvert, imageName));
+            #endregion
+        }
+
+        private static async Task<bool> CheckIfSavedCorrectly(string directoryOfImageToConvert, string imageName)
+        {   
+            if (await Task.Run(()=>File.Exists($"{directoryOfImageToConvert}\\{imageName}_{chosenFormat}.{chosenFormat}")))
             {
                 return true;
-            }
+            } //if the conversion was successful and the file of the converted image exists: return true
             else
             {
                 return false;
-            }
-            #endregion
+            } //otherwise: return false
+            
         }
 
         private static string ReplaceTransparency(Image img)
