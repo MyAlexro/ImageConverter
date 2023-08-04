@@ -81,7 +81,6 @@ namespace ImageConverter
         /// </summary>
         /// <param name="conversionParameters"> ImageConversionParametersModel containing all the parameters of the conversion</param>
         /// <returns></returns>
-        //string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime, int qualityLevel, string compressionAlgo
         public async Task<Dictionary<string, bool>> StartConversionAsync(ImageConversionParametersModel conversionParameters)
         {
             chosenFormat = conversionParameters.format;
@@ -97,15 +96,16 @@ namespace ImageConverter
             compressionResults = new Dictionary<string, bool>();
             compressionsTasks = new List<Task<bool>>();
 
+
             //Check whether the user is trying to convert an image to the same format, if yes don't convert it and set its conversionResult to false
-            foreach (var imageToConvertPath in pathsOfImagesToConvert)
+            pathsOfImagesToConvert.ForEach(delegate (string imageToConvertPath)
             {
                 var imgToConvertExt = Path.GetExtension(imageToConvertPath).ToLower().Trim('.');
                 if (imgToConvertExt == selectedFormat)
                 {
                     conversionsResults.Add(imageToConvertPath, false);
                 }
-            }
+            });
 
             //Start the conversion of each image
             foreach (var imageToConvertPath in pathsOfImagesToConvert)
@@ -205,7 +205,6 @@ namespace ImageConverter
             return (await Task.WhenAll(compressionsTasks)).ToList();
         }
 
-
         #region Convert-to-format methods
         /// <summary>
         /// Asynchronously convert an image to a Png image and save it to the savePath
@@ -218,7 +217,11 @@ namespace ImageConverter
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             imageEncoder = new PngBitmapEncoder();
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            /*If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted image in the temp folder because the compressed one 
+            * will be saved in the chosen savePath later, otherwise save it to the chosen savePath*/
+            string convertedImagePath = chosenQuality != 100 && Settings.Default.SaveBothImages == false ?
+                $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}" :
+                $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
             #endregion
 
@@ -234,21 +237,23 @@ namespace ImageConverter
                 st.Close();
             }
 
-            #region saves the image and checks whether it was saved correctly in the conversionResult var
-            using (Stream st = File.Create($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
+            #region Saves the image, in case adds a compression task, and checks whether it was saved correctly
+            //Save the image
+            using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
-            #endregion
+
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
 
             //If the user decided to compress the image, add the compression task to the compressionsTasks list
             if (chosenQuality != 100)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality, savePath));
             }
 
+            #endregion
             return conversionResult;
         }
 
@@ -265,7 +270,11 @@ namespace ImageConverter
             imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             imageEncoder = new JpegBitmapEncoder();
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            /*If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted image in the temp folder because the compressed one 
+            * will be saved in the chosen savePath later, otherwise save it to the chosen savePath*/
+            string convertedImagePath = chosenQuality != 100 && Settings.Default.SaveBothImages == false ?
+                $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}" :
+                $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
             #endregion
 
@@ -299,21 +308,23 @@ namespace ImageConverter
                 }
             }
 
-            #region Saves the image and checks whether it was saved correctly, return result
-            using (Stream st = File.Create($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
+            #region Saves the image, in case adds a compression task, and checks whether it was saved correctly
+            //Save the image
+            using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
-            #endregion
+
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
 
             //If the user decided to compress the image, add the compression task to the compressionsTasks list
-            if (chosenQuality != 100 && conversionResult == true)
+            if (chosenQuality != 100)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality, savePath));
             }
 
+            #endregion
             return conversionResult;
         }
 
@@ -324,12 +335,17 @@ namespace ImageConverter
         /// <returns></returns>
         private async Task<bool> ConvertoToBmpAndSaveAsync(string pathOfImageToConvert)
         {
-            #region  set up image infos to convert etc.
+            #region  Set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             imageEncoder = new BmpBitmapEncoder();
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            /*If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted image in the temp folder because the compressed one 
+            * will be saved in the chosen savePath later, otherwise save it to the chosen savePath*/
+            string convertedImagePath = chosenQuality != 100 && Settings.Default.SaveBothImages == false ?
+                $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}" :
+                $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+
             bool conversionResult = false;
             #endregion
 
@@ -363,21 +379,23 @@ namespace ImageConverter
                 st.Close();
             }
 
-            #region saves the image and checks whether it was saved correctly
-            using (Stream st = File.Create($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
+            #region Saves the image, in case adds a compression task, and checks whether it was saved correctly
+            //Save the image
+            using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
-            #endregion
+
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
 
             //If the user decided to compress the image, add the compression task to the compressionsTasks list
-            if (chosenQuality != 100 && conversionResult == true)
+            if (chosenQuality != 100)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality, savePath));
             }
 
+            #endregion
             return conversionResult;
         }
 
@@ -395,8 +413,8 @@ namespace ImageConverter
             imageToConvertName = Path.GetFileNameWithoutExtension(imagesToConvertPaths[0]);
             pathToImageToConvertDirectory = Path.GetDirectoryName(imagesToConvertPaths[0]);
             imageEncoder = new GifBitmapEncoder();
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
+            string convertedImagePath;
             bool oneOfImagesIsgPng = false;
             foreach (var path in imagesToConvertPaths)
             {
@@ -496,7 +514,8 @@ namespace ImageConverter
                     }
                 }
                 #endregion
-                #region Add application extension block
+
+                #region Add application extension block and save the gif
                 var finalGifBytesList = new List<byte>();
                 //Add the Header Block and the Logical Screen Descriptor of the basic gif to the final gif
                 finalGifBytesList.AddRange(gifBytesList.Take(13));
@@ -506,13 +525,14 @@ namespace ImageConverter
                 finalGifBytesList.AddRange(gifBytesList.Skip(13));
                 #endregion
 
-                //Write changes to the already created initial gif, gif finished
-                File.WriteAllBytes($"{savePath}\\{imageToConvertName}_{chosenFormat}.gif", finalGifBytesList.ToArray());
+                //Create gif and write the final bytes 
+                convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.gif";
+                File.WriteAllBytes(convertedImagePath, finalGifBytesList.ToArray());
                 ms.Close();
             }
 
             //Checks wether the gif was saved correctly
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
 
             UtilityMethods.EmptyFolder(Settings.Default.TempFolderPath);
 
@@ -552,14 +572,18 @@ namespace ImageConverter
             }
             #endregion
 
-            #region  set up image infos to convert etc.
+            #region Set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             Image imgToConvert = Image.FromFile(pathOfImageToConvert);
             var memStream = new MemoryStream();
             var binWriter = new BinaryWriter(memStream);
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            /*If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted image in the temp folder because the compressed one 
+            * will be saved in the chosen savePath later, otherwise save it to the chosen savePath*/
+            string convertedImagePath = chosenQuality != 100 && Settings.Default.SaveBothImages == false ?
+                $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}" :
+                $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
             #endregion
 
@@ -650,7 +674,8 @@ namespace ImageConverter
             Icon convertedIcon;
             convertedIcon = new Icon(memStream);
             memStream.Close();
-            using (Stream st = File.Create($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
+
+            using (Stream st = File.Create(convertedImagePath))
             {
                 convertedIcon.Save(st);
                 st.Close();
@@ -662,13 +687,13 @@ namespace ImageConverter
             imgToConvert.Dispose();
             #endregion
 
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
             #endregion
 
             //If the user decided to compress the image, add the compression task to the compressionsTasks list
             if (chosenQuality != 100 && conversionResult == true)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality, savePath));
             }
 
             return conversionResult;
@@ -682,11 +707,15 @@ namespace ImageConverter
         /// <returns></returns>
         private async Task<bool> ConvertToTiffAndSaveAsync(string pathOfImageToConvert, string compressionAlgo)
         {
-            #region  set up image infos to convert etc.
+            #region Set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             imageEncoder = new TiffBitmapEncoder();
-            string convertedImagePath = $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            /*If the user wants to compress the image and wants only the converted&compressed image to be saved, save the converted image in the temp folder because the compressed one 
+            * will be saved in the chosen savePath later, otherwise save it to the chosen savePath*/
+            string convertedImagePath = chosenQuality != 100 && Settings.Default.SaveBothImages == false ?
+                $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}" :
+                $"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
             bool conversionResult = false;
             #endregion
 
@@ -752,25 +781,23 @@ namespace ImageConverter
             }
 
             #region Saves the image and checks whether it was saved correctly, return result
-            using (Stream st = File.Create($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
+            using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
             #endregion
 
             //If the user decided to compress the image, add the compression task to the compressionsTasks list
             if (chosenQuality != 100)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality, savePath));
             }
 
             return conversionResult;
         }
-
         #endregion
-
 
         /// <summary>
         /// Compress an image 
@@ -781,12 +808,13 @@ namespace ImageConverter
         /// <param name="quality"></param>
         /// <param name="destinationPath"> Path where to save the image, if not specificed, the image will be saved to its original version's path</param>
         /// <returns></returns>
-        private async Task<bool> CompressImageAsync(string imagePath, string formatOfImageToCompress, int quality, string destinationPath = "")
+        private async Task<bool> CompressImageAsync(string imagePath, string formatOfImageToCompress, int quality, string destinationPath)
         {
             #region Set up variables
             encoderParameters = new EncoderParameters();
             string pathOfImageToCompressDirectory = Path.GetDirectoryName(imagePath);
             string imageName = Path.GetFileNameWithoutExtension(imagePath);
+            string compressedImagePath;
             //Get image codec info for the encoder based on the mime type of the image
             foreach (var codecInfo in ImageCodecInfo.GetImageEncoders())
             {
@@ -806,26 +834,19 @@ namespace ImageConverter
             encoderParameters.Param[0] = qualityParam;
             #endregion
 
+            //The path where to save the image is its original version's one, the name of the image already contains its extension since it has been already converted
+            compressedImagePath = $"{destinationPath}\\{imageName}_Compressed.{formatOfImageToCompress}";
+
             //Open converted image, compress it and save a copy to the same directory
             using (Stream st = File.OpenRead(imagePath))
             {
                 var imageToCompress = new Bitmap(st);
-                //The path where to save the image is its original version's one, the name of the image already contains its extension since it has been already converted
-                if (destinationPath == "")
-                {
-                    imageToCompress.Save($"{savePath}\\{imageName}_Compressed.{formatOfImageToCompress}", imgToCompressCodecInfo, encoderParameters);
-                }
-                else
-                {
-                    imageToCompress.Save($"{destinationPath}\\{imageName}_Compressed.{formatOfImageToCompress}", imgToCompressCodecInfo, encoderParameters);
-                }
+                imageToCompress.Save(compressedImagePath, imgToCompressCodecInfo, encoderParameters);
+
                 st.Close();
             }
 
-            if (destinationPath == "")
-                return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageName}_Compressed.{formatOfImageToCompress}"));
-            else
-                return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{destinationPath}\\{imageName}_Compressed.{formatOfImageToCompress}"));
+            return await Task.Run(() => CheckIfSavedCorrectlyAsync(compressedImagePath));
         }
 
         /// <summary>

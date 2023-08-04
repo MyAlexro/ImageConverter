@@ -94,7 +94,7 @@ namespace ImageConverter
             }
             #endregion
 
-            #region Apply theme type, colors and hide or show controls
+            #region Apply theme type, colors and hide, show or change controls
             MainWindowGrid.Background = ThemeManager.SolidColorBrushOfSelectedThemeMode();
             TitleTextBox.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
             ThemeManager.solidColorBrush = new SolidColorBrush()
@@ -243,7 +243,8 @@ namespace ImageConverter
         {
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[]; //Get files the user is trying to convert
+                //Get files the user is trying to convert
+                string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[];
                 //If the droopping files aren't images
                 if (UtilityMethods.IsOrContainsImage(droppingFiles) == false)
                 {
@@ -251,7 +252,8 @@ namespace ImageConverter
                     else if (Settings.Default.Language == "en") { WarningTextBlock.Text = LanguageManager.EN_WarningUnsupportedFile; }
                 }
 
-                //Check if the any of the dropping-files are already present in the list of images to convert
+                //If the user wants to add the images to the already present ones, check if the any of the dropping-files 
+                //are already present in the list of images to convert
                 if (local_pathsOfImagesToConvert.Count != 0 && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
                 {
                     foreach (var file in droppingFiles)
@@ -308,12 +310,18 @@ namespace ImageConverter
                 ReplaceTransparencySP.Visibility = Visibility.Collapsed;
                 ConversionResultTextBlock.Visibility = Visibility.Collapsed;
                 QualityOptionSP.Visibility = Visibility.Visible;
-                ImagesNameTextBlock.Text = string.Empty;
                 SavePathOptionSP.Visibility = Visibility.Visible;
 
-                if (FormatComboBox.SelectedValue?.ToString() != "System.Windows.Controls.Label: GIF")
+                if ((string)AddOrReplaceDroppedImagesBttn.Tag == "Replace")
                 {
-                    GifOptionsSP.Visibility = Visibility.Collapsed;
+                    if (FormatComboBox.SelectedValue?.ToString() != "GIF")
+                    {
+                        GifOptionsSP.Visibility = Visibility.Collapsed;
+                    }
+                    if (FormatComboBox.SelectedValue?.ToString() != "TIFF")
+                    {
+                        GifOptionsSP.Visibility = Visibility.Collapsed;
+                    }
                 }
                 #endregion
 
@@ -324,7 +332,7 @@ namespace ImageConverter
                 {
                     droppedFilesToConvert.Add(file);
                 }
-                //Gets all the images and the ones in the folders because the warning label is hidden, so the dropped files must be images
+                //Gets all the images and the ones in the folders (because the warning label is hidden, the dropped files must be images)
                 local_pathsOfImagesToConvert = GetImagesToConvertAndPrepareGUI(droppedFilesToConvert);
                 LoadPreviewImage(local_pathsOfImagesToConvert);
 
@@ -554,7 +562,6 @@ namespace ImageConverter
         }
         #endregion
 
-
         /// <summary>
         /// If there are images to convert enable the EmptyImgViewerMenuBttn in the context menu of the ImgViewer
         /// </summary>
@@ -749,9 +756,10 @@ namespace ImageConverter
 
             #region Adds or sets name(s) of the image(s) to the ImagesNamesTextBlock under ImgViewer
             //If the user wants to replace the already dropped images, clear the textblock
-            if ((string)AddOrReplaceDroppedImagesBttn.Tag == "Replace" && ImagesNameTextBlock.Text != string.Empty)
+            if ((string)AddOrReplaceDroppedImagesBttn.Tag == "Replace")
+            {
                 ImagesNameTextBlock.Text = string.Empty;
-
+            }
             //Add the images paths
             for (int i = 0; i < newPathsOfImagesToConvert.Count; i++)
             {

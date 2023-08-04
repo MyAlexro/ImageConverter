@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="ImageConverter.Menu"
+﻿<UserControl xmlns:CustomControls="clr-namespace:ImageConverter.CustomControls"  x:Class="ImageConverter.Menu"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ImageConverter"
-             mc:Ignorable="d" Height="{Binding}" Width="255">
+             mc:Ignorable="d" Height="{Binding}" Width="255" x:Name="UserControl">
 
     <UserControl.Resources>
         <!-- Style for the Theme or theme color rectangles-->
@@ -20,9 +20,15 @@
             <EventSetter Event="MouseEnter" Handler="Rectangles_MouseEnter"/>
             <EventSetter Event="MouseLeave" Handler="Rectangles_MouseLeave"/>
         </Style>
-        <Style TargetType="Label" x:Key="LabelStyle">
+        <Style TargetType="TextBlock" x:Key="TextBlockStyle">
             <Setter Property="FontFamily" Value="Segoa UI"/>
             <Setter Property="FontSize" Value="17"/>
+            <Setter Property="MaxWidth" Value="{Binding Width, ElementName=UserControl}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+        <Style TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,5,0,0"/>
         </Style>
     </UserControl.Resources>
 
@@ -41,7 +47,7 @@
         <!-- Choose theme color Stackpanels -->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,20,0,0">
             <!--Theme color label-->
-            <Label x:Name="ThemeColorLabel" Style="{StaticResource LabelStyle}" Content="Theme color:" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ThemeColorTextBlock" Style="{StaticResource TextBlockStyle}" Text="Theme color:" VerticalAlignment="Center"/>
             <!--Colors stackpanel-->
             <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" VerticalAlignment="Center">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultThemeColor" Fill="#FFDAA619" MouseDown="ThemeColRects_MouseDown"/>
@@ -53,11 +59,11 @@
         </StackPanel>
 
         <!-- Choose theme type Stackpanel-->
-        <StackPanel Orientation="Horizontal" Height="35" Margin="0,5,0,0">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <!-- Label theme type-->
-            <Label x:Name="ThemeLabel" Style="{StaticResource LabelStyle}" Content="Theme:" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ThemeTextBlock" Style="{StaticResource TextBlockStyle}" Text="Theme:" VerticalAlignment="Center"/>
             <!--Theme type stackpanel-->
-            <StackPanel x:Name="ThemeModesSP" Orientation="Horizontal" VerticalAlignment="Center">
+            <StackPanel x:Name="ThemeModesSP" Orientation="Horizontal" VerticalAlignment="Center" Margin="0">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="LightTheme" Fill="White" MouseDown="ThemeMode_MouseDown"/>
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DarkTheme" Fill=" #1d1d1d" Stroke="LightGray" MouseDown="ThemeMode_MouseDown"/>
             </StackPanel>
@@ -71,14 +77,23 @@
 
         <!-- Language stackpanel-->
         <StackPanel Orientation="Horizontal">
-            <Label x:Name="LanguageOptionLabel" Style="{StaticResource LabelStyle}" Content="Language:" VerticalAlignment="Center" HorizontalAlignment="Left" />
-            <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="46" DropDownClosed="LanguageComboBox_DropDownClosed">
+            <TextBlock x:Name="LanguageOptionTextBlock" Style="{StaticResource TextBlockStyle}" Text="Language:" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <ComboBox x:Name="LanguageComboBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="46" DropDownClosed="LanguageComboBox_DropDownClosed">
                 <Label x:Name="ItOption" >It</Label>
                 <Label x:Name="EnOption" >En</Label>
             </ComboBox>
         </StackPanel>
 
         <!--#endregion Language option-->
+
+        <Separator Opacity="0.5" Height="5"/>
+
+        <!-- Save both the converted and compressed images stackpanel -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" MaxWidth="{Binding ElementName=MenuSP, Path=Width}" Width="255">
+            <TextBlock x:Name="SaveBothImagesTextBlock"  Text="Save both the uncompressed and compressed image" 
+                       Style="{StaticResource TextBlockStyle}" Width="178"/>
+            <CustomControls:ToggleSwitch x:Name="SaveBothImagesToggleSwitch" Height="25" Width="55" Margin="0" StateChanged="ToggleSwitch_StateChanged"/>
+        </StackPanel>
 
         <Separator Opacity="0.5" Height="5"/>
 

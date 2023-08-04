@@ -11,11 +11,14 @@
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FirstRun" Type="System.Boolean" Scope="User">
+    <Setting Name="FirstRun" Description="Setting which determines wether the app has been launched a first time" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="TempFolderPath" Type="System.String" Scope="User">
+    <Setting Name="TempFolderPath" Description="Path to the user's temporary path, usually located in the Appdata folder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SaveBothImages" Description="Settings which determines wether, in case the user decided to compress the image(s),  to save the converted but uncompressed image(s) and the compressed image(s), or only the compressed one(s)" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
