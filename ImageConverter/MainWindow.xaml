@@ -25,7 +25,7 @@
         <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
 
         <!-- ComboBox to choose the format to which convert the image-->
-        <ComboBox x:Name="FormatComboBox" Text="Sel " HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True">
+        <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True" DropDownClosed="FormatComboBox_DropDownClosed">
             <Label Height="26" Width="76" Background="#FFDAA619" Content="PNG"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="JPG"/>
             <Label Height="26" Width="76" Background="#FFDAA619" Content="JPEG"/>
@@ -35,25 +35,30 @@
             <Label Height="26" Width="76" Background="#FFDAA619" Content="CUR"/>
         </ComboBox>
 
-        <!--Contanier of the image to convert-->
+        <!-- GIF: checkbox that is shown only when the format "GIF" is selected, it indicates whether the gif shall be in loop or not-->
+        <CheckBox x:Name="GifLoopOptionCB"  Content="Ripeti la gif per sempre" HorizontalAlignment="Left" Margin="468,192,0,0" VerticalAlignment="Top" Visibility="Hidden" IsChecked="True" Click="GifLoopOption_Click" />
+
+        <!--Container of the image to convert-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
             <Image Width="365" Height="330" x:Name="ImgViewer" Margin="0,0,0,0" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave"/>
         </Border>
 
-        <!-- Textblock that shows the name of the image to convert-->
-        <TextBlock x:Name="ImageNameLabel" HorizontalAlignment="Left" Margin="93,430,0,0" VerticalAlignment="Top" Width="365" Height="71" TextWrapping="Wrap"/>
+        <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
+        <ScrollViewer HorizontalAlignment="Left" Height="71" Margin="93,430,0,0" VerticalAlignment="Top" Width="365">
+            <TextBlock x:Name="ImageNameLabel" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+        </ScrollViewer>
 
         <!-- Label that appears only if the users is trying to drop files which can't be converted-->
         <Label x:Name="WarningLabel" Content="" HorizontalAlignment="Left" Margin="93,76,0,0" VerticalAlignment="Top" Width="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden" FontSize="10"/>
 
         <!-- Textblock that appears whena a conversion is ongoing or a conversion has finished-->
-        <TextBlock x:Name="ConversionResultLabel" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
+        <TextBlock x:Name="ConversionResultTextBlock" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
 
         <!--Button to open the Menu-->
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>
 
         <!--Menu-->
-        <local:Menu x:Name="Menu" Height="511" Width="255" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-260,0,0,0" >
+        <local:Menu x:Name="Menu" Height="511" Width="255" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-262,0,0,0" >
             <local:Menu.Effect>
                 <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
             </local:Menu.Effect>

@@ -17,7 +17,7 @@ namespace ImageConverter
         private Storyboard storyboard;
         private ThicknessAnimation thicknessAnimation;
         private FrameworkElement nameOfMenu;
-        private Thickness closedPos = new Thickness(-260, 0, 0, 0); //posizione del menu quando è chiuso
+        private Thickness closedPos = new Thickness(-262, 0, 0, 0); //posizione del menu quando è chiuso
         private Thickness openedPos = new Thickness(0, 0, 0, 0);  //posizione del menu quando è aperto
         private int selectedRectStrokeThickness = 3; //spessore del bordo del rect quando è selezionato o la freccetta del mouse c'è sopra
         private int unselectedRectStrokeThickness = 1; //spessore del bordo del rect non selezionato (normale)
@@ -141,7 +141,16 @@ namespace ImageConverter
                     rect.StrokeThickness = unselectedRectStrokeThickness;
                 }
             }
-            var response = MessageBox.Show("Per applicare il tema bisogna riavviare l'applicazione, riavviarla adesso?","Tema applicato",MessageBoxButton.YesNo,MessageBoxImage.Information);
+            MessageBoxResult response = MessageBoxResult.No;
+            if (Settings.Default.Language == "it")
+            {
+                response = MessageBox.Show(LanguageManager.IT_ApplyFontColorMsgBox,"Cambia colore font",MessageBoxButton.YesNo,MessageBoxImage.Information);
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                response = MessageBox.Show(LanguageManager.EN_ApplyFontColorMsgBox, "Change font color", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
+
             if (response == MessageBoxResult.No)
             {
                 return;
@@ -168,7 +177,15 @@ namespace ImageConverter
                     rect.StrokeThickness = unselectedRectStrokeThickness;
                 }
             }
-            var response = MessageBox.Show("Per applicare il tema bisogna riavviare l'applicazione, riavviarla adesso?", "Tema applicato", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            MessageBoxResult response = MessageBoxResult.No;
+            if (Settings.Default.Language == "it")
+            {
+                response = MessageBox.Show(LanguageManager.IT_ApplyThemeMsgBox, "Cambia tema", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
+            else if (Settings.Default.Language == "en")
+            {
+                response = MessageBox.Show(LanguageManager.EN_ApplyThemeMsgBox, "Change theme", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            }
             if (response == MessageBoxResult.No)
             {
                 return;
