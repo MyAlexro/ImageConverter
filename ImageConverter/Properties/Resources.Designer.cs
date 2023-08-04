@@ -73,6 +73,16 @@ namespace ImageConverter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GitHub_Mark_32px {
+            get {
+                object obj = ResourceManager.GetObject("GitHub_Mark_32px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImageConverterDragAndDropEN {
             get {
                 object obj = ResourceManager.GetObject("ImageConverterDragAndDropEN", resourceCulture);
