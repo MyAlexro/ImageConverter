@@ -87,7 +87,7 @@
                     <!-- Option that indicates how many times the gif shall be repeated -->
                     <StackPanel Orientation="Horizontal">
                         <Label x:Name="GifRepeatTimes" Content="Volte che la gif si ripeterà:"/>
-                        <ComboBox x:Name="GifRepTimesCB" Margin="3,0,0,0"  VerticalAlignment="Center" Height="20" SelectedIndex="0" DropDownClosed="GifRepTimesCB_DropDownClosed_1">
+                        <ComboBox x:Name="GifRepTimesCB" Margin="3,0,0,0"  VerticalAlignment="Center" Height="20" SelectedIndex="0" DropDownClosed="GifRepTimesCB_DropDownClosed">
                             <Label Content="∞"/>
                             <Label Content="1"/>
                             <Label Content="2"/>
