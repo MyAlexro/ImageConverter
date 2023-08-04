@@ -2,10 +2,12 @@
 A very customizable program to convert images to different image formats: jpeg, jpg, png, ico, bmp, gif
 
 ## Incoming features
-- [ ] Option to resize images when converting them to another format
+- [ ] Modify the metadata of the image to convert
 - [X] Option to replace the transparency of PNG images when converting them to a GIF
 - [ ] Add more colors for the replacement of the transparency of a PNG image
-- [ ] Preview all the images to convert
+- [ ] Choose where to save the converted image(s)
+- [ ] Add the possibility to compress the image(s) by choosing the final quality
+- [ ] Add Tiff images support
 - and more
 
 
