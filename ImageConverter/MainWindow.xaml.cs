@@ -42,25 +42,9 @@ namespace ImageConverter
         /// </summary>
         List<string> unsuccessfulConversions;
         /// <summary>
-        /// Times the gif will repeat
+        /// Selected value in the GifRepTimes ComboBox, the default value is zero(infinity)
         /// </summary>
         int repGifTimes = 0;
-        /// <summary>
-        /// delay time (in centiseconds so that it doesn't have to be converted later)
-        /// </summary>
-        int gifDelayTimeinCs = 50;
-        /// <summary>
-        /// Index of the color to replace the transparency of a png image with. 0=nothing, 1=white, 2=black 
-        /// </summary>
-        int replTranspWithCol = 0;
-        /// <summary>
-        /// Final quality of the converted image
-        /// </summary>
-        int qualityLevel;
-        /// <summary>
-        /// Type of compression for Tiff images
-        /// </summary>
-        string compressionAlgo;
         /// <summary>
         /// Timer that measures the time spent converting all the images
         /// </summary>
@@ -89,7 +73,7 @@ namespace ImageConverter
             {
                 if (control.GetType() != typeof(StackPanel))
                     break;
-                foreach(var innerControl in ((StackPanel)control).Children)
+                foreach (var innerControl in ((StackPanel)control).Children)
                 {
                     if (innerControl.GetType() == typeof(ComboBox))
                     {
@@ -321,11 +305,11 @@ namespace ImageConverter
                 return;
             }
             //If one or more images aren't in their original folder anymore stop conversion start
-            foreach(var image in pathsOfImagesToConvert)
+            foreach (var image in pathsOfImagesToConvert)
             {
-                if(!Directory.GetFiles(Path.GetDirectoryName(pathsOfImagesToConvert[0])).Contains(image))
+                if (!Directory.GetFiles(Path.GetDirectoryName(pathsOfImagesToConvert[0])).Contains(image))
                 {
-                    if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error);  }
+                    if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                     if (Settings.Default.Language.ToLower() == "en") { MessageBox.Show(LanguageManager.EN_CantFindDroppedImagesInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                     return;
                 }
@@ -343,12 +327,17 @@ namespace ImageConverter
 
             finishedConversions = new Dictionary<string, bool>();
 
-            #region Take all the conversion parameters not already assigned to their corresponding variable
-            //takes the selected format
-            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower();
-            //takes the selected quality level
-            qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' '));
-            #endregion
+            // Prepare image conversion parameters
+            ImageConversionParametersModel conversionParameters = new ImageConversionParametersModel()
+            {
+                format = ((FormatComboBox.SelectedItem as Label).Content as string).ToLower(),
+                pathsOfImagesToConvert = pathsOfImagesToConvert,
+                gifRepeatTimes = repGifTimes,
+                colorToReplTheTranspWith = ReplTranspColCB.SelectedIndex,
+                delayTime = Convert.ToInt32((GifFramesDelayOptionsCB.SelectedItem as Label).Content) / 10,
+                qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' ')),
+                compressionAlgo = (FormatComboBox.SelectedItem as Label)?.Content.ToString().ToLower(),
+            };
 
             //adds a dot each 500ms during conversion
             Thread ticker = new Thread(() =>
@@ -366,10 +355,10 @@ namespace ImageConverter
             ticker.Start();
             timer.Start();
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, gifDelayTimeinCs, qualityLevel, compressionAlgo));
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversionAsync(conversionParameters));
 
             timer.Stop();
-            #region counts the unsuccessful conversions
+            #region Counts the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
             int i = 0;
             foreach (var conversion in finishedConversions)
@@ -382,7 +371,7 @@ namespace ImageConverter
             }
             #endregion
             ticker.Abort();
-            #region displays the result(s) of the conversion(s)
+            #region Displays the result(s) of the conversion(s)
             //if there were no errors
             if (unsuccessfulConversions.Count == 0)
             {
@@ -441,8 +430,7 @@ namespace ImageConverter
             Menu.OpenMenu(Menu);
         }
 
-        #region Dropdowns methods
-
+        #region Dropdown menus methods
         /// <summary>
         /// Sets the format to convert the images to
         /// </summary>
@@ -463,18 +451,7 @@ namespace ImageConverter
                 GifOptionsSP.Visibility = Visibility.Collapsed;
                 CompressionAlgoOptionSP.Visibility = Visibility.Collapsed;
             }
-                
-        }
 
-        /// <summary>
-        /// Sets the color to replace the transparency of a png image with, !when the ComboBox closes it means that an element has been selected!
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ReplTranspColCB_DropDownClosed(object sender, EventArgs e)
-        {
-            var selectedColor = ((ComboBox)sender).SelectedIndex;
-            replTranspWithCol = selectedColor;
         }
 
         /// <summary>
@@ -492,24 +469,8 @@ namespace ImageConverter
             }
             repGifTimes = Convert.ToInt32(selectedValue);
         }
-
-        /// <summary>
-        /// Sets the value for the delay between the frames of a gif has been selected, !When the ComboBox closes it means that an element has been selected!
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GifFramesDelayOptionsCB_DropDownClosed(object sender, EventArgs e)
-        {
-            var comboBox = (ComboBox)sender;
-            var delayTimeInt = Convert.ToInt32((comboBox.SelectedItem as Label).Content);
-            gifDelayTimeinCs = delayTimeInt / 10;
-        }
-
-        private void CompressionTypesCB_DropDownClosed(object sender, EventArgs e)
-        {
-            compressionAlgo = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString().ToLower();
-        }
         #endregion
+
 
         /// <summary>
         /// If there are images to convert enable the EmptyImgViewerMenuBttn in the context menu of the ImgViewer
@@ -540,9 +501,9 @@ namespace ImageConverter
             pathsOfImagesToConvert.Clear();
             droppedFilesToConvert.Clear();
             EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
-            foreach(var control in OptionsStackPanel.Children)
+            foreach (var control in OptionsStackPanel.Children)
             {
-                if(((StackPanel)control).Name != "ChooseFormatSP")
+                if (((StackPanel)control).Name != "ChooseFormatSP")
                 {
                     ((StackPanel)control).Visibility = Visibility.Collapsed;
                 }
@@ -591,8 +552,7 @@ namespace ImageConverter
             else if (value < 1) { QualityLevelTextBox.Text = "0%"; }
         }
 
-
-
+        #region Utility methods
         /// <summary>
         /// Finds all labels in a stackpanel
         /// </summary>
@@ -722,5 +682,6 @@ namespace ImageConverter
                 st.Close();
             }
         }
+        #endregion
     }
 }

@@ -9,7 +9,6 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using System.Windows.Navigation;
 
 namespace ImageConverter
 {
@@ -70,35 +69,21 @@ namespace ImageConverter
 
 
         /// <summary>
-        /// Checks wether the given path of the file leads to an image
-        /// </summary>
-        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
-        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
-        public static bool IsImage(string pathOfFile)
-        {
-            string filePath = pathOfFile.ToLower();
-            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
         /// </summary>
-        /// <param name="selectedFormat"> format to which convert the image</param>
-        /// <param name="pathsOfImagesToConvert"> path of the image to convert </param>
-        /// <param name="gifRepeatTimes"> the times the gif shall repeat: infinite(0)-10 </param>
-        /// <param name="colorToReplTheTranspWith"> Color to replace the transparency of a png image with</param>
-        /// <param name="delayTime"> delay between two frames of a gif</param>
+        /// <param name="conversionParameters"> ImageConversionParametersModel containing all the parameters of the conversion</param>
         /// <returns></returns>
-        public static async Task<Dictionary<string, bool>> StartConversionAsync(string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime, int qualityLevel, string compressionAlgo)
+        //string selectedFormat, List<string> pathsOfImagesToConvert, int gifRepeatTimes, int colorToReplTheTranspWith, int delayTime, int qualityLevel, string compressionAlgo
+        public static async Task<Dictionary<string, bool>> StartConversionAsync(ImageConversionParametersModel conversionParameters)
         {
-            chosenFormat = selectedFormat;
-            color = colorToReplTheTranspWith;
-            chosenQuality = qualityLevel;
-            chosenCompressionAlgo = compressionAlgo;
+            chosenFormat = conversionParameters.format;
+            color = conversionParameters.colorToReplTheTranspWith;
+            chosenQuality = conversionParameters.qualityLevel;
+            chosenCompressionAlgo = conversionParameters.compressionAlgo;
+            List<string> pathsOfImagesToConvert = conversionParameters.pathsOfImagesToConvert;
+            string selectedFormat = conversionParameters.format;
+            int gifRepeatTimes = conversionParameters.gifRepeatTimes;
+            int delayTime = conversionParameters.delayTime;
             conversionsResults = new Dictionary<string, bool>();
             compressionResults = new Dictionary<string, bool>();
             compressionsTasks = new List<Task<bool>>();
@@ -694,6 +679,21 @@ namespace ImageConverter
         #endregion
 
         #region Utility methods
+        /// <summary>
+        /// Checks wether the given path of the file leads to an image
+        /// </summary>
+        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
+        /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
+        public static bool IsImage(string pathOfFile)
+        {
+            string filePath = pathOfFile.ToLower();
+            if (filePath.Contains(".jpg") || filePath.Contains(".jpeg") || filePath.Contains(".png") || filePath.Contains(".bmp") || filePath.Contains(".ico") || filePath.Contains(".gif") || filePath.Contains(".cur") || filePath.Contains(".tiff"))
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
         /// </summary>

@@ -120,6 +120,7 @@
       <DependentUpon>RoundBttn.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageConversionHandler.cs" />
+    <Compile Include="ImageConversionParametersModel.cs" />
     <Compile Include="LanguageManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
