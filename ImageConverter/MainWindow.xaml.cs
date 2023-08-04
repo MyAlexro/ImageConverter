@@ -88,6 +88,15 @@ namespace ImageConverter
 
         private void ImgViewer_Drop(object sender, DragEventArgs e)
         {
+            #region resetta il ConversionResultLabel al suo stato iniziale (serve perchè se no dopo aver convertito un'altra immagine rimarrebbe con il testo da conversione finita)
+            ThemeManager.solidColorBrush = new SolidColorBrush();
+            ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
+            ConversionResultLabel.Foreground = ThemeManager.solidColorBrush;
+            if (Settings.Default.Language == "it") ConversionResultLabel.Content = LanguageManager.IT_ConversionResultLabelRunningTxt;
+            if (Settings.Default.Language == "en") ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelRunningTxt;
+            ConversionResultLabel.Visibility = Visibility.Hidden;
+            #endregion
+
             if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
                 droppedImage = e.Data.GetData(DataFormats.FileDrop) as string[]; //prende il file droppato dall'utente
@@ -147,6 +156,11 @@ namespace ImageConverter
                 {
                     ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelFinishedTxt;
                 }
+            }
+            else
+            {
+                ConversionResultLabel.Visibility = Visibility.Hidden;
+                return;
             }
         }
 
