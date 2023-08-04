@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageConverter"
-        xmlns:CustomControls="clr-namespace:ImageConverter" xmlns:CustomControls1="clr-namespace:ImageConverter.CustomControls" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
+        xmlns:CustomControls="clr-namespace:ImageConverter" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
         Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
 
@@ -17,15 +17,15 @@
     </Window.Resources>
 
     <Grid x:Name="MainWindowGrid">
-        <StackPanel x:Name="MainWindowStackPanel">
+        <StackPanel x:Name="MainWindowStackPanel" Orientation="Vertical">
 
             <!-- Top block, Stackpanel containing window name and side menu button -->
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="Auto">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="960">
                 <!--Button to open the Menu-->
                 <CustomControls:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="Auto" Width="Auto" VerticalAlignment="Top" MouseDown="MenuBttn_MouseDown" Margin="16,10,0,0"/>
 
                 <!-- Title of the window-->
-                <TextBlock x:Name="TitleTextBox" Height="64" TextWrapping="Wrap" Margin="286,-6,286,2" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" VerticalAlignment="Bottom">
+                <TextBlock x:Name="TitleTextBox" Height="64" Width="Auto" HorizontalAlignment="Center" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" VerticalAlignment="Bottom">
                     <TextBlock.Effect>
                         <DropShadowEffect Opacity="0.215"/>
                     </TextBlock.Effect>
@@ -70,7 +70,7 @@
                         <!-- Format to convert images to stackpanel-->
                         <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,0">
                             <!--Label that says to choose a format-->
-                            <Label x:Name="ChooseFormatLabel" Content="Choose the format &#xA;to convert the images to:" FontFamily="Segoa UI" FontSize="14" Background="{x:Null}" Foreground="Black" Height="50" VerticalAlignment="Top"/>
+                            <Label x:Name="ChooseFormatLabel" Content="Choose the format &#xA;to convert the images to:" FontFamily="Segoa UI" FontSize="14" Height="50" VerticalAlignment="Top"/>
                             <!-- ComboBox to choose the format to which convert the image-->
                             <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="85" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True" DropDownClosed="FormatComboBox_DropDownClosed">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="PNG"/>
@@ -133,7 +133,7 @@
                             <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
                                 <Label Content="Quality:"/>
                                 <Border>
-                                    <TextBlock Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBox x:Name="QualityLevelTextBox" Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" TextChanged="QualityLevelTextBox_TextChanged"/>
                                 </Border>
                             </StackPanel>
 

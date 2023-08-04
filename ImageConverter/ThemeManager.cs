@@ -22,8 +22,11 @@ namespace ImageConverter
         static Color violetThemeColor = Color.FromArgb(255, 238, 130, 238);
         static Color violetThemeHoveringColor = Color.FromArgb(255, 207, 107, 207);
 
-        static Color whiteThemeColor = Color.FromArgb(255, 200, 200, 200);
+        static Color whiteThemeColor = Color.FromArgb(255, 200, 200, 200); 
         static Color whiteThemeHoveringColor = Color.FromArgb(255, 175, 175, 175);
+
+        //Color for labels and textblocks when the WHITE theme is selected
+        static Color blackColor = Colors.Black;
 
 
         //colors of the label, in MainWindow, which tells if the conversion is ongoing, ended successfully or ended with errors 
@@ -33,7 +36,11 @@ namespace ImageConverter
 
         public static SolidColorBrush solidColorBrush;
 
-
+        /// <summary>
+        /// Return the current theme mode as a SolidColorBrush.
+        /// <para> Returns a SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </para>
+        /// </summary>
+        /// <returns> SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </returns>
         public static SolidColorBrush SelectedThemeMode() //THEME OF THE APPLICATION (LIGHT,DARK)
         {
             solidColorBrush = new SolidColorBrush();
@@ -51,6 +58,12 @@ namespace ImageConverter
             return solidColorBrush;
         }
 
+        /// <summary>
+        /// Returns the current theme mode color as a SolidColorBrush
+        /// <para>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</para>
+        /// <para>Colors: DEFAULT, RED, GREEN, VIOLET, WHITE</para>
+        /// </summary>
+        /// <returns>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</returns>
         public static SolidColorBrush SelectedThemeColor()
         {
             solidColorBrush = new SolidColorBrush();
@@ -71,13 +84,18 @@ namespace ImageConverter
             {
                 solidColorBrush.Color = violetThemeColor;
             }
-            else if (Settings.Default.ThemeColor == "WhiteThemeColor") //if the Theme is dark the theme color will be white
+            else if (Settings.Default.ThemeColor == "WhiteThemeColor") //reminder: if the Theme is dark the theme color of the labels and textblocks will be white
             {
                 solidColorBrush.Color = whiteThemeColor;
             }
             return solidColorBrush;
-        } //COLORS OF THE FONT: DEFAULT, RED, GREEN, VIOLET, WHITE(for the dark theme)
+        }
 
+        /// <summary>
+        /// Returns the color that controls should be when the mouse is hovering them
+        /// <para>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</para>
+        /// </summary>
+        /// <returns>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</returns>
         public static SolidColorBrush SelectedThemeHoveringColor()
         {
             solidColorBrush = new SolidColorBrush();
@@ -103,6 +121,6 @@ namespace ImageConverter
                 solidColorBrush.Color = whiteThemeHoveringColor;
             }
             return solidColorBrush;
-        }//COLORs OF THE FONT WHEN THE MOUSE IS OVER IT
+        }
     }
 }
