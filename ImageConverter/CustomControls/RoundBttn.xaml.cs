@@ -32,7 +32,7 @@ namespace ImageConverter
         public RoundBttn()
         {
             InitializeComponent();
-            BttnBackground.Fill = ThemeManager.SelectedThemeColor();
+            BttnBackground.Fill = ThemeManager.SolidColorBrushOfSelectedThemeColor();
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
@@ -42,7 +42,7 @@ namespace ImageConverter
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e) //otherwise set the normal colour
         {
-            BttnBackground.Fill = ThemeManager.SelectedThemeColor();
+            BttnBackground.Fill = ThemeManager.SolidColorBrushOfSelectedThemeColor();
         }
     }
 }

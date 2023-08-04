@@ -44,15 +44,15 @@ namespace ImageConverter
             InitializeComponent();
 
             #region Apply theme mode and color
-            MenuSP.Background = ThemeManager.SelectedThemeMode();
-            SettingsLabel.Foreground = ThemeManager.SelectedThemeColor();
+            MenuSP.Background = ThemeManager.SolidColorBrushOfSelectedThemeMode();
+            SettingsLabel.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
             labels = FindLabels(MenuSP);
             //If the selected ThemeMode is DArkTheme the ThemeColor will be applied to the text of all the labels and textblocks
             if (Settings.Default.ThemeMode == "DarkTheme")
             {
                 foreach (Label label in FindLabels(MenuSP))
                 {
-                    label.Foreground = ThemeManager.SelectedThemeColor();
+                    label.Foreground = ThemeManager.SolidColorBrushOfSelectedThemeColor();
                 }
             }
             #endregion

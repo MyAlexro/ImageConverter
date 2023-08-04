@@ -1,10 +1,15 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.Windows.Media;
 using ImageConverter.Properties;
 
 namespace ImageConverter
 {
     class ThemeManager
     {
+        public static readonly List<string> ThemeColors = new List<string>() { "DefaultThemeColor", "GreenThemeColor", "RedThemeColor", "VioletThemeColor", "WhiteThemeColor" };
+        public static readonly List<string> ThemeModes = new List<string>() { "LightTheme", "DarkTheme" };
+
+
         //Background theme mode
         static Color LightTheme = Color.FromArgb(255, 255, 255, 255);
         static Color DarkTheme = Color.FromArgb(255, 37, 37, 38);
@@ -41,7 +46,7 @@ namespace ImageConverter
         /// <para> Returns a SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </para>
         /// </summary>
         /// <returns> SolidColorBrush, its color is white if the theme mode is LightTheme, or the ThemeManager.DarkTheme color if the selected theme mode is "DarkTheme" </returns>
-        public static SolidColorBrush SelectedThemeMode() //THEME OF THE APPLICATION (LIGHT,DARK)
+        public static SolidColorBrush SolidColorBrushOfSelectedThemeMode() //THEME OF THE APPLICATION (LIGHT,DARK)
         {
             solidColorBrush = new SolidColorBrush();
 
@@ -65,7 +70,7 @@ namespace ImageConverter
         /// <para>Reminder: Only if the ThemeMode is DarkTheme, the ThemeColor will be applied to the text of labels and textblocks</para>
         /// </summary>
         /// <returns>Returns a SolidColorBrush with the corresponding color, depending on the selected theme color</returns>
-        public static SolidColorBrush SelectedThemeColor()
+        public static SolidColorBrush SolidColorBrushOfSelectedThemeColor()
         {
             solidColorBrush = new SolidColorBrush();
 

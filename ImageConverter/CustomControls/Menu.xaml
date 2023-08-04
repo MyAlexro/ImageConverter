@@ -73,8 +73,8 @@
         <StackPanel Orientation="Horizontal">
             <Label x:Name="LanguageOptionLabel" Style="{StaticResource LabelStyle}" Content="Language:" VerticalAlignment="Center" HorizontalAlignment="Left" />
             <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="46" DropDownClosed="LanguageComboBox_DropDownClosed">
-                <Label x:Name="ItOption" Background="{x:Null}">It</Label>
-                <Label x:Name="EnOption" Background="{x:Null}">En</Label>
+                <Label x:Name="ItOption" >It</Label>
+                <Label x:Name="EnOption" >En</Label>
             </ComboBox>
         </StackPanel>
 
