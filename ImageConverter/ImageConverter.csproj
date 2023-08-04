@@ -64,10 +64,10 @@
     <ApplicationIcon>Resources\ImageConverterIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>9D6D4A319074458C1100C985E67EBE7E7C090956</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>936B71808D7F20D80730799B4A237E6D7692A27A</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ImageConverter_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ImageConverter_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -162,6 +162,7 @@
     <None Include="Docs\What%27s In A GIF - Animation and Transparency.pdf" />
     <None Include="Docs\What%27s In A GIF - Bits and Bytes.pdf" />
     <None Include="Docs\What%27s In A GIF - LZW Image Data.pdf" />
+    <None Include="ImageConverter_1_TemporaryKey.pfx" />
     <None Include="ImageConverter_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

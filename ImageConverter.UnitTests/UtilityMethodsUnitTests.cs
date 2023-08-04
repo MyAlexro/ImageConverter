@@ -11,8 +11,8 @@ namespace ImageConverter.UnitTests
         public void IsImage_FileIsNOTAnImage_ReturnsFalse()
         {
             string pathOfFile = @"C:\RandomFile.txt";
-
-            bool result = UtilityMethods.IsOrContainsImage(pathOfFile);
+          
+            bool result = UtilityMethods.IsValidImage(pathOfFile);
 
             Assert.IsFalse(result);
         }
@@ -25,7 +25,7 @@ namespace ImageConverter.UnitTests
 
             for(int i = 0; i <= 2;  i++)
             {
-                results[i] = UtilityMethods.IsOrContainsImage(pathsOfFiles[i]);
+                results[i] = UtilityMethods.IsValidImage(pathsOfFiles[i]);
             }
             foreach(var result in results)
             {

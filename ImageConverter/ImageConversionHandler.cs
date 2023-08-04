@@ -652,6 +652,23 @@ namespace ImageConverter
                 return (false, null);
             }
 
+            //PNG images in an ico/cur file must be in 32bpp ARGB format.
+            if (originalImgToConvExt == ".png")
+            {
+                using (Stream st = File.OpenRead(pathOfImageToConvert))
+                {
+                    Bitmap origPng = new Bitmap(pathOfImageToConvert);
+                    if (origPng.PixelFormat != PixelFormat.Format32bppArgb)
+                    {
+                        var pathOf32bppPng = $@"{Settings.Default.TempFolderPath}\{Path.GetFileName(pathOfImageToConvert)}";
+                        origPng.Clone(new Rectangle(0, 0, origPng.Width, origPng.Height), PixelFormat.Format32bppArgb).Save(pathOf32bppPng);
+                        pathOfImageToConvert = pathOf32bppPng;
+                        st.Close();
+                    }
+                    origPng.Dispose();
+                }
+            }
+
             //Resize the image to the specified sizes
             List<string> resizedImagesToConvert = new List<string>();
             foreach (var size in iconSizes)
@@ -698,8 +715,8 @@ namespace ImageConverter
             });
             var memStream = new MemoryStream();
             var binWriter = new BinaryWriter(memStream);
-            int[] imagesDataSizeStartPositions = new int[resizedImagesToConvert.Count];
-            int[] OffsetsFromStartPositions = new int[resizedImagesToConvert.Count];
+            int[] imageDataSizePositions = new int[resizedImagesToConvert.Count];
+            int[] imageDataOffsetPositions = new int[resizedImagesToConvert.Count];
             string convertedImagePath;
             #endregion
 
@@ -742,10 +759,10 @@ namespace ImageConverter
                 else
                     binWriter.Write((short)1); //Offset #6: Vertical coordinates of the hotspot in number of pixels from the left
 
-                imagesDataSizeStartPositions[index] = (int)memStream.Position;
+                imageDataSizePositions[index] = (int)memStream.Position;
                 binWriter.Write((int)0); //Offset #8: Size of the image's data in bytes, write some placeholders 0s because the actual value will be written later on
 
-                OffsetsFromStartPositions[index] = (int)memStream.Position;
+                imageDataOffsetPositions[index] = (int)memStream.Position;
                 binWriter.Write((int)0); //Offset #12: Offset of BMP or PNG data from the beginning of the ICO/CUR file, write some placeholders 0s...
 
                 index++;
@@ -763,7 +780,7 @@ namespace ImageConverter
                     //Get position of the image's data start
                     var imageDataStart = (int)memStream.Position;
                     //Write the position of the image's data start to offset #12 in the ICONDIRENTRY of the current image
-                    memStream.Position = OffsetsFromStartPositions[index];
+                    memStream.Position = imageDataOffsetPositions[index];
                     binWriter.Write(imageDataStart);
 
                     //If the user has chosen to replace the png transparency
@@ -782,27 +799,63 @@ namespace ImageConverter
                         binWriter.Write(pngData);
                     }
                     //Write image data size to the Offset #8 in the ICONDIRENTRY of the current image
-                    memStream.Position = imagesDataSizeStartPositions[index];
+                    memStream.Position = imageDataSizePositions[index];
                     binWriter.Write(pngData.Length);
                 }
-                else if (originalImgFormat == "bmp") //if the image to convert is a bmp then the BITMAPFILEHEADER block has to be removed
+                else if (originalImgFormat == "bmp")
                 {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
                     //Get position of the image's data start
                     var imageDataStart = (int)memStream.Position;
                     //Write the position of the image's data start to offset #12 in the ICONDIRENTRY of the current image
-                    memStream.Position = OffsetsFromStartPositions[index];
+                    memStream.Position = imageDataOffsetPositions[index];
                     binWriter.Write(imageDataStart);
+
+                    //Get bitmap data
+                    List<byte> bmpBytesList = File.ReadAllBytes(resizedImagesToConvert[index]).ToList();
+
+                    //Get bitmap bpp (2 bytes at offset 28), if it's less than 32bpp it needs the AND mask. This only works for bitmaps with a BITMAPINFOHEADER type DIB header
+                    //since the offsets would be different in other types.
+                    short bpp = BitConverter.ToInt16(bmpBytesList.GetRange(28, 2).ToArray(), 0);
+                    int bitmapHeight = BitConverter.ToInt32(bmpBytesList.GetRange(22, 4).ToArray(), 0);
+                    int bitmapWidth = BitConverter.ToInt32(bmpBytesList.GetRange(18, 4).ToArray(), 0);
+                    if (bpp < 32)
+                    {
+                        //Generate AND mask for the bitmap(all 0s). It's 1 bit per pixel, so height*width/8 to get total bytes and add padding bytes...
+                        //...if necessary(each row must be a multiple of 4 bytes)                        
+                        IEnumerable<byte> andMask;
+                        if ((bitmapWidth * bitmapHeight / 8 / bitmapHeight) % 4 == 0) //if each row is a multiple of 4 bytes     
+                            andMask = Enumerable.Repeat((byte)0, bitmapHeight * bitmapWidth / 8);
+                        else
+                            andMask = Enumerable.Repeat((byte)0, bitmapHeight * bitmapWidth / 8 + (bitmapWidth * bitmapHeight / 8 / bitmapHeight % 4) * bitmapHeight);
+
+                        bmpBytesList.AddRange(andMask);
+                    }
+
                     //Remove file header from the BMP image, which occupies the first 14 bytes of the file
-                    byte[] bmpBytes = File.ReadAllBytes(resizedImagesToConvert[index]);
-                    List<byte> bmpBytesList = bmpBytes.ToList();
                     bmpBytesList.RemoveRange(0, 14);
-                    //Write image data to the position of the image's data start
-                    bmpBytes = bmpBytesList.ToArray();
+
+                    //Write bitmap data
                     memStream.Position = imageDataStart;
-                    binWriter.Write(bmpBytes);
-                    //Write image data size to the offset #8 in the ICONDIRENTRY of the current image
-                    memStream.Position = imagesDataSizeStartPositions[index];
-                    binWriter.Write(bmpBytes.Length);
+                    binWriter.Write(bmpBytesList.ToArray());
+
+                    //Change height(4 bytes at offset 22-14 bytes of the removed bm file header) in the BITMAPINFOHEADER to double its value to account for the AND mask
+                    //Even if the AND mask is not supplied, the BMP header must still specify a doubled height
+                    memStream.Position = imageDataStart + 22 - 14;
+                    binWriter.Write((int)bitmapHeight * 2);
+
+                    if (bpp < 32)
+                    {
+                        //Change the biSizeImage(4 bytes at offset 34-14) in the BITMAPINFOHEADER taking into account the new AND mask
+                        memStream.Position = imageDataStart + 34 - 14;
+                        binWriter.Write(bmpBytesList.Count);
+                    }
+
+                    //Write image data size to the offset #8 in the ICONDIRENTRY of the current image.
+                    memStream.Position = imageDataSizePositions[index];
+                    binWriter.Write(bmpBytesList.Count);
+                    sw.Stop();
                 }
 
                 //Bring memorystream cursor to end
@@ -926,6 +979,7 @@ namespace ImageConverter
 
             return (conversionResult, convertedImagePath);
         }
+
         #endregion
 
         /// <summary>
@@ -985,6 +1039,7 @@ namespace ImageConverter
         private string ReplaceTransparency(Image img, string saveDirectory)
         {
             Bitmap imgWithTranspReplaced = new Bitmap(img.Width, img.Height);
+            imgWithTranspReplaced.SetResolution(img.HorizontalResolution, img.VerticalResolution);
             Graphics g = Graphics.FromImage(imgWithTranspReplaced);
 
             //replace transparency with white
@@ -1020,16 +1075,25 @@ namespace ImageConverter
             Bitmap imgToResize;
             using (Stream st = File.OpenRead(pathOfImgToResize))
             {
+                //32bppARGB bitmaps without the header BITMAPINFOHEADERV5 get loaded as 32bppRgb so the transparency gets lost.
+                //Possible fix: use GDI+ with gdi32(See docs.txt)
                 imgToResize = new Bitmap(st);
                 st.Close();
             }
+
             var imgToResizeFormat = Path.GetExtension(pathOfImgToResize).Trim('.');
             //Get imgToResize format as ImageFormat type
             ImageFormatConverter typeConverter = new ImageFormatConverter();
             ImageFormat imgFormat = (ImageFormat)typeConverter.ConvertFromString(imgToResizeFormat);
 
             var destRect = new Rectangle(0, 0, width, height);
-            var resizedImg = new Bitmap(width, height, imgToResize.PixelFormat);
+            PixelFormat pxFormat;
+            if (imgToResize.PixelFormat.ToString().ToLower().Contains("indexed"))
+                pxFormat = PixelFormat.Format32bppArgb; //GDI+ doesn't support drawing to indexed images, so override the image's pixel format
+            else
+                pxFormat = imgToResize.PixelFormat;
+
+            var resizedImg = new Bitmap(width, height, pxFormat);
 
             resizedImg.SetResolution(imgToResize.HorizontalResolution, imgToResize.VerticalResolution);
             using (var graphics = Graphics.FromImage(resizedImg))

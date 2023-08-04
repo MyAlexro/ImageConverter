@@ -263,7 +263,7 @@ namespace ImageConverter
                 //Get files the user is trying to convert
                 string[] droppingFiles = e.Data.GetData(DataFormats.FileDrop) as string[];
                 //If the droopping files aren't images
-                if (UtilityMethods.IsOrContainsImage(droppingFiles) == false)
+                if (UtilityMethods.IsOrContainsImages(droppingFiles) == false)
                 {
                     if (Settings.Default.Language == "it") { WarningTextBlock.Text = LanguageManager.IT_WarningUnsupportedFile; }
                     else if (Settings.Default.Language == "en") { WarningTextBlock.Text = LanguageManager.EN_WarningUnsupportedFile; }
@@ -278,9 +278,10 @@ namespace ImageConverter
                         //if the file is a folder check the files inside it
                         if (File.GetAttributes(file) == FileAttributes.Directory)
                         {
-                            foreach (var fileInFolder in Directory.GetFiles(file))
+                            var folder = new DirectoryInfo(file).GetFiles("*", SearchOption.AllDirectories);
+                            foreach (var fileInFolder in folder)
                             {
-                                if (local_pathsOfImagesToConvert.Contains(fileInFolder))
+                                if (local_pathsOfImagesToConvert.Contains(fileInFolder.FullName))
                                 {
                                     if (Settings.Default.Language == "it") { WarningTextBlock.Text = LanguageManager.IT_SomeImagesAreAlreadyPresent; }
                                     else if (Settings.Default.Language == "en") { WarningTextBlock.Text = LanguageManager.EN_SomeImagesAreAlreadyPresent; }
@@ -322,15 +323,15 @@ namespace ImageConverter
                     return;
                 }
 
-                List<string> droppedFilesToConvert = new List<string>(); //Paths of the dropped files on the ImgViewer
+                List<string> droppedFiles = new List<string>(); //Paths of the dropped files on the ImgViewer
 
                 //Gets the dropped files and folders
                 foreach (var file in e.Data.GetData(DataFormats.FileDrop) as string[])
                 {
-                    droppedFilesToConvert.Add(file);
+                    droppedFiles.Add(file);
                 }
                 //Gets all the images and the ones in the folders (because the warning label is hidden, the dropped files must be images)
-                local_pathsOfImagesToConvert = GetImagesToConvertAndPrepareGUI(droppedFilesToConvert);
+                local_pathsOfImagesToConvert = GetImagesToConvertAndPrepareGUI(droppedFiles);
                 LoadPreviewImage(local_pathsOfImagesToConvert);
 
                 //Set default savePath as the parent folder of the first image
@@ -619,6 +620,7 @@ namespace ImageConverter
         }
         #endregion
 
+
         private async void StartConversionBttn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //If a format hasn't been selected prompt user to select one and don't convert
@@ -631,10 +633,10 @@ namespace ImageConverter
 
                 return;
             }
-            //If one or more images aren't in their original folder anymore don't convert
+            //If one or more images don't exist anymore(moved or deleted), don't convert
             foreach (var image in local_pathsOfImagesToConvert)
-            {
-                if (!Directory.GetFiles(Path.GetDirectoryName(local_pathsOfImagesToConvert[0])).Contains(image))
+            {   
+                if (File.Exists(image) == false)
                 {
                     if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindImagesToConvertInOriginalFolder, "Errore", MessageBoxButton.OK, MessageBoxImage.Error); }
                     if (Settings.Default.Language.ToLower() == "en") { MessageBox.Show(LanguageManager.EN_CantFindImagesToConvertInOriginalFolder, "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -657,6 +659,7 @@ namespace ImageConverter
                 {
                     if (Settings.Default.Language == "it") { MessageBox.Show(LanguageManager.IT_SelectOneIconSize, "Errore", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
                     if (Settings.Default.Language == "en") { MessageBox.Show(LanguageManager.EN_SelectOneIconSize, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
+                    return;
                 }
             }
 
@@ -854,10 +857,10 @@ namespace ImageConverter
                 //If the file is a folder add the images inside it
                 if (attr.HasFlag(FileAttributes.Directory))
                 {
-                    var folder = filePath;
-                    foreach (var image in Directory.GetFiles(folder))
+                    var folder = new DirectoryInfo(filePath).GetFiles("*", SearchOption.AllDirectories);
+                    foreach (var image in folder)
                     {
-                        newPathsOfImagesToConvert.Add(image);
+                        newPathsOfImagesToConvert.Add(image.FullName);
                     }
                 }
                 //Add the image

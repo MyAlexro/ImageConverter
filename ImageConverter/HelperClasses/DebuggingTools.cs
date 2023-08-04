@@ -9,7 +9,7 @@ namespace ImageConverter.HelperClasses
     /// </summary>
     public class DebuggingTools
     {
-        private int i = 1;
+        private static int i = 1;
         /// <summary>
         /// Dump the content of a MemoryStream in a txt file to to the specified directory, otherwise on the desktop if 
         /// <br>the directoryPath parameter is not specified</br>
@@ -18,7 +18,7 @@ namespace ImageConverter.HelperClasses
         /// <br>String. "Success" if everything went correctly, "Error" and information about the error</br>
         /// </summary>
         /// <param name="memStream"></param>
-        public string DumpMemoryStream(MemoryStream memStream, string directoryPath = "")
+        public static string DumpMemoryStream(MemoryStream memStream, string directoryPath = "")
         {
             //If the user hasn't specified 
             if(directoryPath == "")
@@ -59,7 +59,7 @@ namespace ImageConverter.HelperClasses
         /// </summary>
         /// <param name="pathOfFile"></param>
         /// <returns></returns>
-        public string GetFileBytesLength(string pathOfFile)
+        public static string GetFileBytesLength(string pathOfFile)
         {
             try
             {

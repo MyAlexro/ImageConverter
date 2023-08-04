@@ -12,7 +12,7 @@ namespace ImageConverter.HelperClasses
         /// </summary>
         /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
         /// <returns type="bool" name="IsImage"> true if the file is an image, otherwise false</returns>
-        public static bool IsOrContainsImage(string pathOfFile)
+        public static bool IsValidImage(string pathOfFile)
         {
             string filePath = pathOfFile.ToLower();
             foreach (var format in ConversionParamsModel.availableFormats)
@@ -24,42 +24,25 @@ namespace ImageConverter.HelperClasses
         }
 
         /// <summary>
-        /// Checks wether the given paths of the files are images or are folders containing images
+        /// Checks wether the given file(s) are images. If a path points to a folder, the files in its sub-folders will be checked too.
         /// </summary>
-        /// <param type="string" name="pathOfFile"> path of the file that needs to be checked </param>
-        /// <returns type="bool" name="IsImage"> True if any of the files is an image or is a folder containing an image, else returns False</returns>
-        public static bool IsOrContainsImage(string[] pathOfFiles)
+        /// <param name="paths">Array of string which should point to a file or a folder</param>
+        /// <returns></returns>
+        public static bool IsOrContainsImages(string[] paths)
         {
-            //If the dropped folder contains images
-            bool fileisValidDirectory = false;
-
-            foreach (var file in pathOfFiles)
+            foreach (var path in paths)
             {
-                //Check if the file is a folder and check if it contains any image, if yes then the files are ok to convert
-                if (File.GetAttributes(file) == FileAttributes.Directory)
+                if (File.GetAttributes(path) == FileAttributes.Directory)
                 {
-                    string[] filesInDir = Directory.GetFiles(file);
-                    foreach (var fileInDir in filesInDir)
+                    var filesInDir = new DirectoryInfo(path).GetFiles("*", SearchOption.AllDirectories);
+                    foreach (var file in filesInDir)
                     {
-                        if (IsOrContainsImage(fileInDir))
-                        {
-                            fileisValidDirectory = true;
-                        }
-                        else
-                        {
-                            fileisValidDirectory = false;
+                        if (IsValidImage(file.FullName) == false)
                             return false;
-                        }
                     }
                 }
-                //If it's not a folder or it doesn't contain any images
-                else { fileisValidDirectory = false; }
-
-                //If the file isn't an image
-                if (IsOrContainsImage(file) == false && !fileisValidDirectory)
-                {
+                else if (IsValidImage(path) == false)
                     return false;
-                }
             }
             return true;
         }
