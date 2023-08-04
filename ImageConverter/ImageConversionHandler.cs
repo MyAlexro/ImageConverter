@@ -51,8 +51,7 @@ namespace ImageConverter
             }
             if (format == "ico") //se il formato in cui convertire l'immagine è ico. L'ho messo separato dagli altri formati perchè non ci sono Encoder con MimeType ico
             {
-                Bitmap imageToIco = new Bitmap(imageToConvert);
-                imageToIco.Save($"{directoryOfImageToConvert}\\{imageName}.{format}", System.Drawing.Imaging.ImageFormat.Icon);
+                imageToConvert.Save($"{directoryOfImageToConvert}\\{imageName}.{format}", System.Drawing.Imaging.ImageFormat.Icon);
             }
             else //se è un qualsiasi altro formato
             {
@@ -69,7 +68,6 @@ namespace ImageConverter
 
             if (File.Exists($"{directoryOfImageToConvert}\\{imageName}.{format}")) //se la conversione è riuscita e quindi c'è l'immagine convertita
             {
-                Thread.Sleep(3000);
                 return true;
             }
             else

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImageConverter"
         xmlns:CustomControls="clr-namespace:ImageConverter" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
-        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" Icon="pack://application:,,,/Resources/ImageConverterIcon.png">
+        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" Icon="pack://application:,,,/Resources/ImageConverterWindowIcon.png">
 
     <Grid x:Name="MainWindowGrid">
 
@@ -49,7 +49,7 @@
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>
 
         <!--Menu-->
-        <local:Menu x:Name="Menu" HorizontalAlignment="Left" Height="511" VerticalAlignment="Top" Width="261" Margin="-269,0,0,0">
+        <local:Menu x:Name="Menu" Height="511" Width="255" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-260,0,0,0" >
             <local:Menu.Effect>
                 <DropShadowEffect BlurRadius="10" Opacity="0.75" RenderingBias="Quality"/>
             </local:Menu.Effect>
