@@ -69,7 +69,7 @@
         <!-- Language stackpanel-->
         <StackPanel Orientation="Horizontal">
             <Label x:Name="LanguageOptionLabel" FontFamily="Segoa UI" FontSize="17" Content="Lingua:" VerticalAlignment="Center" HorizontalAlignment="Left" />
-            <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" DropDownClosed="LanguageComboBox_DropDownClosed">
+            <ComboBox x:Name="LanguageComboBox" Margin="0,15,0,15" IsReadOnly="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="46" DropDownClosed="LanguageComboBox_DropDownClosed">
                 <Label x:Name="ItOption" Background="{x:Null}">It</Label>
                 <Label x:Name="EnOption" Background="{x:Null}">En</Label>
             </ComboBox>

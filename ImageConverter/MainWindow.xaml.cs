@@ -86,7 +86,7 @@ namespace ImageConverter
                     WarningLabel.Visibility = Visibility.Visible;
                     break;
                 }
-            } 
+            }
         }
 
         private void ImgViewer_DragLeave(object sender, DragEventArgs e)
@@ -102,6 +102,7 @@ namespace ImageConverter
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             ConversionResultTextBlock.Visibility = Visibility.Hidden;
             ImagesNameLabel.Text = string.Empty;
+            GifLoopOptionCB.Visibility = Visibility.Hidden;
             #endregion
 
             droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -136,6 +137,7 @@ namespace ImageConverter
                     st.Close();
                 } //loads image to show from a stream and shows it, if the image was used directly it would've 
                                                                              //remained in use even after emptying the ImgViewer and so couldn't be deleted
+
                 WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
@@ -251,9 +253,17 @@ namespace ImageConverter
             }
         }
 
+        private void ImageViewerContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            if (ImgViewer.Source.ToString() != "pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg" && ImgViewer.Source.ToString() != "pack://application:,,,/Resources/ImageConverterDragAndDropEN.png")
+            {
+                EmptyImgViewerCntxtMenuBttn.IsEnabled = true;
+            }
+        }
+
         private void EmptyImgViewerCntxtMenuBttn_Click(object sender, RoutedEventArgs e)
         {
-            ImgViewer.ClearValue(Image.SourceProperty);
+            ImgViewer.Source = null;
             if (Settings.Default.Language == "it") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg")); }
             else if (Settings.Default.Language == "en") { ImgViewer.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/ImageConverterDragAndDropEN.png")); }
             stringToImgSrcConverter = null;
@@ -264,6 +274,7 @@ namespace ImageConverter
             stringToImgSrcConverter = null;
             pathsOfImagesToConvert = null;
             imgSourceConverter = null;
+            EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
         }
     }
 }

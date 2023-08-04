@@ -50,7 +50,7 @@ namespace ImageConverter
          EN_CantConvertImageToSameFormat = "You can't convert an image to another image with the same format",
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_GifLoopOptionCheckBoxText = "Gif in loop",
-         EN_EmpyBttnCntxtMenu = "Empty Image viewer",
+         EN_EmpyBttnCntxtMenu = "Empty",
          EN_ApplyLanguageMsgBox = "To apply the language the application needs to be restarted, restart it now?",
          EN_LanguageLabelTxt = "Language:";
     }

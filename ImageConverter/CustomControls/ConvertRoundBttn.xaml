@@ -10,7 +10,7 @@
         <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
             <Rectangle x:Name="BttnBackground" Fill="#FFDAA619" Width="104" Height="23" RadiusY="3.667" RadiusX="3.667">
             </Rectangle>
-            <Label Content="Converti immagine" FontFamily="Segoa UI" x:Name="ConvertLabel"/>
+            <Label Content="Converti immagine" FontFamily="Segoa UI" x:Name="ConvertLabel" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Viewbox>
 

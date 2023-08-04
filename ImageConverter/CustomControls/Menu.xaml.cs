@@ -201,6 +201,10 @@ namespace ImageConverter
         private void LanguageComboBox_DropDownClosed(object sender, EventArgs e)
         {
             var previousLanguage = Settings.Default.Language;
+            if((LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower() == previousLanguage) //if the user closes the dropdown menu without changing option
+            {
+                return;
+            }
             Settings.Default.Language = (LanguageComboBox.SelectedItem as Label).Content.ToString().ToLower();
             Settings.Default.Save();
             Settings.Default.Reload();

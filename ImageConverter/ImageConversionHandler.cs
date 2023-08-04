@@ -1,4 +1,8 @@
-﻿using ImageConverter.Properties;
+﻿/*
+ * doc for gif conversion: http://giflib.sourceforge.net/whatsinagif/index.html
+ */
+
+using ImageConverter.Properties;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -20,7 +24,6 @@ namespace ImageConverter
         private static BmpBitmapEncoder bmpEncoder;
         private static GifBitmapEncoder gifEncoder;
 
-        private static Uri imageUri; //uri of the image to convert
         private static string imageName; //name of the image to convert
         private static string directoryOfImageToConvert; //directory of the image to convert
 
@@ -95,10 +98,18 @@ namespace ImageConverter
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(pathOfImage);
             directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
-            imageUri = new Uri(pathOfImage);
             pngEncoder = new PngBitmapEncoder();
             #endregion
-            pngEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+            using (Stream st = File.OpenRead(pathOfImage))
+            {
+                var imageToConv = new BitmapImage();
+                imageToConv.BeginInit();
+                imageToConv.StreamSource = st;
+                imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                imageToConv.EndInit();
+                pngEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                st.Close();
+            }//loads image to convert from a stream and converts it
 
             #region saves the image and checks whether it was save correctly
             using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.png"))
@@ -122,10 +133,18 @@ namespace ImageConverter
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(pathOfImage);
             directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
-            imageUri = new Uri(pathOfImage);
             jpegOrJpgEncoder = new JpegBitmapEncoder();
             #endregion
-            jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+            using (Stream st = File.OpenRead(pathOfImage))
+            {
+                var imageToConv = new BitmapImage();
+                imageToConv.BeginInit();
+                imageToConv.StreamSource = st;
+                imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                imageToConv.EndInit();
+                jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                st.Close();
+            }//loads image to convert from a stream and converts it
 
             #region Saves image based on format(jpeg or jpg) and checks wether it was saved correctly
             if (format == "jpeg")
@@ -160,10 +179,18 @@ namespace ImageConverter
             #region  set up image infos to convert etc.
             imageName = Path.GetFileNameWithoutExtension(pathOfImage);
             directoryOfImageToConvert = Path.GetDirectoryName(pathOfImage);
-            imageUri = new Uri(pathOfImage);
             bmpEncoder = new BmpBitmapEncoder();
             #endregion
-            bmpEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+            using (Stream st = File.OpenRead(pathOfImage))
+            {
+                var imageToConv = new BitmapImage();
+                imageToConv.BeginInit();
+                imageToConv.StreamSource = st;
+                imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                imageToConv.EndInit();
+                bmpEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                st.Close();
+            }//loads image to convert from a stream and converts it
 
             #region saves bmp image and checkes whether it was saved correctly
             using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.bmp"))
@@ -194,8 +221,16 @@ namespace ImageConverter
             {
                 foreach (var image in imagesPaths)
                 {
-                    imageUri = new Uri(image);
-                    gifEncoder.Frames.Add(BitmapFrame.Create(imageUri));
+                    using (Stream st = File.OpenRead(image))
+                    {
+                        var imageToConv = new BitmapImage();
+                        imageToConv.BeginInit();
+                        imageToConv.StreamSource = st;
+                        imageToConv.CacheOption = BitmapCacheOption.OnLoad;
+                        imageToConv.EndInit();
+                        gifEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                        st.Close();
+                    }//loads image to convert from a stream and converts it
                 }
                 if (inLoop == true)
                 {
@@ -203,7 +238,7 @@ namespace ImageConverter
                     {
                         gifEncoder.Save(ms);
                         var fileBytes = ms.ToArray();
-                        // This is the NETSCAPE2.0 Application Extension.
+                        // This is the NETSCAPE2.0 Application Extension to loop the gif.
                         var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
                         var newBytes = new List<byte>();
                         newBytes.AddRange(fileBytes.Take(13));
