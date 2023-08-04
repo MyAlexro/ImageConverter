@@ -1,10 +1,13 @@
 ﻿
+using System;
+using System.Collections.Generic;
+
 namespace ImageConverter
 {
     public class LanguageManager
     {
         public static readonly string[] languages = new string[2] { "it", "en" };
-
+        
         //Italian
         public static readonly string
          IT_SettingsLabelTxt = "Impostazioni",
@@ -13,7 +16,7 @@ namespace ImageConverter
          IT_ApplyThemeMsgBox = "Per applicare il tema bisogna riavviare l'applicazione, riavviarla adesso?",
          IT_ApplyFontColorMsgBox = "Per applicare il colore del font bisogna riavviare l'applicazione, riavviarla adesso?",
          IT_CreditsLabelTxt = "Creatore: Alessandro Dinardo(MyAlexro)",
-         IT_ConvertLabelTxt = "Converti immagine",
+         IT_StartConversionLabelTxt = "Converti immagine",
          IT_ChooseFormatLabelTxt = "Scegliere il formato in cui \nconvertire l'immagine:",
          IT_WarningLabelTxt = "⚠ Il file che si vuole convertire non è un'immagine o non è supportato",
          IT_SelectFormatMsgBox = "Selezionare un formato in cui convertire l'immagine",
@@ -29,7 +32,9 @@ namespace ImageConverter
          IT_EmpyBttnCntxtMenu = "Svuota",
          IT_ApplyLanguageMsgBox = "Per applicare la lingua bisogna riavviare l'applicazione, riavviarla desso?",
          IT_LanguageLabelTxt = "Lingua:",
-         IT_DelayTimeLabelTxt = "Tempo di passaggio da un frame all'altro:";
+         IT_DelayTimeLabelTxt = "Tempo di passaggio da un frame all'altro:",
+         IT_AddToExistingImagesToolTip = "Aggiungi le immagini trascinate",
+         IT_ReplaceExistingImagesToolTip = "Sostituisci con le immagini presente con quelle trascinate";
 
         //English
         public static readonly string
@@ -39,7 +44,7 @@ namespace ImageConverter
          EN_ApplyThemeMsgBox = "To apply the theme the application needs to be restarted, restart it now?",
          EN_ApplyFontColorMsgBox = "To apply the color of the font the application needs to be restarted, restart it now?",
          EN_CreditsLabelTxt = "Creator: Alessandro Dinardo(MyAlexro)",
-         EN_ConvertLabelTxt = "Convert image",
+         EN_StartConversionLabelTxt = "Convert image",
          EN_ChooseFormatLabelTxt = "Choose the format in which \nto convert the image:",
          EN_WarningLabelTxt = "⚠ The file you are trying to convert isn't an image or isn't supported",
          EN_SelectFormatMsgBox = "Select a format in which to convert the image",
@@ -54,6 +59,9 @@ namespace ImageConverter
          EN_EmpyBttnCntxtMenu = "Empty",
          EN_ApplyLanguageMsgBox = "To apply the language the application needs to be restarted, restart it now?",
          EN_LanguageLabelTxt = "Language:",
-         EN_DelayTimeLabelTxt = "Delay time between two frames:";
+         EN_DelayTimeLabelTxt = "Delay time between two frames:",
+         EN_AddToExistingImagesToolTip = "Add the dropped images",
+         EN_ReplaceExistingImagesToolTip = "Replace current images with dropped images";
+
     }
 }

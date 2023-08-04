@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ImageConverter"
-             mc:Ignorable="d" Height="511" Width="255">
+             mc:Ignorable="d" Height="510" Width="255">
 
     <UserControl.Resources>
         <!-- Style for the Theme or font color rectangles-->
@@ -25,7 +25,7 @@
 
 
     <!-- Menu stackpanel -->
-    <StackPanel x:Name="MenuSP" Orientation="Vertical" Margin="0,0,0,0" Background="White">
+    <StackPanel x:Name="MenuSP" Orientation="Vertical" Margin="0,0,0,0" Background="White" MaxHeight="510">
 
         <!--Close menu button label-->
         <Label x:Name="CloseMenuBttn"  Content="×" FontSize="25" Margin="225,-12,0,0" MouseEnter="CloseMenuBttn_MouseEnter" MouseDown="CloseMenuBttn_MouseDown" MouseLeave="CloseMenuBttn_MouseLeave" Foreground="#FFCACCCF" Height="37"/>
@@ -64,8 +64,13 @@
 
         <Separator Opacity="0.5" Height="5"/>
 
+        <StackPanel Orientation="Horizontal">
+        </StackPanel>
+
+        <Separator Opacity="0.5" Height="5"/>
+
         <!--#region Language option-->
-        
+
         <!-- Language stackpanel-->
         <StackPanel Orientation="Horizontal">
             <Label x:Name="LanguageOptionLabel" FontFamily="Segoa UI" FontSize="17" Content="Lingua:" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -79,6 +84,10 @@
 
         <Separator Opacity="0.5" Height="5"/>
 
-        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" Margin="0,250,0,0" >Creatore: Alessandro Dinardo (MyAlexro)</Label>
+        <Rectangle Height="230" x:Name="Empty"/>
+
+        <Label x:Name="CreditsLabel" Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" DockPanel.Dock="Bottom">Creatore: Alessandro Dinardo (MyAlexro)</Label>
+
     </StackPanel>
+
 </UserControl>

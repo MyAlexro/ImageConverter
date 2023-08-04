@@ -63,6 +63,16 @@ namespace ImageConverter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AddImages {
+            get {
+                object obj = ResourceManager.GetObject("AddImages", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImageConverterDragAndDropEN {
             get {
                 object obj = ResourceManager.GetObject("ImageConverterDragAndDropEN", resourceCulture);
@@ -96,6 +106,16 @@ namespace ImageConverter.Properties {
         internal static System.Drawing.Bitmap ImageConverterWindowIcon {
             get {
                 object obj = ResourceManager.GetObject("ImageConverterWindowIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ReplaceImages {
+            get {
+                object obj = ResourceManager.GetObject("ReplaceImages", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
