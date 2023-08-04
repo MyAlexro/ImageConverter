@@ -64,6 +64,12 @@ namespace ImageConverter
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_EmpyBttnCntxtMenu;
                 DelayTimeLabel.Content = LanguageManager.EN_DelayTimeLabelTxt;
             }
+            //if the folder for ImageConverter in the temp direcory has been deleted create it again
+            if (!Directory.Exists($"{Path.GetTempPath()}\\ImageConverter"))
+            {
+                Directory.CreateDirectory($"{Path.GetTempPath()}\\ImageConverter");
+                Settings.Default.TempFolderPath = $"{Path.GetTempPath()}\\ImageConverter";
+            }
         }
 
         private void MainWindow1_Loaded(object sender, RoutedEventArgs e)
@@ -77,6 +83,13 @@ namespace ImageConverter
                 else
                 {
                     Settings.Default.Language = "en";
+                }
+                
+                //Creates a folder for ImageConverter in the temp directory
+                if (!Directory.Exists($"{Path.GetTempPath()}\\ImageConverter"))
+                {
+                    Directory.CreateDirectory($"{Path.GetTempPath()}\\ImageConverter");
+                    Settings.Default.TempFolderPath = $"{Path.GetTempPath()}\\ImageConverter";
                 }
                 Settings.Default.FirstRun = false;
                 Settings.Default.Save();

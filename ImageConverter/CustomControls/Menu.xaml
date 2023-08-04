@@ -7,7 +7,7 @@
              mc:Ignorable="d" Height="511" Width="255">
 
     <UserControl.Resources>
-        <!-- Style for the Theme color rectangles-->
+        <!-- Style for the Theme or font color rectangles-->
         <Style TargetType="Rectangle" x:Key="rectStyle">
             <Setter Property="Width" Value="20"/>
             <Setter Property="Height" Value="20"/>
@@ -17,8 +17,8 @@
             <Setter Property="RadiusX" Value="3.833"/>
             <Setter Property="Stroke" Value="Black"/>
             <Setter Property="StrokeThickness" Value="1"/>
-            <EventSetter Event="MouseEnter" Handler="ThemeRects_MouseEnter"/>
-            <EventSetter Event="MouseLeave" Handler="ThemeRects_MouseLeave"/>
+            <EventSetter Event="MouseEnter" Handler="Rectangles_MouseEnter"/>
+            <EventSetter Event="MouseLeave" Handler="Rectangles_MouseLeave"/>
         </Style>
 
     </UserControl.Resources>

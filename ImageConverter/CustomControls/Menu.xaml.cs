@@ -119,12 +119,12 @@ namespace ImageConverter
             CloseMenu(nameOfMenu); //close the menu
         }
 
-        private void ThemeRects_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Rectangles_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //sets the width of the rect, over which the mouse is, the selected-rect border width
         }
 
-        private void ThemeRects_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Rectangles_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if ((sender as Rectangle).Name != Settings.Default.FontCol && (sender as Rectangle).Name != Settings.Default.ThemeType) //if the mouse gets out the theme-select rects(unless it's the already chosen theme type)
             {
@@ -173,6 +173,10 @@ namespace ImageConverter
             (sender as Rectangle).StrokeThickness = selectedRectStrokeThickness; //if a rect gets clicked set its border width as the selected one
             Settings.Default.ThemeType = ((Rectangle)sender).Name; //set the name of the rect as the option of the theme type
             if (((Rectangle)sender).Name == "LightTheme" && Settings.Default.FontCol == "WhiteFontCol") //if the selected theme is light but the font color is white
+            {
+                Settings.Default.FontCol = "DefaultFontCol"; //set the font color to default to prevent readability issues
+            }
+            else if (((Rectangle)sender).Name == "DarkTheme" && Settings.Default.FontCol == "DarkThemeFontColor") //if the selected theme is light but the font color is white
             {
                 Settings.Default.FontCol = "DefaultFontCol"; //set the font color to default to prevent readability issues
             }

@@ -5,9 +5,11 @@ namespace ImageConverter
 {
     class ThemeManager
     {
+        //Background theme color
         static Color LightTheme = Color.FromArgb(255, 255, 255, 255);
-        static Color DarkTheme = Color.FromArgb(255, 46, 46, 46);
+        static Color DarkTheme = Color.FromArgb(255, 37, 37, 38);
 
+        //Font colors
         static Color defaultFontColor = Color.FromArgb(255, 218, 166, 25); //the color of the font  when the mouse ISN'T over the mouse
         static Color defaultFontHoveringColor = Color.FromArgb(255, 162, 123, 17); //the color of the font when the mouse IS over the mouse
 
@@ -20,8 +22,8 @@ namespace ImageConverter
         static Color VioletFontColor = Color.FromArgb(255, 238, 130, 238);
         static Color VioletFontHoveringColor = Color.FromArgb(255, 207, 107, 207);
 
-        static Color WhiteFontColor = Color.FromArgb(255, 255, 255, 255);
-        static Color WhiteFontHoveringColor = Color.FromArgb(255, 214, 214, 214);
+        static Color WhiteFontColor = Color.FromArgb(255, 200, 200, 200);
+        static Color WhiteFontHoveringColor = Color.FromArgb(255, 175, 175, 175);
 
 
         //colors of the label, in MainWindow, which tells if the conversion is ongoing, ended successfully or ended with errors 
