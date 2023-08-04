@@ -33,7 +33,11 @@ namespace ImageConverter
 
         public static async Task<bool> ConvertAndSaveAsync(string format, string imageToConvertPath)
         {
-            System.Diagnostics.Debug.WriteLine($"Converting: {imageToConvertPath}");
+            try
+            {
+
+
+                System.Diagnostics.Debug.WriteLine($"Converting: {imageToConvertPath}");
                 #region  set up image to convert etc.
                 pathOfImageToConvert = imageToConvertPath;
                 imageName = Path.GetFileNameWithoutExtension(imageToConvertPath);
@@ -61,6 +65,7 @@ namespace ImageConverter
                     using (Stream st = File.Create($"{directoryOfImageToConvert}\\{imageName}.{format}"))
                     {
                         icon.Save(st);
+                        st.Close();
                     }
                 }
                 else
@@ -84,6 +89,11 @@ namespace ImageConverter
                 {
                     return false;
                 } //otherwise: return false
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         private static ImageCodecInfo GetEncoderInfo(String mimeType) //gets the informations for the encoder based on the chosen format
