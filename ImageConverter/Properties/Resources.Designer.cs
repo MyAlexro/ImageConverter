@@ -63,9 +63,19 @@ namespace ImageConverter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ajax_loader {
+        internal static System.Drawing.Bitmap ImageConverterDragAndDropEN {
             get {
-                object obj = ResourceManager.GetObject("ajax_loader", resourceCulture);
+                object obj = ResourceManager.GetObject("ImageConverterDragAndDropEN", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImageConverterDragAndDropIT {
+            get {
+                object obj = ResourceManager.GetObject("ImageConverterDragAndDropIT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

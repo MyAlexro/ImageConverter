@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageConverter"
         mc:Ignorable="d"
-        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize">
+        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded">
 
     <Grid x:Name="MainWindowGrid">
 
@@ -20,7 +20,7 @@
         <!-- Bottone per cominciare a convertire l'immagine-->
         <local:ConvertRoundBttn x:Name="ConvertBttn" HorizontalAlignment="Left" Height="54" Margin="463,401,0,0" VerticalAlignment="Top" Width="174" MouseDown="ConvertBttn_MouseDown"/>
 
-        <Label Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
+        <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" />
 
         <!-- ComboBox per scegliere in che formato convertire l'immagine-->
         <ComboBox x:Name="FormatComboBox" Text="Sel " HorizontalAlignment="Left" Margin="607,125,0,0" VerticalAlignment="Top" Width="86" Background="#FFDAA619" BorderBrush="#FFDAA619" Foreground="Black" Height="21" IsReadOnly="True">
@@ -33,7 +33,7 @@
 
         <!--Contenitore dell'immagine da convertire-->
         <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="93,100,0,0" VerticalAlignment="Top">
-            <Image Width="363" Height="328" x:Name="ImgViewer" Margin="1,1,1,1" AllowDrop="True" Source="Resources/ImageConverterDragAndDrop.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver"/>
+            <Image Width="363" Height="328" x:Name="ImgViewer" Margin="1,1,1,1" AllowDrop="True" Source="pack://siteoforigin:,,,/Resources/ImageConverterDragAndDropIT.jpg" Opacity="0.3" DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver"/>
         </Border>
 
         <!-- Label che appare solo se l'utente sta per droppare 2 file-->

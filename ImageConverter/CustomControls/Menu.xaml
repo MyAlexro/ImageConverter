@@ -34,8 +34,8 @@
 
         <!-- Choose theme Stackpanels -->
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,20,0,0">
-            <!--Theme label-->
-            <Label FontFamily="Segoa UI" FontSize="20" Content="Colore Tema:" Margin="0,0,0,0"/>
+            <!--Theme color label-->
+            <Label x:Name="ThemeColorLabel" FontFamily="Segoa UI" FontSize="20" Content="Colore Tema:" Margin="0,0,0,0"/>
             <!--Colors stackpanel-->
             <StackPanel x:Name="ThemeColorsSP" Orientation="Horizontal" Margin="0,8,0,0">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DefaultTheme" Fill="#FFDAA619" MouseDown="ThemeColRects_MouseDown"/>
@@ -46,13 +46,13 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="35" Margin="0,5,0,0">
             <!-- Label theme type-->
-            <Label FontFamily="Segoa UI" FontSize="20" Content="Tema:" Margin="0,0,0,0"/>
+            <Label x:Name="ThemeLabel" FontFamily="Segoa UI" FontSize="20" Content="Tema:" Margin="0,0,0,0"/>
             <!--Theme type stackpanel-->
             <StackPanel x:Name="ThemeTypeSP" Orientation="Horizontal" Margin="0,8,0,0">
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="LightTheme" Fill="White" MouseDown="ThemeType_MouseDown"/>
                 <Rectangle Style="{StaticResource rectStyle}" x:Name="DarkTheme" Fill=" #1d1d1d" Stroke="LightGray" MouseDown="ThemeType_MouseDown"/>
             </StackPanel>
         </StackPanel>
-
+        <Label Opacity="0.5" FontFamily="Segoa UI Bold" FontWeight="Bold" FontStyle="Italic" Margin="0,330"> Creatore: Alessandro Dinardo</Label>
     </StackPanel>
 </UserControl>
