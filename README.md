@@ -7,7 +7,8 @@ Convert multiple images to a gif
 More options(where to save images etc.)
 
 
-#Minimum requirements:
+# Minimum requirements:
 300MB of free Ram
 ~400Kb of free disk space
+.NET framework 4.6 or higher
 
