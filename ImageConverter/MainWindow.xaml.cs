@@ -1,9 +1,7 @@
-﻿using System.Drawing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Globalization;
-using System.Media;
 using ImageConverter.Properties;
 using System.Threading.Tasks;
 using System.Threading;
@@ -177,7 +175,7 @@ namespace ImageConverter
                 if (!(ConversionResultLabel.Content as string).Contains("..."))
                 {
                     ConversionResultLabel.Content += ".";
-                    Thread.Sleep(800);
+                    Thread.Sleep(100);
                 }
                 else
                 {
