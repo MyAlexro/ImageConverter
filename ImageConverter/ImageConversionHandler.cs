@@ -312,6 +312,8 @@ namespace ImageConverter
             //Empty the Temp Folder, which may contain previous temp images
             UtilityMethods.EmptyFolder(Settings.Default.TempFolderPath);
 
+            GC.Collect();
+
             return conversionsResults;
         }
 
@@ -419,6 +421,7 @@ namespace ImageConverter
                     imageToConv.EndInit();
                     imageEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                 }
+                st.Close();
             }
 
             #region Saves the image and checks whether it was saved correctly
@@ -799,6 +802,8 @@ namespace ImageConverter
 
             #region Dispose objects
             memStream.Close();
+            binWriter.Close();
+            memStream.Dispose();
             binWriter.Dispose();
             foreach (var image in imagesToConvert)
             {
@@ -853,6 +858,7 @@ namespace ImageConverter
                     imageToConv.EndInit();
                     imageEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                 }
+                st.Close();
             }
 
             //Set compression type in the encoder
