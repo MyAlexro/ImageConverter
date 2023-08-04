@@ -8,6 +8,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System;
 
 namespace ImageConverter
 {
@@ -22,7 +23,9 @@ namespace ImageConverter
         ImageSourceConverter imgSourceConverter = new ImageSourceConverter();
         List<bool> finishedConversions;
         List<string> unsuccessfulConversions;
-        bool GifInLoopOpt = true;
+        int repGifTimes = 0;
+        int delayTimeInCS = 50; //delay time (in centiseconds so that it doesn't have to be converted later)
+        int replTranspWithCol = 0;
 
         public MainWindow()
         {
@@ -30,7 +33,7 @@ namespace ImageConverter
             MainWindowGrid.Background = ThemeManager.SelectedThemeType();
             TitleTextBox.Foreground = ThemeManager.SelectedFontColor();
             ThemeManager.solidColorBrush = new SolidColorBrush();
-            ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
+            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             foreach (System.Windows.Controls.Label element in FormatComboBox.Items)
             {
@@ -42,8 +45,9 @@ namespace ImageConverter
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.IT_WarningLabelTxt;
                 ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
-                GifLoopOptionCB.Content = LanguageManager.IT_GifLoopOptionCheckBoxText;
+                GifRepeatTimes.Content = LanguageManager.IT_GifLoopsOptionText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.IT_EmpyBttnCntxtMenu;
+                DelayTimeLabel.Content = LanguageManager.IT_DelayTimeLabelTxt;
             }
             else if (Settings.Default.Language == "en")
             {
@@ -51,8 +55,9 @@ namespace ImageConverter
                 ChooseFormatLabel.Content = LanguageManager.EN_ChooseFormatLabelTxt;
                 WarningLabel.Content = LanguageManager.EN_WarningLabelTxt;
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
-                GifLoopOptionCB.Content = LanguageManager.EN_GifLoopOptionCheckBoxText;
+                GifRepeatTimes.Content = LanguageManager.EN_GifLoopOptionText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_EmpyBttnCntxtMenu;
+                DelayTimeLabel.Content = LanguageManager.EN_DelayTimeLabelTxt;
             }
         }
 
@@ -96,23 +101,33 @@ namespace ImageConverter
 
         private void ImgViewer_Drop(object sender, DragEventArgs e)
         {
+            if (WarningLabel.Visibility == Visibility.Visible)
+            {
+                WarningLabel.Visibility = Visibility.Hidden;
+                return;
+            } //if the warning label IS visible the dropped file is not an image, so ignore the drop(return)
+
             #region resets controls
             ThemeManager.solidColorBrush = new SolidColorBrush();
-            ThemeManager.solidColorBrush.Color = ThemeManager.RunningConversionLabelColor;
+            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
             ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush;
             ConversionResultTextBlock.Visibility = Visibility.Hidden;
             ImagesNameLabel.Text = string.Empty;
-            GifLoopOptionCB.Visibility = Visibility.Hidden;
+            if(FormatComboBox.SelectedValue?.ToString() != "System.Windows.Controls.Label: GIF")
+            {
+                GifOptionsSP.Visibility = Visibility.Hidden;
+            }
+            ReplaceTransparencySP.Visibility = Visibility.Hidden;
             #endregion
 
             droppedImages = e.Data.GetData(DataFormats.FileDrop) as string[];
-            if (e.Data.GetData(DataFormats.FileDrop) != null) //if the warning label is visible, so if the file(s) is/are not image(s)
+            if (e.Data.GetData(DataFormats.FileDrop) != null) 
             {
                 if (WarningLabel.Visibility == Visibility.Visible)
                 {
                     WarningLabel.Visibility = Visibility.Hidden;
                     return;
-                }
+                } //if the warning label is not visible, so if the file(s) is/are image(s)
                 pathsOfImagesToConvert = droppedImages;
                 if (droppedImages.Length == 1) ImagesNameLabel.Text += Path.GetFileName(droppedImages[0]);
                 else
@@ -122,6 +137,13 @@ namespace ImageConverter
                         ImagesNameLabel.Text += Path.GetFileName(imagePath + ", ");
                     }
                 } //shows the name of the image(s) under the image container
+                foreach (string imagePath in droppedImages)
+                {
+                    if (Path.GetExtension(imagePath).ToLower() == ".png")
+                    {
+                        ReplaceTransparencySP.Visibility = Visibility.Visible;
+                    }
+                } // If the image is a png enable the option to replace transparency
                 if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunningTxt;
                 if (Settings.Default.Language == "en") ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
                 stringToImgSrcConverter = new ImageSourceConverter();
@@ -137,7 +159,6 @@ namespace ImageConverter
                     st.Close();
                 } //loads image to show from a stream and shows it, if the image was used directly it would've 
                                                                              //remained in use even after emptying the ImgViewer and so couldn't be deleted
-
                 WarningLabel.Visibility = Visibility.Hidden; //hides the warning label in case it the user tried to convert a non valid file but then dropped a valid file
                 ConvertImgBttn.IsEnabled = true;
             }
@@ -160,6 +181,8 @@ namespace ImageConverter
 
             finishedConversions = new List<bool>();
             string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //takes the selected format
+            ThemeManager.solidColorBrush.Color = ThemeManager.RunningOrStaticConversionLabelColor;
+            ConversionResultTextBlock.Foreground = ThemeManager.solidColorBrush; //se
             ConversionResultTextBlock.Visibility = Visibility.Visible; //makes the label of the state of the conversion visible
             ConvertImgBttn.IsEnabled = false; //while a conversion is ongoing the convertbttn gets disabled
             if (Settings.Default.Language == "it")
@@ -171,8 +194,8 @@ namespace ImageConverter
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
             }
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert, GifInLoopOpt));
-            #region gets the unsuccessful conversions
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, delayTimeInCS));
+            #region counts the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
             int i = 0;
             foreach (var conversion in finishedConversions)
@@ -231,26 +254,39 @@ namespace ImageConverter
 
         private void FormatComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            if ((((ComboBox)sender).SelectedItem as Label)?.Content.ToString() == "GIF")// the null coalescing operator (?.) is needed beacause if the user closes the combobox menu
-            {                                                                           // without selecting a format the selected item would be null, casuing a NullReferenceException
-                GifLoopOptionCB.Visibility = Visibility.Visible;
-            }
+            var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
+
+            if (selectedValue == "GIF")                      
+                GifOptionsSP.Visibility = Visibility.Visible;
             else
-            {
-                GifLoopOptionCB.Visibility = Visibility.Hidden;
-            }
+                GifOptionsSP.Visibility = Visibility.Hidden;
         }
 
-        private void GifLoopOption_Click(object sender, RoutedEventArgs e)
+        private void ReplTranspColCB_DropDownClosed(object sender, EventArgs e)
         {
-            if (GifLoopOptionCB.IsChecked == false)
-            {
-                GifInLoopOpt = false;
-            }
+            var selectedIndex = ((ComboBox)sender).SelectedIndex;
+            if (selectedIndex == 0)
+                replTranspWithCol = 0;
             else
+                replTranspWithCol = selectedIndex;
+        }
+
+        private void GifRepTimesCB_DropDownClosed_1(object sender, EventArgs e)
+        {
+            var selectedValue = (((ComboBox)sender).SelectedItem as Label)?.Content.ToString();
+            if(selectedValue == "∞")
             {
-                GifInLoopOpt = true;
+                repGifTimes = 0;
+                return;
             }
+            repGifTimes = Convert.ToInt32(selectedValue);        
+        }
+
+        private void DelayTimesCB_DropDownClosed(object sender, EventArgs e)
+        {
+            var comboBox = (ComboBox)sender;
+            var delayTimeInt = Convert.ToInt32((comboBox.SelectedItem as Label).Content);
+            delayTimeInCS = delayTimeInt / 10;
         }
 
         private void ImageViewerContextMenu_Opened(object sender, RoutedEventArgs e)
@@ -275,6 +311,8 @@ namespace ImageConverter
             pathsOfImagesToConvert = null;
             imgSourceConverter = null;
             EmptyImgViewerCntxtMenuBttn.IsEnabled = false;
+            GifOptionsSP.Visibility = Visibility.Hidden;
+            ReplaceTransparencySP.Visibility = Visibility.Hidden;
         }
     }
 }

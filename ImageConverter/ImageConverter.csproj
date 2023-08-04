@@ -29,7 +29,7 @@
     <ErrorReportUrl>https://github.com/MyAlexro/ImageConverter/issues</ErrorReportUrl>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.2.8.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -163,6 +163,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Docs\GifBytesExamination.rtf" />
+    <None Include="Docs\What%27s In A GIF - Animation and Transparency.pdf" />
+    <None Include="Docs\What%27s In A GIF - Bits and Bytes.pdf" />
+    <None Include="Docs\What%27s In A GIF - LZW Image Data.pdf" />
     <None Include="ImageConverterKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -196,6 +200,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ImageConverterIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Docs\Online docs links.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TestImages\BmpImages\LAND.BMP" />
+    <Resource Include="TestImages\BmpImages\LAND3.BMP" />
+    <Resource Include="TestImages\BmpImages\swirl_effect.bmp" />
+    <Resource Include="TestImages\JpegImages\download %281%29.jpg" />
+    <Resource Include="TestImages\JpegImages\download.jpg" />
+    <Resource Include="TestImages\JpegImages\peezzaa.jpeg" />
+    <Resource Include="TestImages\JpegImages\Pizza-500x500.jpeg" />
+    <Resource Include="TestImages\JpegImages\pizzaaa.jpeg" />
+    <Resource Include="TestImages\JpgImages\148-1482860_pizza-png-tumblr-download-pizza.jpg" />
+    <Resource Include="TestImages\JpgImages\2-23197_mega-meat-pizza-pizza.jpg" />
+    <Resource Include="TestImages\JpgImages\download.jpg" />
+    <Resource Include="TestImages\PngImages\download.png" />
+    <Resource Include="TestImages\PngImages\PNGPIX-COM-Sun-PNG-Transparent-Image-4-500x500.png" />
+    <Resource Include="TestImages\PngImages\simpsons_PNG95.png" />
+    <Resource Include="TestImages\PngImages\smp_badge1-500x500.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

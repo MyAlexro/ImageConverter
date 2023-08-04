@@ -9,6 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
+# Documentation used to develope some parts of the app
+Docs
+# Images used to test some functions of the app
+TestImages
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

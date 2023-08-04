@@ -1,7 +1,7 @@
 ﻿
 namespace ImageConverter
 {
-    class LanguageManager
+    public class LanguageManager
     {
         public static readonly string[] languages = new string[2] { "it", "en" };
 
@@ -25,10 +25,11 @@ namespace ImageConverter
          IT_UnsuccConversionResultTextBlockFinishedTxt = "Non è stato possibile convertire alcune immagini: ",
          IT_CantConvertImageToSameFormat = "Non si può convertire un'immagine in un'altra immagine con lo stesso formato",
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
-         IT_GifLoopOptionCheckBoxText = "Ripeti la gif per sempre",
+         IT_GifLoopsOptionText = "Volte che la gif si ripeterà:",
          IT_EmpyBttnCntxtMenu = "Svuota",
          IT_ApplyLanguageMsgBox = "Per applicare la lingua bisogna riavviare l'applicazione, riavviarla desso?",
-         IT_LanguageLabelTxt = "Lingua:";
+         IT_LanguageLabelTxt = "Lingua:",
+         IT_DelayTimeLabelTxt = "Tempo di passaggio da un frame all'altro:";
 
         //English
         public static readonly string
@@ -49,9 +50,10 @@ namespace ImageConverter
          EN_UnsuccConversionResultTextBlockFinishedTxt = "It wasn't possible to convert some images: ",
          EN_CantConvertImageToSameFormat = "You can't convert an image to another image with the same format",
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
-         EN_GifLoopOptionCheckBoxText = "Gif in loop",
+         EN_GifLoopOptionText = "Times the gif will repeat:",
          EN_EmpyBttnCntxtMenu = "Empty",
          EN_ApplyLanguageMsgBox = "To apply the language the application needs to be restarted, restart it now?",
-         EN_LanguageLabelTxt = "Language:";
+         EN_LanguageLabelTxt = "Language:",
+         EN_DelayTimeLabelTxt = "Delay time between two frames:";
     }
 }
