@@ -10,18 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using ImageConverter.Classes;
+using ImageConverter.Models;
 
 namespace ImageConverter
 {
     public class ImageConversionHandler
     {
-        private BitmapEncoder imageEncoder;
-
-        private Encoder imageCompressorEncoder;
-        private ImageCodecInfo imgToCompressCodecInfo;
-        private EncoderParameter qualityEncoderParam;
-        private EncoderParameters encoderParameters;
-
         /// <summary>
         /// Format to convert the images to
         /// </summary>
@@ -49,7 +43,7 @@ namespace ImageConverter
         /// <summary>
         /// List of compression tasks that will be executed when all the images have been converted
         /// </summary>
-        private List<Task<bool>> compressionsTasks;
+        private List<CompressionParametersModel> compressionsParameters;
 
         /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
@@ -72,7 +66,7 @@ namespace ImageConverter
             var conversionsResults = new Dictionary<string, bool>();
             //List of the results of the compression for each image
             var compressionResults = new Dictionary<string, bool>();
-            compressionsTasks = new List<Task<bool>>();
+            compressionsParameters = new List<CompressionParametersModel>();
             #endregion
 
             //Check whether the user is trying to convert an image to the same format, if yes don't convert by setting already its conversionResult to false
@@ -107,7 +101,15 @@ namespace ImageConverter
 
                         //If the user wants to compress the image, if the conversion has been successful, add the compression task for the converted image
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
-                            compressionsTasks.Add(CompressImageAsync(resultsTuple.convertedImagePath, compressionQuality, savePath));
+                        {
+                            compressionsParameters.Add(new CompressionParametersModel
+                            {
+                                imageToCompressPath = resultsTuple.convertedImagePath,
+                                quality = compressionQuality,
+                                savePath = savePath,
+                            });
+                        }
+                        conversionsResults.Add(imageToConvertPath, resultsTuple.conversionResult);
                     }
                     else if (selectedFormat == "jpeg" || selectedFormat == "jpg")
                     {
@@ -117,7 +119,15 @@ namespace ImageConverter
                             resultsTuple = await Task.Run(() => ConvertToJpegOrJpgAndSaveAsync(imageToConvertPath, chosenFormat, savePath));
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
-                            compressionsTasks.Add(CompressImageAsync(resultsTuple.convertedImagePath, compressionQuality, savePath));
+                        {
+                            compressionsParameters.Add(new CompressionParametersModel
+                            {
+                                imageToCompressPath = resultsTuple.convertedImagePath,
+                                quality = compressionQuality,
+                                savePath = savePath,
+                            });
+                        }
+                        conversionsResults.Add(imageToConvertPath, resultsTuple.conversionResult);
                     }
                     else if (selectedFormat == "bmp")
                     {
@@ -127,7 +137,15 @@ namespace ImageConverter
                             resultsTuple = await Task.Run(() => ConvertoToBmpAndSaveAsync(imageToConvertPath, savePath));
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
-                            compressionsTasks.Add(CompressImageAsync(resultsTuple.convertedImagePath, compressionQuality, savePath));
+                        {
+                            compressionsParameters.Add(new CompressionParametersModel
+                            {
+                                imageToCompressPath = resultsTuple.convertedImagePath,
+                                quality = compressionQuality,
+                                savePath = savePath,
+                            });
+                        }
+                        conversionsResults.Add(imageToConvertPath, resultsTuple.conversionResult);
                     }
                     else if (selectedFormat == "gif")
                     {
@@ -139,24 +157,39 @@ namespace ImageConverter
                         {
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
-                                compressionsTasks.Add(CompressImageAsync(imagePath, compressionQuality, Settings.Default.TempFolderPath));
+                                compressionsParameters.Add(new CompressionParametersModel
+                                {
+                                    imageToCompressPath = imagePath,
+                                    quality = compressionQuality,
+                                    savePath = Settings.Default.TempFolderPath,
+                                });
                             }
                         }
                         //Else create the uncompressed gif, then add the compression tasks for the compressed gif
                         else if (compressionQuality != 100 && Settings.Default.SaveBothImages == true)
                         {
                             resultsTuple = await Task.Run(() => ConvertToGifAndSaveAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime, savePath));
+                            //Adds the conversion result for each image
+                            pathsOfImagesToConvert.ForEach(delegate (string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });
 
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
                                 if (resultsTuple.conversionResult == true)
-                                    compressionsTasks.Add(CompressImageAsync(imagePath, compressionQuality, Settings.Default.TempFolderPath));
+                                {
+                                    compressionsParameters.Add(new CompressionParametersModel
+                                    {
+                                        imageToCompressPath = imagePath,
+                                        quality = compressionQuality,
+                                        savePath = Settings.Default.TempFolderPath,
+                                    });
+                                }
                             }
                         }
                         //If the user doesn't want to compress the gif, convert the images into gif.
-                        else if (compressionQuality == 100)
+                        else
                         {
                             resultsTuple = await Task.Run(() => ConvertToGifAndSaveAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime, savePath));
+                            pathsOfImagesToConvert.ForEach(delegate(string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });                            
                         }
                         break;
                     }
@@ -170,33 +203,55 @@ namespace ImageConverter
                         {
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
-                                compressionsTasks.Add(CompressImageAsync(imagePath, compressionQuality, Settings.Default.TempFolderPath));
+                                compressionsParameters.Add(new CompressionParametersModel
+                                {
+                                    imageToCompressPath = imagePath,
+                                    quality = compressionQuality,
+                                    savePath = Settings.Default.TempFolderPath,
+                                });
                             }
                         }
                         else if (compressionQuality != 100 && Settings.Default.SaveBothImages == true)
                         {
                             resultsTuple = await Task.Run(() => ConvertToIcoOrCurAndSaveAsync(pathsOfImagesToConvert, selectedFormat, savePath));
+                            pathsOfImagesToConvert.ForEach(delegate (string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });
                             foreach (var imagePath in pathsOfImagesToConvert)
                             {
                                 if (resultsTuple.conversionResult == true)
-                                    compressionsTasks.Add(CompressImageAsync(imagePath, compressionQuality, Settings.Default.TempFolderPath));
+                                {
+                                    compressionsParameters.Add(new CompressionParametersModel
+                                    {
+                                        imageToCompressPath = imagePath,
+                                        quality = compressionQuality,
+                                        savePath = Settings.Default.TempFolderPath,
+                                    });
+                                }
                             }
                         }
                         else if (compressionQuality == 100)
                         {
                             resultsTuple = await Task.Run(() => ConvertToIcoOrCurAndSaveAsync(pathsOfImagesToConvert, selectedFormat, savePath));
+                            pathsOfImagesToConvert.ForEach(delegate (string imagePath) { conversionsResults.Add(imagePath, resultsTuple.conversionResult); });
                         }
                         break;
                     }
                     else if (selectedFormat == "tiff")
                     {
                         if (compressionQuality != 100 && Settings.Default.SaveBothImages == false)
-                            resultsTuple = await Task.Run(() => ConvertToTiffAndSaveAsync(imageToConvertPath, selectedFormat, Settings.Default.TempFolderPath));
+                            resultsTuple = await Task.Run(() => ConvertToTiffAndSaveAsync(imageToConvertPath, tiffCompressionAlgo, Settings.Default.TempFolderPath));
                         else
-                            resultsTuple = await Task.Run(() => ConvertToTiffAndSaveAsync(imageToConvertPath, selectedFormat, savePath));
+                            resultsTuple = await Task.Run(() => ConvertToTiffAndSaveAsync(imageToConvertPath, tiffCompressionAlgo, savePath));
 
                         if (compressionQuality != 100 && resultsTuple.conversionResult == true)
-                            compressionsTasks.Add(CompressImageAsync(resultsTuple.convertedImagePath, compressionQuality, savePath));
+                        {
+                            compressionsParameters.Add(new CompressionParametersModel
+                            {
+                                imageToCompressPath = resultsTuple.convertedImagePath,
+                                quality = compressionQuality,
+                                savePath = savePath,
+                            });
+                        }
+                        conversionsResults.Add(imageToConvertPath, resultsTuple.conversionResult);
                     }
                 }
             }
@@ -206,11 +261,10 @@ namespace ImageConverter
 
             /*If the user has set a quality for the compression and there's any possible compression, 
             *compress the image(s) and combine the results of the compression(s) with the conversion(s) one(s)*/
-            if (compressionsTasks.Count != 0 && compressionQuality != 100)
+            if (compressionsParameters.Count != 0 && compressionQuality != 100)
             {
-
                 //Start the image-compression tasks in compressionsTasks list
-                List<bool> compressionResultsBoolList = await Task.Run(() => StartCompressionParallelAsync());
+                List<bool> compressionResultsBoolList = await Task.Run(() => StartCompressionsParallelAsync());
 
                 //Add the compression results to the dictionary with its corresponding image 
                 //if the selected format is gif, the compressed gif needs to be created because the compression tasks compressed the images that compose the gif, not the gif itself
@@ -266,12 +320,13 @@ namespace ImageConverter
         /// </summary>
         /// <param name="pathsOfImagesToCompress"></param>
         /// <returns></returns>
-        public async Task<List<bool>> StartCompressionParallelAsync()
+        public async Task<List<bool>> StartCompressionsParallelAsync()
         {
-            foreach (var compressionTask in compressionsTasks)
+            var compressionsTasks = new List<Task<bool>>();
+            foreach (var compressionParam in compressionsParameters)
             {
                 //Execute task and when it finishes add its value to the list
-                Task.Run(() => compressionTask);
+                compressionsTasks.Add(Task.Run(() => CompressImageAsync(compressionParam)));
             }
             //When the list of all the tasks completes, return the list containing all the results of the compressions
             return (await Task.WhenAll(compressionsTasks)).ToList();
@@ -288,7 +343,7 @@ namespace ImageConverter
         {
             #region  set up image infos to convert etc.
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
-            imageEncoder = new PngBitmapEncoder();
+            var imageEncoder = new PngBitmapEncoder();
             string convertedImagePath;
             bool conversionResult = false;
             #endregion
@@ -314,7 +369,7 @@ namespace ImageConverter
                 st.Close();
             }
 
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
+            conversionResult = await CheckIfSavedCorrectlyAsync(convertedImagePath);
 
             #endregion
             return (conversionResult, convertedImagePath);
@@ -331,8 +386,7 @@ namespace ImageConverter
             #region Set up infos about the image to convert etc.
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             string imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
-
-            imageEncoder = new JpegBitmapEncoder();
+            var imageEncoder = new JpegBitmapEncoder();
             string convertedImagePath;
             bool conversionResult = false;
             #endregion
@@ -376,7 +430,7 @@ namespace ImageConverter
                 st.Close();
             }
 
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
+            conversionResult = await CheckIfSavedCorrectlyAsync(convertedImagePath);
             #endregion
             return (conversionResult, convertedImagePath);
         }
@@ -392,7 +446,7 @@ namespace ImageConverter
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             string imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
 
-            imageEncoder = new BmpBitmapEncoder();
+            var imageEncoder = new BmpBitmapEncoder();
             string convertedImagePath;
             bool conversionResult = false;
             #endregion
@@ -436,7 +490,7 @@ namespace ImageConverter
                 st.Close();
             }
 
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
+            conversionResult = await CheckIfSavedCorrectlyAsync(convertedImagePath);
             #endregion
             return (conversionResult, convertedImagePath);
         }
@@ -453,7 +507,7 @@ namespace ImageConverter
         {
             #region  set up image infos to convert etc.
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathsOfImagesToConvert[0]);
-            imageEncoder = new GifBitmapEncoder();
+            var imageEncoder = new GifBitmapEncoder();
             bool conversionResult = false;
             string convertedImagePath;
             bool oneOfImagesIsgPng = false;
@@ -573,7 +627,7 @@ namespace ImageConverter
             }
 
             //Checks wether the gif was saved correctly
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
+            conversionResult = await CheckIfSavedCorrectlyAsync(convertedImagePath);
 
             return (conversionResult, convertedImagePath);
         }
@@ -586,7 +640,7 @@ namespace ImageConverter
         /// <returns></returns>
         private async Task<(bool conversionResult, string convertedImagePath)> ConvertToIcoOrCurAndSaveAsync(List<string> pathsOfImagesToConvert, string format, string savePath)
         {
-            #region if the image to convert isn't a png or bmp image it can't be converterd: return false
+            //If the image to convert isn't a png or bmp image it can't be converterd: return false
             foreach (var imagePath in pathsOfImagesToConvert)
             {
                 string imgToConvExt = Path.GetExtension(imagePath).ToLower();
@@ -603,7 +657,6 @@ namespace ImageConverter
                     return (false, null);
                 }
             };
-            #endregion
 
             #region Set up image infos to convert etc.
             string firstImageName = Path.GetFileNameWithoutExtension(pathsOfImagesToConvert[0]);
@@ -767,7 +820,7 @@ namespace ImageConverter
             #region Set up image infos to convert etc.
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             string imageFormat = Path.GetExtension(pathOfImageToConvert).Trim('.');
-            imageEncoder = new TiffBitmapEncoder();
+            var imageEncoder = new TiffBitmapEncoder();
             string convertedImagePath;
             bool conversionResult = false;
             #endregion
@@ -840,7 +893,7 @@ namespace ImageConverter
                 imageEncoder.Save(st);
                 st.Close();
             }
-            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync(convertedImagePath));
+            conversionResult = await CheckIfSavedCorrectlyAsync(convertedImagePath);
             #endregion
 
             return (conversionResult, convertedImagePath);
@@ -856,11 +909,14 @@ namespace ImageConverter
         /// <param name="quality"></param>
         /// <param name="savePath"> Path where to save the image, if not specificed, the image will be saved to its original version's path</param>
         /// <returns></returns>
-        private async Task<bool> CompressImageAsync(string imagePath, int quality, string savePath)
+        private async Task<bool> CompressImageAsync(CompressionParametersModel parameters)
         {
             #region Set up variables
-            encoderParameters = new EncoderParameters();
-            string pathOfImageToCompressDirectory = Path.GetDirectoryName(imagePath);
+            ImageCodecInfo imgToCompressCodecInfo = null;
+            string imagePath = parameters.imageToCompressPath;
+            int quality = parameters.quality;
+            string savePath = parameters.savePath;
+            var encoderParameters = new EncoderParameters();
             string imageName = Path.GetFileNameWithoutExtension(imagePath);
             string compressedImagePath;
             string formatOfImageToCompress = Path.GetExtension(imagePath).Trim('.');
@@ -877,8 +933,8 @@ namespace ImageConverter
                     imgToCompressCodecInfo = codecInfo;
                 }
             }
-            imageCompressorEncoder = Encoder.Quality;
-            qualityEncoderParam = new EncoderParameter(imageCompressorEncoder, quality);
+            var imageCompressorEncoder = Encoder.Quality;
+            var qualityEncoderParam = new EncoderParameter(imageCompressorEncoder, quality);
             encoderParameters.Param[0] = qualityEncoderParam;
             #endregion
 
@@ -889,12 +945,12 @@ namespace ImageConverter
             using (Stream st = File.OpenRead(imagePath))
             {
                 var imageToCompress = new Bitmap(st);
-                imageToCompress.Save(compressedImagePath, imgToCompressCodecInfo, encoderParameters);
+                await Task.Run(() => imageToCompress.Save(compressedImagePath, imgToCompressCodecInfo, encoderParameters));
 
                 st.Close();
             }
 
-            return await Task.Run(() => CheckIfSavedCorrectlyAsync(compressedImagePath));
+            return await CheckIfSavedCorrectlyAsync(compressedImagePath);
         }
 
         /// <summary>

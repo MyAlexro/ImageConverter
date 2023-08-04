@@ -12,16 +12,23 @@ namespace ImageConverter.Classes
     /// </summary>
     public static class DebuggingTools
     {
+        private static int i = 1;
         /// <summary>
-        /// Dump the content of a MemoryStream in a txt file on the desktop
+        /// Dump the content of a MemoryStream in a txt file to to the specified directory, otherwise on the desktop if 
+        /// <br>the directoryPath parameter is not specified</br>
+        /// <para></para>
+        /// <br>Returns:</br>
+        /// <br>String. "Success" if everything went correctly, "Error" and information about the error</br>
         /// </summary>
         /// <param name="memStream"></param>
-        public static string DumpMemoryStream(MemoryStream memStream)
+        public static string DumpMemoryStream(MemoryStream memStream, string directoryPath = "")
         {
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            //If the user hasn't specified 
+            if(directoryPath == "")
+                directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             try
             {
-                using (Stream st = File.Create($"{desktopPath}\\MemoryDump.txt"))
+                using (Stream st = File.Create($"{directoryPath}\\MemoryDump{i}.txt"))
                 {
                     st.Write(memStream.ToArray(), 0, memStream.ToArray().Length);
                 }
@@ -31,7 +38,7 @@ namespace ImageConverter.Classes
             {
                 try
                 {
-                    using (Stream st = File.Create($"{desktopPath}\\MemoryDump{Directory.GetFiles(desktopPath).Count()}.txt"))
+                    using (Stream st = File.Create($"{directoryPath}\\MemoryDump{Directory.GetFiles(directoryPath).Count()}.txt"))
                     {
                         st.Write(memStream.ToArray(), 0, memStream.ToArray().Length);
                     }
@@ -41,12 +48,20 @@ namespace ImageConverter.Classes
                     return "Error, delete one of the already-existing memory dumps";
                 }
             }
-            if (File.Exists($"{desktopPath}\\MemoryDump.txt") || File.Exists($"{desktopPath}\\MemoryDump{Directory.GetFiles(desktopPath).Count()}.txt"))
+            if (File.Exists($"{directoryPath}\\MemoryDump{i}.txt") || File.Exists($"{directoryPath}\\MemoryDump{Directory.GetFiles(directoryPath).Count()}.txt"))
+            {
+                i++;
                 return "Success";
+            }
             else
                 return "Error, can't find created file";
         }
 
+        /// <summary>
+        /// Get the length of the array of bytes read from the file using the File.ReadAllBytes method
+        /// </summary>
+        /// <param name="pathOfFile"></param>
+        /// <returns></returns>
         public static string GetFileBytesLength(string pathOfFile)
         {
             try
