@@ -20,6 +20,9 @@
         <!-- Button to start the conversion of the image-->
         <local:ConvertRoundBttn x:Name="ConvertImgBttn" HorizontalAlignment="Left" Height="36" Margin="468,398,0,0" VerticalAlignment="Top" Width="129" MouseDown="ConvertRoundBttn_MouseDown" IsEnabled="False"/>
 
+        <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
+        <TextBlock x:Name="ConversionResultTextBlock" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
+
         <!--Label that says to choose a format-->
         <Label x:Name="ChooseFormatLabel" Content="Scegliere il formato in cui &#xA;convertire l'immagine:" Margin="463,100,183,342" FontFamily="Segoa UI" FontSize="14" Background="{x:Null}" Foreground="Black"/>
         <!-- ComboBox to choose the format to which convert the image-->
@@ -95,9 +98,6 @@
 
         <!-- Label that appears only if the users is trying to drop files which can't be converted-->
         <Label x:Name="WarningLabel" Content="" HorizontalAlignment="Left" Margin="93,76,0,0" VerticalAlignment="Top" Width="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Hidden" FontSize="10"/>
-
-        <!-- Textblock that appears whena a conversion is ongoing or a conversion has finished-->
-        <TextBlock x:Name="ConversionResultTextBlock" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Hidden" HorizontalAlignment="Left" Margin="602,403,0,0" VerticalAlignment="Top" Width="342" Height="98"/>
 
         <!--Button to open the Menu-->
         <local:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="39" Margin="10,0,0,0" VerticalAlignment="Top" Width="55" MouseDown="MenuBttn_MouseDown" Grid.Row="1"/>

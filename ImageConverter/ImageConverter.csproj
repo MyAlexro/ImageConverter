@@ -26,10 +26,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>https://github.com/MyAlexro/ImageConverter/</SupportUrl>
     <ErrorReportUrl>https://github.com/MyAlexro/ImageConverter/issues</ErrorReportUrl>
+    <ProductName>ImageConverter</ProductName>
+    <PublisherName>Alessandro Dinardo</PublisherName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.2.8.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.1.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -202,27 +205,28 @@
     <None Include="Resources\ImageConverterIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Docs\Online docs links.txt" />
+    <None Include="Docs\Online docs links.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="TestImages\BmpImages\LAND.BMP" />
-    <Resource Include="TestImages\BmpImages\LAND3.BMP" />
-    <Resource Include="TestImages\BmpImages\swirl_effect.bmp" />
-    <Resource Include="TestImages\JpegImages\download %281%29.jpg" />
-    <Resource Include="TestImages\JpegImages\download.jpg" />
-    <Resource Include="TestImages\JpegImages\peezzaa.jpeg" />
-    <Resource Include="TestImages\JpegImages\Pizza-500x500.jpeg" />
-    <Resource Include="TestImages\JpegImages\pizzaaa.jpeg" />
-    <Resource Include="TestImages\JpgImages\148-1482860_pizza-png-tumblr-download-pizza.jpg" />
-    <Resource Include="TestImages\JpgImages\2-23197_mega-meat-pizza-pizza.jpg" />
-    <Resource Include="TestImages\JpgImages\download.jpg" />
-    <Resource Include="TestImages\PngImages\download.png" />
-    <Resource Include="TestImages\PngImages\PNGPIX-COM-Sun-PNG-Transparent-Image-4-500x500.png" />
-    <Resource Include="TestImages\PngImages\simpsons_PNG95.png" />
-    <Resource Include="TestImages\PngImages\smp_badge1-500x500.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Temp\" />
+    <None Include="TestImages\BmpImages\LAND.BMP" />
+    <None Include="TestImages\BmpImages\LAND3.BMP" />
+    <None Include="TestImages\BmpImages\swirl_effect.bmp" />
+    <None Include="TestImages\JpegImages\download %281%29.jpg" />
+    <None Include="TestImages\JpegImages\download.jpg" />
+    <None Include="TestImages\JpegImages\peezzaa.jpeg" />
+    <None Include="TestImages\JpegImages\Pizza-500x500.jpeg" />
+    <None Include="TestImages\JpegImages\pizzaaa.jpeg" />
+    <None Include="TestImages\JpgImages\148-1482860_pizza-png-tumblr-download-pizza.jpg" />
+    <None Include="TestImages\JpgImages\2-23197_mega-meat-pizza-pizza.jpg" />
+    <None Include="TestImages\JpgImages\download.jpg" />
+    <None Include="TestImages\PngImages\blue.png" />
+    <None Include="TestImages\PngImages\download.png" />
+    <None Include="TestImages\PngImages\green.png" />
+    <None Include="TestImages\PngImages\PNGPIX-COM-Sun-PNG-Transparent-Image-4-500x500.png" />
+    <None Include="TestImages\PngImages\red.png" />
+    <None Include="TestImages\PngImages\simpsons_PNG95.png" />
+    <None Include="TestImages\PngImages\smp_badge1-500x500.png" />
+    <None Include="TestImages\PngImages\yellow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

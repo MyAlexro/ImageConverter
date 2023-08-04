@@ -64,20 +64,20 @@ namespace ImageConverter
                     conversionsResults.Add(false);
                     return conversionsResults;
                 }
-            } //checks whether the user is trying to convert the image to the same format, converting an image to the same format causes an error because it will try to overwrite the image that is in use by the program
-            foreach (var imagePath in pathsOfImagesToConvert)
+            } //checks whether the user is trying to convert the image to the same format
+            foreach (var imageToConvertPath in pathsOfImagesToConvert)
             {
                 if (format == "png")
                 {
-                    conversionsResults.Add(await Task.Run(() => ToPng(imagePath)));
+                    conversionsResults.Add(await Task.Run(() => ToPng(imageToConvertPath)));
                 }
                 else if (format == "jpeg" || format == "jpg")
                 {
-                    conversionsResults.Add(await Task.Run(() => ToJpegOrJpg(imagePath, format)));
+                    conversionsResults.Add(await Task.Run(() => ToJpegOrJpg(imageToConvertPath, format)));
                 }
                 else if (format == "bmp")
                 {
-                    conversionsResults.Add(await Task.Run(() => ToBmp(imagePath)));
+                    conversionsResults.Add(await Task.Run(() => ToBmp(imageToConvertPath)));
                 }
                 else if (format == "gif")
                 {
@@ -86,7 +86,7 @@ namespace ImageConverter
                 }
                 else if (format == "ico" || format == "cur")
                 {
-                    conversionsResults.Add(await Task.Run(() => ToIconOrCur(imagePath, format)));
+                    conversionsResults.Add(await Task.Run(() => ToIconOrCur(imageToConvertPath, format)));
                 }
             }
 
@@ -148,6 +148,7 @@ namespace ImageConverter
                         imageToConv.CacheOption = BitmapCacheOption.OnLoad;
                         imageToConv.EndInit();
                         jpegOrJpgEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                        st.Close();
                     }
                 }//if the user selected a color to convert the image transparency with
                 else
@@ -212,6 +213,7 @@ namespace ImageConverter
                         imageToConv.CacheOption = BitmapCacheOption.OnLoad;
                         imageToConv.EndInit();
                         bmpEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
+                        st2.Close();
                     }
                 }//if the user selected a color to convert the image transparency with
                 else
@@ -222,6 +224,7 @@ namespace ImageConverter
                     imageToConv.EndInit();
                     bmpEncoder.Frames.Add(BitmapFrame.Create(imageToConv));
                 }
+                st.Close();
             }//loads image to convert from a stream, eventually replace the transparency, and converts it
 
             #region saves bmp image and checkes whether it was saved correctly
@@ -338,8 +341,6 @@ namespace ImageConverter
             var binWriter = new BinaryWriter(memStream);
             #endregion
 
-            try
-            {
                 #region Icon header
                 binWriter.Write((short)0);   //offset #0: reserved
 
@@ -375,7 +376,9 @@ namespace ImageConverter
 
                 var start = (int)memStream.Position + 4;
                 binWriter.Write(start); //offset #12: of image data from the beginning of the ico/cur file
-                #endregion
+            #endregion
+            try
+            {
                 #region Image data
                 if (ext == ".png")
                 {
@@ -385,6 +388,7 @@ namespace ImageConverter
                         {
                             var imgToConvWithReplacedTransp = Image.FromStream(st);
                             imgToConvWithReplacedTransp.Save(memStream, ImageFormat.Png);
+                            st.Close();
                         }
                     }//if the user selected a color to convert the image transparency with
                     else
@@ -392,26 +396,34 @@ namespace ImageConverter
                 }
                 else
                 {
+                    imgToConvert.Save(memStream, ImageFormat.Bmp);
                     byte[] bmpBytes = File.ReadAllBytes(imgToConvertPath);
-                    List<byte> bytesList = bmpBytes.ToList<byte>();
-                    for (int i = 0; i <= 14; i++)
+                    List<byte> bytesList = bmpBytes.ToList();
+                    for (int i = 1 ; i <= 224; i++)
                     {
                         bytesList.RemoveAt(i);
                     }
                     bmpBytes = bytesList.ToArray();
-                    Stream stream = new MemoryStream(bmpBytes);
-                    imgToConvert = Image.FromStream(stream);
-                    imgToConvert.Save(memStream, ImageFormat.Png);
-                }//if the image to convert is a bmp then the BITMAPFILEHEADER has to be deleted
+                    using (Stream stream = new MemoryStream(bmpBytes))
+                    {
+                        imgToConvert = Image.FromStream(stream);
+                        stream.Close();
+                    }
 
+                    imgToConvert.Save(memStream, ImageFormat.Bmp);
+                }//if the image to convert is a bmp then the BITMAPFILEHEADER block has to be deleted
+                 
                 var imageSize = (int)memStream.Position - start;
                 memStream.Seek(sizeHere, SeekOrigin.Begin);
                 binWriter.Write(imageSize);
                 memStream.Seek(0, SeekOrigin.Begin);
                 #endregion
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("\n");
+                System.Diagnostics.Debug.WriteLine(e.Message);
                 return false;
             }
 

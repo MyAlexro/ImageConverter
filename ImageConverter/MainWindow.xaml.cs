@@ -8,7 +8,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Threading;
 using System;
+using System.Diagnostics;
 
 namespace ImageConverter
 {
@@ -24,8 +26,9 @@ namespace ImageConverter
         List<bool> finishedConversions;
         List<string> unsuccessfulConversions;
         int repGifTimes = 0;
-        int delayTimeInCS = 50; //delay time (in centiseconds so that it doesn't have to be converted later)
+        int delayTimeInCs = 50; //delay time (in centiseconds so that it doesn't have to be converted later)
         int replTranspWithCol = 0;
+        Stopwatch timer = new Stopwatch(); //timer that measures the time needed to convert all the images
 
         public MainWindow()
         {
@@ -39,7 +42,7 @@ namespace ImageConverter
             {
                 element.Background = ThemeManager.SelectedFontColor();
             }
-            if (Settings.Default.Language == "it")
+            if (Settings.Default.Language == "it") //applies translation to all the visible controls
             {
                 ImgViewer.Source = imgSourceConverter.ConvertFromInvariantString("pack://application:,,,/Resources/ImageConverterDragAndDropIT.jpg") as ImageSource;
                 ChooseFormatLabel.Content = LanguageManager.IT_ChooseFormatLabelTxt;
@@ -110,7 +113,7 @@ namespace ImageConverter
                 {
                     WarningLabel.Visibility = Visibility.Hidden;
                     return;
-                } //if the warning label IS visible the dropped file is not an image, so ignore the drop(return)
+                } //if the warning label IS visible the dropped file is not an image, so ignore the drop
 
                 #region resets controls
                 ThemeManager.solidColorBrush = new SolidColorBrush();
@@ -198,7 +201,24 @@ namespace ImageConverter
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunningTxt;
             }
 
-            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, delayTimeInCS));
+            Thread ticker = new Thread(() =>
+            {
+                while (true)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ConversionResultTextBlock.Text += ".";
+                    });
+                    Thread.Sleep(800);
+                }
+            }); //adds a dot each 800ms during conversion
+            ticker.IsBackground = true;
+            ticker.Start();
+            timer.Start();
+
+            finishedConversions = await Task.Run(() => ImageConversionHandler.StartConversion(selectedFormat, pathsOfImagesToConvert, repGifTimes, replTranspWithCol, delayTimeInCs));
+
+            timer.Stop();
             #region counts the unsuccessful conversions
             unsuccessfulConversions = new List<string>();
             int i = 0;
@@ -211,6 +231,7 @@ namespace ImageConverter
                 i++;
             }
             #endregion
+            ticker.Abort();
             #region displays the result(s) of the conversion(s)
             ConversionResultTextBlock.Visibility = Visibility.Visible;
             if (unsuccessfulConversions.Count == 0)
@@ -227,6 +248,7 @@ namespace ImageConverter
                 {
                     ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockFinishedTxt;
                 }
+                ConversionResultTextBlock.Text += $" in {(int)timer.Elapsed.TotalMilliseconds}ms"; //time taken to convert the images in milliseconds
             } //if there were no errors
             else
             {
@@ -247,6 +269,7 @@ namespace ImageConverter
                 }
             } //if there was any error
             #endregion
+            timer.Reset();
 
             ConvertImgBttn.IsEnabled = true; //re-enables the convertbttn to convert another image
         }
@@ -287,7 +310,7 @@ namespace ImageConverter
         {
             var comboBox = (ComboBox)sender;
             var delayTimeInt = Convert.ToInt32((comboBox.SelectedItem as Label).Content);
-            delayTimeInCS = delayTimeInt / 10;
+            delayTimeInCs = delayTimeInt / 10;
         }
 
         private void ImageViewerContextMenu_Opened(object sender, RoutedEventArgs e)
