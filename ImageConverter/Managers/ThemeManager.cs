@@ -6,7 +6,13 @@ namespace ImageConverter
 {
     class ThemeManager
     {
+        /// <summary>
+        /// Available theme colors
+        /// </summary>
         public static readonly List<string> ThemeColors = new List<string>() { "DefaultThemeColor", "GreenThemeColor", "RedThemeColor", "VioletThemeColor", "WhiteThemeColor" };
+        /// <summary>
+        /// Available theme modes
+        /// </summary>
         public static readonly List<string> ThemeModes = new List<string>() { "LightTheme", "DarkTheme" };
 
 
