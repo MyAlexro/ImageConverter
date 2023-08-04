@@ -200,6 +200,7 @@ namespace ImageConverter
             return (await Task.WhenAll(compressionsTasks)).ToList();
         }
 
+        #region Convert-to-formats methods
         private static async Task<bool> ToPngAsync(string pathOfImageToConvert)
         {
             #region  set up image infos to convert etc.
@@ -607,6 +608,8 @@ namespace ImageConverter
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
             pathToImageToConvertDirectory = Path.GetDirectoryName(pathOfImageToConvert);
             imageEncoder = new TiffBitmapEncoder();
+            string convertedImagePath = $"{pathToImageToConvertDirectory}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}";
+            bool conversionResult = false;
             #endregion
 
             //Start process of conversion
@@ -676,10 +679,21 @@ namespace ImageConverter
                 imageEncoder.Save(st);
                 st.Close();
             }
-            return await Task.Run(() => CheckIfSavedCorrectlyAsync($"{pathToImageToConvertDirectory}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
+            conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{pathToImageToConvertDirectory}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
             #endregion
+
+            //If the user decided to compress the image, add the compression task to the compressionsTasks list
+            if (chosenQuality != 100)
+            {
+                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+            }
+
+            return conversionResult;
         }
 
+        #endregion
+
+        #region Utility methods
         /// <summary>
         /// Takes an Image as input, replaces its transparency and returns the path where it has been saved (in the temp folder)
         /// </summary>
@@ -788,5 +802,6 @@ namespace ImageConverter
             }
 
         }
+        #endregion
     }
 }
