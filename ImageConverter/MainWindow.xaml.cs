@@ -136,10 +136,12 @@ namespace ImageConverter
                     MessageBox.Show(LanguageManager.EN_SelectFormatMsgBox, "Errore", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 return;
-            }
-            string selectedFormat = (((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower());
-            ConversionResultLabel.Visibility = Visibility.Visible;
-            Task.Run(() => Loading());
+            } //se non è selezionato il formato in cui convertire l'immagine 
+
+            //se invece è stato selezionato
+            string selectedFormat = ((FormatComboBox.SelectedItem as System.Windows.Controls.Label).Content as string).ToLower(); //prende il selected format
+            ConversionResultLabel.Visibility = Visibility.Visible; //label sullo stato della conversione visibile
+            
             conversionFinished = await Task.Run(() => ImageConversionHandler.ConvertAndSaveAsync(selectedFormat, pathofImgToConvert));
             if (conversionFinished == true)
             {
@@ -155,7 +157,7 @@ namespace ImageConverter
                     ConversionResultLabel.Content = LanguageManager.EN_ConversionResultLabelFinishedTxt;
                 }
             }
-            else
+            else 
             {
                 ConversionResultLabel.Visibility = Visibility.Hidden;
                 return;
@@ -167,20 +169,21 @@ namespace ImageConverter
             Menu.OpenMenu(Menu);
         }
 
-        private async Task Loading()
+        private async Task ConversionLabelLoading()
         {
-            while (true)
+            ConversionResultLabel.Content += ".";
+            Thread.Sleep(500);
+            while (conversionFinished == false)
             {
                 System.Diagnostics.Debug.WriteLine("running");
-                if (!(ConversionResultLabel.Content as string).Contains("..."))
+               /* if (!(ConversionResultLabel.Content as string).Contains("..."))
                 {
-                    ConversionResultLabel.Content += ".";
-                    Thread.Sleep(100);
+
                 }
                 else
                 {
                     ConversionResultLabel.Content = (ConversionResultLabel.Content as string).Replace("...", string.Empty);
-                }
+                }*/
             }
 
         }
