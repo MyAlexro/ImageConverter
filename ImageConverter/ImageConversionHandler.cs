@@ -9,6 +9,7 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using ImageConverter.Classes;
 
 namespace ImageConverter
 {
@@ -67,7 +68,7 @@ namespace ImageConverter
         /// </summary>
         private string imageFormat = string.Empty;
         /// <summary>
-        /// Path where the image(s) will be saved
+        /// Path where the converted image(s) will be saved
         /// </summary>
         private string savePath = string.Empty;
         /// <summary>
@@ -116,28 +117,28 @@ namespace ImageConverter
                 {
                     if (selectedFormat == "png")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ToPngAsync(imageToConvertPath)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertToPngAndSaveAsync(imageToConvertPath)));
                     }
                     else if (selectedFormat == "jpeg" || selectedFormat == "jpg")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ToJpegOrJpgAsync(imageToConvertPath, selectedFormat)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertToJpegOrJpgAndSaveAsync(imageToConvertPath, selectedFormat)));
                     }
                     else if (selectedFormat == "bmp")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ToBmpAsync(imageToConvertPath)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertoToBmpAndSaveAsync(imageToConvertPath)));
                     }
                     else if (selectedFormat == "gif")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ImagesToGifAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertImagesToGifAndSaveAsync(pathsOfImagesToConvert, gifRepeatTimes, delayTime)));
                         break;
                     }
                     else if (selectedFormat == "ico" || selectedFormat == "cur")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ToIcoOrCurAsync(imageToConvertPath, selectedFormat)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertToIcoOrCurAndSaveAsync(imageToConvertPath, selectedFormat)));
                     }
                     else if (selectedFormat == "tiff")
                     {
-                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ToTiffAsync(imageToConvertPath, selectedFormat)));
+                        conversionsResults.Add(imageToConvertPath, await Task.Run(() => ConvertToTiffAndSaveAsync(imageToConvertPath, selectedFormat)));
                     }
                 }
             }
@@ -147,16 +148,20 @@ namespace ImageConverter
 
             /*If the user has set a quality for the compression and there's any possible compression, 
             *compress the image(s) and combine the results of the compression(s) with the conversion(s) one(s)*/
-            if (chosenQuality != 100 && compressionsTasks.Count != 0)
+            if (compressionsTasks.Count != 0 && chosenQuality != 100)
             {
                 //Start compressing the images
                 List<bool> compressionResultsBoolList = await Task.Run(() => StartCompressionParallelAsync());
-                //Add the compression results to the dictionary with its corresponding image, if it's a gif only the final gif will be compressed and have a result
+                //Add the compression results to the dictionary with its corresponding image 
+                //if the selected format is gif, the compressed image needs to be created because the compression tasks compressed the images
                 if (selectedFormat.ToLower() == "gif")
                 {
+                    bool gifCompressionsResult = await Task.Run(() => ConvertImagesToGifAndSaveAsync(Directory.GetFiles(Settings.Default.TempFolderPath).ToList(),
+                                                                                                     gifRepeatTimes,
+                                                                                                     delayTime));
                     for (int i = 0; i <= pathsOfImagesToConvert.Count - 1; i++)
                     {
-                        compressionResults.Add(pathsOfImagesToConvert.ElementAt(i), compressionResultsBoolList.ElementAt(0));
+                        compressionResults.Add(pathsOfImagesToConvert.ElementAt(i), gifCompressionsResult);
                     }
                 }
                 else
@@ -178,11 +183,8 @@ namespace ImageConverter
             }
             #endregion
 
-            //Deletes the content of the temporary folder in case there are any images that haven't been deleted(for example the image with the transparency replaced but still not converted)
-            foreach (var file in Directory.GetFiles(Settings.Default.TempFolderPath))
-            {
-                File.Delete(file);
-            }
+            //Empty the Temp Folder, which may contain previous temp images
+            UtilityMethods.EmptyFolder(Settings.Default.TempFolderPath);
 
             return conversionsResults;
         }
@@ -203,8 +205,14 @@ namespace ImageConverter
             return (await Task.WhenAll(compressionsTasks)).ToList();
         }
 
-        #region Convert-to-formats methods
-        private async Task<bool> ToPngAsync(string pathOfImageToConvert)
+
+        #region Convert-to-format methods
+        /// <summary>
+        /// Asynchronously convert an image to a Png image and save it to the savePath
+        /// </summary>
+        /// <param name="pathOfImageToConvert"></param>
+        /// <returns></returns>
+        private async Task<bool> ConvertToPngAndSaveAsync(string pathOfImageToConvert)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -244,7 +252,13 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private async Task<bool> ToJpegOrJpgAsync(string pathOfImageToConvert, string format)
+        /// <summary>
+        /// Asynchronously convert an image to a Jpeg or Jpg image and save it to the savePath
+        /// </summary>
+        /// <param name="pathOfImageToConvert"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        private async Task<bool> ConvertToJpegOrJpgAndSaveAsync(string pathOfImageToConvert, string format)
         {
             #region Set up infos about the image to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -303,7 +317,12 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private async Task<bool> ToBmpAsync(string pathOfImageToConvert)
+        /// <summary>
+        /// Asynchronously convert an image to a Bmp image and save it to the savePath
+        /// </summary>
+        /// <param name="pathOfImageToConvert"></param>
+        /// <returns></returns>
+        private async Task<bool> ConvertoToBmpAndSaveAsync(string pathOfImageToConvert)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -364,13 +383,13 @@ namespace ImageConverter
 
         //TODO: Fix conversion to gif, sometimes the final gifs are buggy
         /// <summary>
-        /// Convert a group of images into a gif
+        /// Asynchronously convert a group of images into a Gif image and save it to the savePath
         /// </summary>
         /// <param name="imagesToConvertPaths">List containing the paths of the images to convert</param>
         /// <param name="repeatTimes"> Times the gif will be repeated(loop(0), 1-10)</param>
         /// <param name="delayTime"> Delay between two frames in centiseconds</param>
         /// <returns></returns>
-        private async Task<bool> ImagesToGifAsync(List<String> imagesToConvertPaths, int repeatTimes, int delayTime)
+        private async Task<bool> ConvertImagesToGifAndSaveAsync(List<string> imagesToConvertPaths, int repeatTimes, int delayTime)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(imagesToConvertPaths[0]);
@@ -387,13 +406,12 @@ namespace ImageConverter
             }
             #endregion
 
-
             //Adds each image to the encoder, (after replacing the transparency in case the image is a png)
-            foreach (var image in imagesToConvertPaths)
+            foreach (var imagePath in imagesToConvertPaths)
             {
-                imageFormat = Path.GetExtension(image).Trim('.');
+                imageFormat = Path.GetExtension(imagePath).Trim('.');
                 //Loads image to convert from a stream, (in case) replace transparency and converts it
-                using (Stream st = File.OpenRead(image))
+                using (Stream st = File.OpenRead(imagePath))
                 {
                     var imageToConv = new BitmapImage();
 
@@ -454,8 +472,8 @@ namespace ImageConverter
                         {
                             Debug.Write($"Found GCE block n°{a}, at index {i}. ");
                             //Modify Delay Time byte with the chosen value
-                            gifBytesList[i+4] = (byte)delayTime;
-                            Debug.WriteLine($"Modified Delay Time byte at index {i+4}.");
+                            gifBytesList[i + 4] = (byte)delayTime;
+                            Debug.WriteLine($"Modified Delay Time byte at index {i + 4}.");
                             a++;
                         }
                     }
@@ -496,16 +514,27 @@ namespace ImageConverter
             //Checks wether the gif was saved correctly
             conversionResult = await Task.Run(() => CheckIfSavedCorrectlyAsync($"{savePath}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"));
 
-            //If the user decided to compress the image, add the compression task to the compressionsTasks list
-            if (chosenQuality != 100 && conversionResult == true)
+            UtilityMethods.EmptyFolder(Settings.Default.TempFolderPath);
+
+            //Compressing directly the gif will break it, so add the compression tasks of the original images and then create the "compressed" gif with the compressed images
+            if (chosenQuality != 100)
             {
-                compressionsTasks.Add(CompressImageAsync(convertedImagePath, chosenFormat, chosenQuality));
+                foreach (var imagePath in imagesToConvertPaths)
+                {
+                    compressionsTasks.Add(CompressImageAsync(imagePath, Path.GetExtension(imagePath).Trim('.'), chosenQuality, Settings.Default.TempFolderPath));
+                }
             }
 
             return conversionResult;
         }
 
-        private async Task<bool> ToIcoOrCurAsync(string pathOfImageToConvert, string format)
+        /// <summary>
+        /// Asynchronously convert an image to a Ico or Cur image and save it to the savePath
+        /// </summary>
+        /// <param name="pathOfImageToConvert"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        private async Task<bool> ConvertToIcoOrCurAndSaveAsync(string pathOfImageToConvert, string format)
         {
             var imgToConvExt = Path.GetExtension(pathOfImageToConvert).ToLower();
             #region if the image to convert isn't a png or bmp image it can't be converterd: return false
@@ -645,7 +674,13 @@ namespace ImageConverter
             return conversionResult;
         }
 
-        private async Task<bool> ToTiffAsync(string pathOfImageToConvert, string compressionAlgo)
+        /// <summary>
+        /// Asynchronously convert an image to a Tiff image and save it to the savePath
+        /// </summary>
+        /// <param name="pathOfImageToConvert"></param>
+        /// <param name="compressionAlgo"></param>
+        /// <returns></returns>
+        private async Task<bool> ConvertToTiffAndSaveAsync(string pathOfImageToConvert, string compressionAlgo)
         {
             #region  set up image infos to convert etc.
             imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -733,11 +768,12 @@ namespace ImageConverter
 
             return conversionResult;
         }
+
         #endregion
 
 
         /// <summary>
-        /// Compress an image, it gets called after an image has already been converted 
+        /// Compress an image 
         /// </summary>
         /// <param name="imagePath"></param>
         /// <param name="formatOfImageToCompress"></param>
@@ -824,7 +860,6 @@ namespace ImageConverter
             #endregion
         }
 
-        #region Utility methods
 
         /// <summary>
         /// Checks if an image has been converted correctly and thus if it has been saved correctly
@@ -846,6 +881,5 @@ namespace ImageConverter
             }
 
         }
-        #endregion
     }
 }
