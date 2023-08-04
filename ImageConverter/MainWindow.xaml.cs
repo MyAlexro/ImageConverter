@@ -252,7 +252,7 @@ namespace ImageConverter
                     else if (Settings.Default.Language == "en") { WarningTextBlock.Text = LanguageManager.EN_WarningUnsupportedFile; }
                 }
 
-                //If the user wants to add the images to the already present ones, check if the any of the dropping-files 
+                //If the user wants to ADD (not replace) some new images to the already present ones, check if the any of the dropping-files 
                 //are already present in the list of images to convert
                 if (local_pathsOfImagesToConvert.Count != 0 && (string)AddOrReplaceDroppedImagesBttn.Tag == "Add")
                 {
@@ -499,7 +499,7 @@ namespace ImageConverter
                 else if (Settings.Default.Language == "en") { ConversionResultTextBlock.Text = LanguageManager.EN_UnsuccConversionResultTextBlockFinishedText; }
             }
 
-            Thread.Sleep(800); //Add delay otherwise if the user pressed the button right after re-enabling it, it would become black
+            Thread.Sleep(800); //Add delay otherwise if the user pressed the button right after re-enabling it and the button would become dark
             StartConversionBttn.IsEnabled = false; //Unbug the button
             StartConversionBttn.IsEnabled = true; //Re-enables the convertbttn to convert another image
         }

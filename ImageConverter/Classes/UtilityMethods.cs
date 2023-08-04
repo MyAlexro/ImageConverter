@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace ImageConverter.Classes
 {
-    class UtilityMethods
+    public class UtilityMethods
     {
         /// <summary>
         /// Checks wether the given path of the file is an image
@@ -92,7 +92,7 @@ namespace ImageConverter.Classes
         /// Empty a folder by deleting all its content
         /// </summary>
         /// <param name="path"></param>
-        public static void EmptyFolder(string path)
+        internal static void EmptyFolder(string path)
         {
             foreach (var file in Directory.GetFiles(path))
             {
