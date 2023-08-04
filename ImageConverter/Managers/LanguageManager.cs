@@ -10,7 +10,7 @@
         //--ITALIAN--
         public static readonly string
          //Conversion options
-         IT_GifFramesDelayTimeLabelText = "Tempo di passaggio da un frame all'altro:",
+         IT_GifFramesDelayTimeLabelText = $"Tempo di passaggio da un frame all'altro({ImageConversionParametersModel.minDelayTime}-{ImageConversionParametersModel.maxDelayTime}ms):",
          IT_AddToExistingImagesToolTip = "Aggiungi le immagini trascinate a quelle già presenti",
          IT_ReplaceExistingImagesToolTip = "Sostituisci le immagini presenti con quelle trascinate",
          IT_StartConversionBttnText = "Converti immagini",
@@ -54,7 +54,7 @@
         //--ENGLISH--
         public static readonly string
         //Conversion options
-         EN_GifFramesDelayTimeLabelText = "Delay time between two frames:",
+         EN_GifFramesDelayTimeLabelText = $"Delay time between two frames({ImageConversionParametersModel.minDelayTime}-{ImageConversionParametersModel.maxDelayTime}ms):",
          EN_AddToExistingImagesToolTip = "Add the dropped images to the current ones",
          EN_ReplaceExistingImagesToolTip = "Replace the current images with the dropped ones",
          EN_StartConversionBttnText = "Convert images",

@@ -8,7 +8,7 @@
              mc:Ignorable="d" Height="44.666" Width="180.5">
 
     <Viewbox>
-        <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+        <Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave" Focusable="True">
             <Rectangle x:Name="BttnBackground" Fill="#FFDAA619" Width="Auto" Height="Auto" RadiusY="4.5" RadiusX="4.5"/>
             <Label Content="{Binding ButtonText, ElementName=RoundButton}" FontSize="{Binding FontSize, ElementName=RoundButton}" FontFamily="Segoa UI" x:Name="ConvertLabel" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>

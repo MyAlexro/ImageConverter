@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Markup;
@@ -14,6 +15,23 @@ namespace ImageConverter
         /// Available formats to convert the image(s) to
         /// </summary>
         public static readonly List<string> availableFormats = new List<string> { "PNG", "JPG", "JPEG", "BMP", "GIF", "ICO", "CUR", "TIFF" };
+        /// <summary>
+        /// Maximum allowed value of the delay time between two frames of a gif
+        /// </summary>
+        public const int maxDelayTime = 2500;
+        /// <summary>
+        /// Minimum allowed value of the delay time between two frames of a gif
+        /// </summary>
+        public const int minDelayTime = 1;
+        /// <summary>
+        /// Maximum allowed value of the quality level used in the compression of the image
+        /// </summary>
+        public const int maxQualityLevel = 100;
+        /// <summary>
+        /// Minimum allowed value of the quality level used in the compression of the image
+        /// </summary>
+        public const int minQualityLevel = 0;
+
 
         private string _format;
         /// <summary>

@@ -55,6 +55,10 @@ namespace ImageConverter
         /// </summary>
         private int chosenQuality = 0;
         /// <summary>
+        /// Delay time between two frames of a gif in centiseconds
+        /// </summary>
+        int delayTime;
+        /// <summary>
         /// Type of compression for Tiff images
         /// </summary>
         private string chosenCompressionAlgo;
@@ -87,7 +91,7 @@ namespace ImageConverter
             List<string> pathsOfImagesToConvert = conversionParameters.pathsOfImagesToConvert;
             string selectedFormat = conversionParameters.format;
             int gifRepeatTimes = conversionParameters.gifRepeatTimes;
-            int delayTime = conversionParameters.delayTime;
+            delayTime = conversionParameters.delayTime;
             conversionsResults = new Dictionary<string, bool>();
             compressionResults = new Dictionary<string, bool>();
             compressionsTasks = new List<Task<bool>>();
@@ -369,7 +373,7 @@ namespace ImageConverter
             bool conversionResult = false;
             #endregion
 
-            //Adds each image to the encoder, (before replacing the transparency in case the image is a png)
+            //Adds each image to the encoder, (after replacing the transparency in case the image is a png)
             foreach (var image in imagesToConvertPaths)
             {
                 imageFormat = Path.GetExtension(image).Trim('.');
@@ -408,7 +412,7 @@ namespace ImageConverter
             //Adds the application extensions and graphic control extension blocks to the gif file structure
             using (var ms = new MemoryStream())
             {
-                //Saves the basic gif to the memory
+                //Saves the "basic" gif to the memory
                 imageEncoder.Save(ms);
                 var gifBytesArr = ms.ToArray();
 
