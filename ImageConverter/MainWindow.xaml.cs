@@ -584,11 +584,11 @@ namespace ImageConverter
         {
             string text = QualityLevelTextBox.Text;
             int value;
-            if (int.TryParse(text.Trim('%'), out value) && value < 100 && value > 0 && text.Contains("%"))
+            if (int.TryParse(text.Trim('%'), out value) && value < 100 && value >= 0 && text.Contains("%"))
                 return;
             QualityLevelTextBox.Text = Regex.Replace(QualityLevelTextBox.Text, "[^0-9]", "") + "%";
             if (value > 100) { QualityLevelTextBox.Text = "100%"; }
-            else if (value < 1) { QualityLevelTextBox.Text = "1%"; }
+            else if (value < 1) { QualityLevelTextBox.Text = "0%"; }
         }
 
 

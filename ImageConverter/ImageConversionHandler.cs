@@ -77,6 +77,7 @@ namespace ImageConverter
             return false;
         }
 
+        //TODO: Fix compresses image that the user tried to convert to the same image
         /// <summary>
         /// Starts the conversion of one or more images to the specified format. Returns a string(path of the converted image) and a bool(was the conversion successful? true/false)
         /// </summary>
@@ -590,7 +591,7 @@ namespace ImageConverter
                 }
             }
 
-            #region Set compression type in the encoder
+            //Set compression type in the encoder
             switch(compressionAlgo.ToLower())
             {
                 default:
@@ -620,7 +621,6 @@ namespace ImageConverter
                     ((TiffBitmapEncoder)imageEncoder).Compression = TiffCompressOption.Zip;
                     break;
             }
-            #endregion
 
             #region Saves the image and checks whether it was saved correctly, return result
             using (Stream st = File.Create($"{pathToImageToConvertDirectory}\\{imageToConvertName}_{chosenFormat}.{chosenFormat}"))
