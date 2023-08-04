@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace ImageConverter
                     if (value == availableFormat.ToLower())
                     {
                         _format = value;
-                        break;
+                        return;
                     }
                 }
             }
@@ -63,5 +64,21 @@ namespace ImageConverter
         /// Type of compression for Tiff images
         /// </summary>
         public string compressionAlgo { get; set; }
+
+        private string _savePath;
+        /// <summary>
+        /// Path where the image(s) will be saved, the default save path is the one of the first image to convert
+        /// </summary>
+        public string savePath
+        {
+            get { return _savePath; }
+            set
+            {
+                if (Directory.Exists(value))
+                    _savePath = value;
+                else
+                    throw new Exception("Invalid path, ImageConversionParametersModel.savePath");
+            }
+        }
     }
 }

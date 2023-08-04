@@ -16,8 +16,7 @@ namespace ImageConverter
         }
 
         // Using a DependencyProperty as the backing store for FontSize.  This enables animation, styling, binding, etc...
-        public static new readonly DependencyProperty FontSizeProperty =
-            DependencyProperty.Register("FontSize", typeof(int), typeof(RoundBttn), new PropertyMetadata(12));
+        public static new readonly DependencyProperty FontSizeProperty = DependencyProperty.Register("FontSize", typeof(int), typeof(RoundBttn), new PropertyMetadata(12));
 
 
         public string ButtonText

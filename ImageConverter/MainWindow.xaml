@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImageConverter"
         xmlns:CustomControls="clr-namespace:ImageConverter" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
-        Title="ImageConverter" Height="540" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
+        Title="ImageConverter" Height="560" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
 
     <Window.Resources>
         <Style x:Key="ComboBoxElement" TargetType="Label">
@@ -20,7 +20,7 @@
     <Grid x:Name="MainWindowGrid">
         <StackPanel x:Name="MainWindowStackPanel" Orientation="Vertical">
             <!-- Top block, Stackpanel containing window name and side menu button -->
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="960">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="{Binding ElementName=MainWindow1, Path=Width}">
                 <!--Button to open the Menu-->
                 <CustomControls:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="Auto" Width="Auto" VerticalAlignment="Top" MouseDown="MenuBttn_MouseDown" Margin="16,10,0,0"/>
 
@@ -39,7 +39,7 @@
                 <!-- Left block, Stackpanel containing the ImgViewer and all its related controls-->
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                     <!-- Label that appears only if the users is trying to drop files which can't be converted-->
-                    <Label x:Name="WarningLabel" Content="Error text" HorizontalAlignment="Left" VerticalAlignment="Top" Height="Auto" Width="Auto" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="10" />
+                    <TextBlock x:Name="WarningTextBlock" Text="Error text" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Height="28" MaxWidth="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="11" />
 
                     <!-- Button that determines if the dropped images replace the images to convert or add up to them-->
                     <Image Tag="Replace" x:Name="AddOrReplaceDroppedImagesBttn" Source="Resources/ReplaceImages.png" Stretch="Uniform" Width="Auto" Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImagesBttn_MouseDown"/>
@@ -57,7 +57,7 @@
 
                     <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
                     <ScrollViewer HorizontalAlignment="Left" Height="Auto" MaxHeight="60" VerticalAlignment="Top" Width="365" Margin="0,1,0,0">
-                        <TextBlock x:Name="ImagesNameLabel" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="ImagesNameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
                     </ScrollViewer>
 
                 </StackPanel>
@@ -98,7 +98,6 @@
                         <StackPanel x:Name="CompressionAlgoOptionSP" Orientation="Horizontal" Margin="0,8">
                             <Label Content="Compression algorithm:" x:Name="CompressionAlgoLabel"/>
                             <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left"  VerticalAlignment="Bottom">
-                                <Label x:Name="NoneAlgoLabel" Style="{StaticResource ComboBoxElement}" Content="None"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Default"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt3"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt4"/>
@@ -110,7 +109,6 @@
 
                         <!-- GIF format options-->
                         <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" Visibility="Visible" Width="Auto" Height="Auto" Margin="0,8,0,0">
-
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
@@ -144,19 +142,23 @@
                         </StackPanel>
 
                         <!-- Quality compression options -->
-                        <StackPanel x:Name="QualityCompressionOptionSP" Orientation="Vertical" Margin="0,8">
-                            <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
-                                <Label Content="Quality:" x:Name="QualityLabel"/>
-                                <Border>
-                                    <TextBox x:Name="QualityLevelTextBox" Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" TextChanged="QualityLevelTextBox_TextChanged"/>
-                                </Border>
-                            </StackPanel>
+                        <StackPanel x:Name="QualityOptionSP" Orientation="Horizontal">
+                            <Label Content="Quality:" x:Name="QualityLabel"/>
+                            <Border>
+                                <TextBox x:Name="QualityLevelTextBox" Text="100%" HorizontalAlignment="Center" VerticalAlignment="Center" TextChanged="QualityLevelTextBox_TextChanged"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Choose where to save image(s) option-->
+                        <StackPanel x:Name="SavePathOptionSP" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8" Height="28">
+                            <TextBox x:Name="SavePathTextBlock" HorizontalAlignment="Center" MaxWidth="250">Path where the image(s) will be saved</TextBox>
+                            <Button x:Name="ChooseFolderBttn" Click="ChooseFolderBttn_Click">Choose folder</Button>
                         </StackPanel>
 
                     </StackPanel>
 
                     <!-- Button to start the conversion of the image-->
-                    <CustomControls:RoundBttn x:Name="StartConversionBttn" ButtonText="Convert images" FontSize="12" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="129" MouseDown="StartConversionBttn_MouseDown" IsEnabled="False" Margin="4,340,0,0"/>
+                    <CustomControls:RoundBttn x:Name="StartConversionBttn" ButtonText="Start Conversion" FontSize="12" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="129" MouseDown="StartConversionBttn_MouseDown" IsEnabled="False" Margin="4,340,0,0"/>
 
                     <!-- Textblock that appears when a conversion is ongoing or a conversion has finished-->
                     <TextBlock x:Name="ConversionResultTextBlock" Text="Conversion result" x:FieldModifier="public" TextWrapping="Wrap" Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Height="Auto" Margin="140,350,0,0"/>
@@ -166,7 +168,7 @@
         </StackPanel>
 
         <!--Side menu-->
-        <CustomControls:Menu x:Name="Menu" Height="Auto" Width="255" Margin="-262,0,0,0" HorizontalAlignment="Left" >
+        <CustomControls:Menu x:Name="Menu"  Height="{Binding ElementName=MainWindow1, Path=Height}" Width="255" Margin="-260,0,0,0" HorizontalAlignment="Left" >
             <CustomControls:Menu.Effect>
                 <DropShadowEffect BlurRadius="10" Opacity="0.75"/>
             </CustomControls:Menu.Effect>

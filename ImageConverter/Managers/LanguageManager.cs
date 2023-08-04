@@ -17,10 +17,10 @@
          IT_ChooseFormatLabelText = "Scegliere il formato in \ncui convertire l'immagine:",
          IT_ImageViewerContextMenuText = "Svuota",
          IT_CompressionAlgoLabelText = "Algortimo di compressione:",
-         IT_NoneAlgoLabelText = "Nessuno",
          IT_ReplacePngTransparencyLabelText = "Sostituisci la trasparenza della png con:",
          IT_GifRepeatTimesLabelText = "Volte che la gif si ripeterà:",
          IT_QualityLabelText = "Qualità:",
+         IT_ChooseFolderBttnText = "Scegli cartella...",
          IT_Nothing = "Niente",
          IT_White = "Bianco",
          IT_Black = "Nero",
@@ -47,8 +47,9 @@
          IT_CantConvertImageToSameFormat = "Non è possibile un'immagine allo stesso formato",
          IT_CantConvertThisImageToIco = "Solo le immagini con il formato \"png\" o \"bmp\" possono essere convertite in immagini \"ico\" o \"cur\"!",
          IT_WarningUnsupportedFile = "⚠ Il file che si vuole convertire non è un'immagine o non è supportato",
-         IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini non verranno aggiunte perchè sono già presenti",
-         IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale";
+         IT_SomeImagesAreAlreadyPresent = "⚠ Alcune immagini non verranno aggiunte perchè sono già presenti nella lista di immagini da convertire",
+         IT_CantFindDroppedImagesInOriginalFolder = "Non è stato possibile trovare una o più immagini da convertire nella loro cartella originale",
+         IT_BrowserDialogDescription = "Selezionare la cartella dove salvare le immagini convertite";
 
         //--ENGLISH--
         public static readonly string
@@ -60,10 +61,10 @@
          EN_ChooseFormatLabelText = "Choose the format \nto convert the image to:",
          EN_ImageViewerContextMenuText = "Empty",
          EN_CompressionAlgoLabelText = "Compression algorithm:",
-         EN_NoneAlgoLabelText = "None",
          EN_ReplacePngTransparencyLabelText = "Replace the transparency of png images with:",
          EN_GifRepeatTimesLabelText = "Times the gif will repeat:",
          EN_QualityLabelText = "Quality:",
+         EN_ChooseFolderBttn = "Choose folder...",
          EN_Nothing = "Nothing",
          EN_White = "White",
          EN_Black = "Black",
@@ -90,7 +91,8 @@
          EN_CantConvertImageToSameFormat = "You can't convert an image to the same format",
          EN_CantConvertThisImageToIco = "Only \"png\" or \"bmp\" images can be converted to \"ico\" or \"cur\" images!",
          EN_WarningUnsupportedFile = "⚠ The file you are trying to convert isn't an image or isn't supported",
-         EN_SomeImagesAreAlreadyPresent = "⚠ Some images won't be added because they are already present",
-         EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder";
+         EN_SomeImagesAreAlreadyPresent = "⚠ Some images won't be added because they are already present in the list of images to convert",
+         EN_CantFindDroppedImagesInOriginalFolder = "Some images to convert couldn't be found in their original folder",
+         EN_BrowserDialogDescription = "Select the folder where the converted images will be saved";
     }
 }
