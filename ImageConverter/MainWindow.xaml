@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImageConverter"
         xmlns:CustomControls="clr-namespace:ImageConverter" xmlns:CustomControls1="clr-namespace:ImageConverter.CustomControls" x:Name="MainWindow1" x:Class="ImageConverter.MainWindow"
         mc:Ignorable="d"
-        Title="ImageConverter" Height="560" Width="960" ResizeMode="CanMinimize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
+        Title="ImageConverter" Height="520" Width="860" MinHeight="520"  MinWidth="780" ResizeMode="CanResize" Loaded="MainWindow_Loaded" Icon="Resources/ImageConverterWindowIcon.png">
 
     <Window.Resources>
         <Style x:Key="ComboBoxElement" TargetType="{x:Type Label}">
@@ -20,12 +20,12 @@
     <Grid x:Name="MainWindowGrid">
         <StackPanel x:Name="MainWindowStackPanel" Orientation="Vertical">
             <!-- Top block, Stackpanel containing window name and side menu button -->
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Height="Auto" Width="{Binding Width, ElementName=MainWindow1}">
+            <Grid VerticalAlignment="Top" Width="{Binding Width, ElementName=MainWindowGrid}">
                 <!--Button to open the Menu-->
-                <CustomControls:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left" Height="Auto" Width="Auto" VerticalAlignment="Top" MouseDown="MenuBttn_MouseDown" Margin="16,10,0,0"/>
+                <CustomControls:MenuButton x:Name="MenuBttn" HorizontalAlignment="Left"   VerticalAlignment="Top" MouseDown="MenuBttn_MouseDown" Margin="16,10,0,0"/>
 
                 <!-- Title of the window-->
-                <TextBlock x:Name="TitleTextBox" Height="64" Width="Auto" HorizontalAlignment="Center" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" VerticalAlignment="Bottom">
+                <TextBlock x:Name="TitleTextBox" HorizontalAlignment="Center" Text="ImageConverter" FontSize="48" FontWeight="Bold" Foreground="#FFDAA619" FontFamily="Arial Rounded MT Bold" VerticalAlignment="Bottom">
                     <TextBlock.Effect>
                         <DropShadowEffect Opacity="0.215"/>
                     </TextBlock.Effect>
@@ -34,18 +34,24 @@
             </Grid>
 
             <!-- Bottom block divided in left and right part-->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto" Height="Auto">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                 <!-- Left block, Stackpanel containing the ImgViewer and all its related controls-->
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="6*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <!-- Label that appears only if the users is trying to drop files which can't be converted-->
-                    <TextBlock x:Name="WarningTextBlock" Text="Error text" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Height="28" MaxWidth="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="11" />
+                    <TextBlock x:Name="WarningTextBlock" Grid.Row="0" Text="Error text" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Height="28" MaxWidth="365" Foreground="#FFFF3434" FontWeight="Bold" Visibility="Visible" FontSize="11" />
 
                     <!-- Button that determines if the dropped images replace the images to convert or add up to them-->
-                    <Image Tag="Replace" x:Name="InsertNewImagesModeBttn" Source="Resources/ReplaceImages.png" Stretch="Uniform" Width="Auto" Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImagesBttn_MouseDown"/>
+                    <Image Tag="Replace" x:Name="InsertNewImagesModeBttn" Grid.Row="1" Source="Resources/ReplaceImages.png" Stretch="Uniform"  Height="24" HorizontalAlignment="Left" MouseDown="AddOrReplaceDroppedImagesBttn_MouseDown"/>
 
                     <!--Container of the images to convert ImgViewer-->
-                    <Border  Width="365" Height="330" BorderBrush="Black" BorderThickness="1">
+                    <Border Grid.Row="2" Width="365" Height="330" BorderBrush="Black" BorderThickness="1">
                         <Image x:Name="ImgViewer" Height="330" Width="365" AllowDrop="True" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/ImageConverterDragAndDropEN.png" Opacity="0.3" 
                                DragDrop.Drop="ImgViewer_Drop" DragDrop.DragOver="ImgViewer_DragOver" DragDrop.DragLeave="ImgViewer_DragLeave" MouseDown="ImgViewer_MouseDown_SelectImages" MouseEnter="ImgViewer_MouseEnter">
                             <Image.ContextMenu>
@@ -57,23 +63,23 @@
                     </Border>
 
                     <!-- Textblock that shows the name of the image to convert, with a scrollviewer so that if there are too many names the user can use the scrollbar and see all of them-->
-                    <ScrollViewer HorizontalAlignment="Left" Height="Auto" MaxHeight="60" VerticalAlignment="Top" Width="365" Margin="0,1,0,0">
+                    <ScrollViewer Grid.Row="3" HorizontalAlignment="Left"  MaxHeight="60" VerticalAlignment="Top" Width="365" Margin="0,1,0,0">
                         <TextBlock x:Name="ImagesNamesTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
                     </ScrollViewer>
 
-                </StackPanel>
+                </Grid>
 
                 <!-- Right block, Conversion options etc -->
                 <Grid x:Name="RightBlockGrid" Width="350">
                     <!-- Stackpanel that contains all the options for the conversion -->
-                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical"  VerticalAlignment="Top" HorizontalAlignment="Left">
 
                         <!-- Format to convert images to stackpanel-->
                         <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,4">
                             <!--Label that says to choose a format-->
                             <Label x:Name="ChooseFormatLabel" Content="Choose the format &#xA;to convert the images to:" FontFamily="Segoa UI" FontSize="14" Height="50" VerticalAlignment="Top"/>
                             <!-- ComboBox to choose the format to which convert the image-->
-                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10" Width="Auto" Height="Auto" 
+                            <ComboBox x:Name="FormatComboBox" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Margin="0,0,0,10"   
                                       DropDownClosed="FormatComboBox_DropDownClosed">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="PNG"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="JPG"/>
@@ -89,7 +95,7 @@
                         <!-- PNG image options: Stackpanel that is shown only when one or more images to convert are pngs, it indicates the color the transparency is going to be replaced with-->
                         <StackPanel x:Name="ReplaceTransparencySP" Orientation="Horizontal">
                             <Label x:Name="ReplacePngTransparencyLabel" Content="Replace the transparency of png images with:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" SelectedIndex="0">
+                            <ComboBox x:Name="ReplTranspColCB" HorizontalAlignment="Center" VerticalAlignment="Center"  SelectedIndex="0">
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="Nothing" Content="Nothing"/>
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="White"  Content="White"/>
                                 <Label Style="{StaticResource ComboBoxElement}" x:Name="Black" Content="Black"/>
@@ -99,7 +105,7 @@
                         <!-- TIFF format option-->
                         <StackPanel x:Name="TiffOptionsSP" Orientation="Horizontal">
                             <Label Content="Compression algorithm:" x:Name="CompressionAlgoLabel"/>
-                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <ComboBox x:Name="CompressionTypesCB" SelectedIndex="0"  HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Default"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt3"/>
                                 <Label Style="{StaticResource ComboBoxElement}" Content="Ccitt4"/>
@@ -144,7 +150,7 @@
                         </StackPanel>
 
                         <!-- GIF format options-->
-                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}" Height="Auto" Margin="0,4,0,0">
+                        <StackPanel x:Name="GifOptionsSP" Orientation="Vertical" MaxWidth="{Binding MaxWidth, ElementName=RightBlockGrid}"  Margin="0,4,0,0">
                             <!-- Option that indicates how many times the gif shall be repeated -->
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="GifRepeatTimes" Content="Times the gif will repeat:"/>
@@ -200,7 +206,7 @@
         </StackPanel>
 
         <!--Side menu-->
-        <CustomControls:Menu x:Name="Menu"  Height="{Binding Height, ElementName=MainWindow1}" Width="255" Margin="-260,0,0,0" HorizontalAlignment="Left" >
+        <CustomControls:Menu x:Name="Menu"  Height="{Binding Height, ElementName=MainWindowGrid}" Width="255" Margin="-262,0,0,0" HorizontalAlignment="Left" >
             <CustomControls:Menu.Effect>
                 <DropShadowEffect BlurRadius="10" Opacity="0.75"/>
             </CustomControls:Menu.Effect>
