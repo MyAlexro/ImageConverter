@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Alessandro Dinardo")]
 [assembly: AssemblyProduct("ImageConverter")]
-[assembly: AssemblyCopyright("Copyright Alessandro Dinardo©  2021")]
+[assembly: AssemblyCopyright("Copyright Alessandro Dinardo©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

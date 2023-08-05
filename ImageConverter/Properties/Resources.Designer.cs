@@ -125,7 +125,7 @@ namespace ImageConverter.Properties {
         ///Images, icons and any other artwork is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
         ///
         ///MIT License
-        ///Copyright (c) 2021 Alessandro Dinardo
+        ///Copyright (c) 2023 Alessandro Dinardo
         ///
         ///Permission is hereby granted, free of charge, to any person obtaining a copy
         ///of this software and associated documentation files (the &quot;Software&quot;), to deal

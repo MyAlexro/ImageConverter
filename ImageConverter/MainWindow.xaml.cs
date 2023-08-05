@@ -1,5 +1,5 @@
 ﻿/*MIT License
-*Copyright (c) 2021 Alessandro Dinardo
+*Copyright (c) 2023 Alessandro Dinardo
 *
 *Permission is hereby granted, free of charge, to any person obtaining a copy
 *of this software and associated documentation files (the "Software"), to deal
@@ -202,7 +202,7 @@ namespace ImageConverter
                 ConversionResultTextBlock.Text = LanguageManager.EN_ConversionResultTextBlockRunning;
                 GifRepeatTimes.Content = LanguageManager.EN_GifRepeatTimesLabelText;
                 EmptyImgViewerCntxtMenuBttn.Header = LanguageManager.EN_ImageViewerContextMenuText;
-                GifFramesDelayTimeLabel.Content = LanguageManager.EN_GifRepeatTimesLabelText;
+                GifFramesDelayTimeLabel.Content = LanguageManager.EN_GifFramesDelayTimeLabelText;
                 InsertNewImagesModeBttn.ToolTip = LanguageManager.EN_ReplaceExistingImagesToolTip;
                 ReplacePngTransparencyLabel.Content = LanguageManager.EN_ReplacePngTransparencyLabelText;
                 QualityLabel.Content = LanguageManager.EN_QualityLabelText;
