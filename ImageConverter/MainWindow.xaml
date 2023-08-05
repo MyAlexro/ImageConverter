@@ -70,9 +70,9 @@
                 </Grid>
 
                 <!-- Right block, Conversion options etc -->
-                <Grid x:Name="RightBlockGrid" HorizontalAlignment="Left">
+                <Grid x:Name="RightBlockGrid" HorizontalAlignment="Center">
                     <!-- Stackpanel that contains all the options for the conversion -->
-                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical"  VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <StackPanel x:Name="OptionsStackPanel" x:Uid="OptionsStackPanel" Orientation="Vertical"  VerticalAlignment="Top" HorizontalAlignment="Center">
 
                         <!-- Format to convert images to stackpanel-->
                         <StackPanel Orientation="Horizontal" x:Name="ChooseFormatSP" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,48,0,4">
@@ -188,9 +188,9 @@
                         <StackPanel x:Name="ResizingOptionSP"  Orientation="Horizontal" HorizontalAlignment="Left">
                             <Label x:Name="ResizingOptionLabel">Resize the image(px):</Label>
                             <Label x:Name="WidthResLabel" Content="Width"/>
-                            <TextBox x:Name="ImgWidthResTextBlock" MinWidth="20" MaxWidth="50" HorizontalAlignment="Center" VerticalAlignment="Center" PreviewTextInput="ImgDimensionsResTextBlock_PreviewTextInput"></TextBox>
+                            <TextBox x:Name="ImgWidthResTextBlock" MinWidth="20" MaxWidth="39" HorizontalAlignment="Center" VerticalAlignment="Center" PreviewTextInput="ImgDimensionsResTextBlock_PreviewTextInput"></TextBox>
                             <Label x:Name="HeightResLabel" Content="Height"/>
-                            <TextBox x:Name="ImgHeightResTextBlock" MinWidth="20" MaxWidth="50" HorizontalAlignment="Center" VerticalAlignment="Center" PreviewTextInput="ImgDimensionsResTextBlock_PreviewTextInput"></TextBox>
+                            <TextBox x:Name="ImgHeightResTextBlock" MinWidth="20" MaxWidth="39" HorizontalAlignment="Center" VerticalAlignment="Center" PreviewTextInput="ImgDimensionsResTextBlock_PreviewTextInput"></TextBox>
                             <Button x:Name="ResetResizingDimensions" Click="ResetResizingDimensions_Click" Content="Reset" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                         
