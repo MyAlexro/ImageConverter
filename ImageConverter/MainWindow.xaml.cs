@@ -67,6 +67,8 @@ namespace ImageConverter
         /// Stream that loads the preview image into memory and subsequently sets it as the ImgViewer source
         /// </summary>
         FileStream previewImageStream;
+        (int width, int height) originalImgDimensions;
+
 
         public MainWindow()
         {
@@ -151,6 +153,7 @@ namespace ImageConverter
             TiffOptionsSP.Visibility = Visibility.Collapsed;
             IcoOptionsSP.Visibility = Visibility.Collapsed;
             SavePathOptionSP.Visibility = Visibility.Collapsed;
+            ResizingOptionSP.Visibility = Visibility.Collapsed;
             #endregion
             #region Apply translation to all the visible controls
             if (Settings.Default.Language == "it")
@@ -169,6 +172,9 @@ namespace ImageConverter
                 ImageSavePathLabel.Content = LanguageManager.IT_ImageSavePathLabelText;
                 ChooseFolderBttn.Content = LanguageManager.IT_ChooseFolderBttnText;
                 IconSizesTextBlock.Text = LanguageManager.IT_IconSizesTextBlockText;
+                ResizingOptionLabel.Content = LanguageManager.IT_ResizingOptionLabelText;
+                WidthResLabel.Content = LanguageManager.IT_WidthResLabelText;
+                HeightResLabel.Content = LanguageManager.IT_HeightResLabelText;
                 //Each item in the combobox that contains a series of colors to replace a png transparency with
                 foreach (Label item in ReplTranspColCB.Items)
                 {
@@ -204,6 +210,9 @@ namespace ImageConverter
                 ImageSavePathLabel.Content = LanguageManager.EN_ImageSavePathLabelText;
                 ChooseFolderBttn.Content = LanguageManager.EN_ChooseFolderBttnText;
                 IconSizesTextBlock.Text = LanguageManager.EN_IconSizesTextBlockText;
+                ResizingOptionLabel.Content = LanguageManager.EN_ResizingOptionLabelText;
+                WidthResLabel.Content = LanguageManager.EN_WidthResLabelText;
+                HeightResLabel.Content = LanguageManager.EN_HeightResLabelText;
                 //Each item in the combobox that contains a series of colors to replace a png transparency with
                 foreach (Label item in ReplTranspColCB.Items)
                 {
@@ -492,6 +501,10 @@ namespace ImageConverter
             else
                 IcoOptionsSP.Visibility = Visibility.Collapsed;
 
+            if (selectedValue != "ICO" && selectedValue != "GIF" && selectedValue != "CUR")
+                ResizingOptionSP.Visibility = Visibility.Visible;
+            else
+                ResizingOptionSP.Visibility = Visibility.Collapsed;
 
         }
 
@@ -618,6 +631,29 @@ namespace ImageConverter
                 browserDialog.Dispose();
             }
         }
+
+        /// <summary>
+        /// Reset the resizing dimensions to the original dimensions of the image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResetResizingDimensions_Click(object sender, RoutedEventArgs e)
+        {
+            ImgWidthResTextBlock.Text = originalImgDimensions.width.ToString();
+            ImgHeightResTextBlock.Text = originalImgDimensions.height.ToString();
+        }
+
+        /// <summary>
+        /// Input validation for dimensions of resized image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ImgDimensionsResTextBlock_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
         #endregion
 
 
@@ -635,7 +671,7 @@ namespace ImageConverter
             }
             //If one or more images don't exist anymore(moved or deleted), don't convert
             foreach (var image in local_pathsOfImagesToConvert)
-            {   
+            {
                 if (File.Exists(image) == false)
                 {
                     if (Settings.Default.Language.ToLower() == "it") { MessageBox.Show(LanguageManager.IT_CantFindImagesToConvertInOriginalFolder, "Errore", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -662,6 +698,16 @@ namespace ImageConverter
                     return;
                 }
             }
+
+            //Get the dimensions for the resized image and sanitize input and check if the user has changed the resize parameters and so if actually wants to resize
+            Regex regex = new Regex("[^0-9]");       
+            regex.Replace(ImgHeightResTextBlock.Text, String.Empty);
+            (int width, int height) resizedImgDimensions;
+            resizedImgDimensions.width = Convert.ToInt32(regex.Replace(ImgWidthResTextBlock.Text, String.Empty));
+            resizedImgDimensions.height = Convert.ToInt32(regex.Replace(ImgHeightResTextBlock.Text, String.Empty));
+            bool wantsResize = true;
+            if (resizedImgDimensions.width == originalImgDimensions.width && resizedImgDimensions.height == originalImgDimensions.height)
+                wantsResize = false;
 
             #region Prepares GUI controls
             if (Settings.Default.Language == "it") ConversionResultTextBlock.Text = LanguageManager.IT_ConversionResultTextBlockRunning;
@@ -711,6 +757,8 @@ namespace ImageConverter
                     qualityLevel = Convert.ToInt32(QualityLevelTextBox.Text.Trim('%', ' ')),
                     tiffCompressionAlgo = (CompressionTypesCB.SelectedItem as Label)?.Content.ToString().ToLower(),
                     saveDirectory = SavePathTextBlock.Text,
+                    resizeDimensions = resizedImgDimensions,
+                    resize = wantsResize,
                 };
 
                 //Adds a dot during conversion to show the loading
@@ -876,6 +924,23 @@ namespace ImageConverter
                 }
             }
 
+            //Take the dimensions of the first image in the list and set it as the default resize dimensions
+            using (FileStream firstImageStream = File.OpenRead(newPathsOfImagesToConvert[0]))
+            {
+                BitmapImage firstImage = new BitmapImage();
+                firstImage.BeginInit();
+                firstImage.StreamSource = firstImageStream;
+                firstImage.CacheOption = BitmapCacheOption.None;
+                firstImage.EndInit();
+
+                originalImgDimensions = (firstImage.PixelWidth, firstImage.PixelHeight);
+
+                ImgWidthResTextBlock.Text = firstImage.PixelWidth.ToString();
+                ImgHeightResTextBlock.Text = firstImage.PixelHeight.ToString();
+                firstImageStream.Close();
+                firstImageStream.Dispose();
+            }
+
             #region Adds or sets name(s) of the image(s) to the ImagesNamesTextBlock under ImgViewer
             //If the user wants to replace the already dropped images, clear the textblock
             if ((string)InsertNewImagesModeBttn.Tag == "Replace")
@@ -907,7 +972,7 @@ namespace ImageConverter
         }
 
         /// <summary>
-        /// Loads the image to see in the ImgViewer control
+        /// Loads the image to see in the ImgViewer control and gets its Width and height
         /// </summary>
         /// <param name="pathsOfImagesToConvert"></param>
         public void LoadPreviewImage(List<string> pathsOfImagesToConvert)
@@ -915,8 +980,28 @@ namespace ImageConverter
             previewImageStream?.Dispose();
             previewImageStream?.Close();
             previewImage = null;
-            
+
             ImgViewer.Opacity = 1.0f; //Sets ImgViewer opacity to 1(max)
+
+            //Loads the preview image from a stream just to get dimensions
+            using (previewImageStream = File.OpenRead(pathsOfImagesToConvert[0]))
+            {
+                previewImage = new BitmapImage();
+                previewImage.BeginInit();
+                previewImage.StreamSource = previewImageStream;
+                previewImage.CacheOption = BitmapCacheOption.OnLoad;
+                //Reduce height resolution of image to reduce memory usage in case of large images
+                previewImage.DecodePixelHeight = (int)ImgViewer.Height;
+                previewImage.DecodePixelWidth = (int)ImgViewer.Width;
+                previewImage.EndInit();
+
+                ImgViewer.Source = previewImage;
+                //Freeze bitmapimage to make in umodifiable and prevent the system to spend more resources on it
+                previewImage.Freeze();
+                previewImageStream.Close();
+            }
+
+
             //Loads the preview image from a stream, if the image was used directly it would have remained in use even after emptying the ImgViewer and so it couldn't be (in case) deleted
             using (previewImageStream = File.OpenRead(pathsOfImagesToConvert[0]))
             {
@@ -924,8 +1009,9 @@ namespace ImageConverter
                 previewImage.BeginInit();
                 previewImage.StreamSource = previewImageStream;
                 previewImage.CacheOption = BitmapCacheOption.OnLoad;
-                //Reduce height resolution of image
-                previewImage.DecodePixelHeight = 0;// (int)ImgViewer.Height;
+                //Reduce height resolution of image to reduce memory usage in case of large images
+                previewImage.DecodePixelHeight = (int)ImgViewer.Height;
+                previewImage.DecodePixelWidth = (int)ImgViewer.Width;
                 previewImage.EndInit();
 
                 ImgViewer.Source = previewImage;

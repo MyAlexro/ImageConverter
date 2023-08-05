@@ -26,6 +26,9 @@
          IT_White = "Bianco",
          IT_Black = "Nero",
          IT_IconSizesTextBlockText = "Dimensioni(px) dell'immagine disponibili nell'icona:",
+         IT_ResizingOptionLabelText = "Ridimensiona l'immagine(px):",
+            IT_WidthResLabelText = "Larghezza",
+            IT_HeightResLabelText = "Altezza",
 
          //Settings menu
          IT_SettingsLabelText = "Impostazioni",
@@ -78,8 +81,11 @@
          EN_White = "White",
          EN_Black = "Black",
          EN_IconSizesTextBlockText = "Sizes(px) of the image available in the icon:",
+            EN_ResizingOptionLabelText = "Resize the image(px):",
+            EN_WidthResLabelText = "Width",
+            EN_HeightResLabelText = "Height",
 
-         //Settings menu
+        //Settings menu
         EN_SettingsLabelText = "Settings",
          EN_ThemeColorTextBlockText = "Theme color:",
          EN_ThemeTextBlockText = "Theme:",

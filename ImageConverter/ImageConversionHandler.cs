@@ -44,6 +44,21 @@ namespace ImageConverter
         private int color = 0;
 
         /// <summary>
+        /// Width parameter of the final resized image
+        /// </summary>
+        private int resizingWidth;
+
+        /// <summary>
+        /// Height parameter of the final resized image
+        /// </summary>
+        private int resizingHeight;
+
+        /// <summary>
+        /// Whether the user wants to resize the image or not
+        /// </summary>
+        private bool resize;
+
+        /// <summary>
         /// Starts the conversion of one or more images to the specified format. 
         /// <para>Returns a dictionary containing a string(path of the image to convert) and a bool(was the conversion successful? true/false)</para>
         /// </summary>
@@ -57,6 +72,9 @@ namespace ImageConverter
             List<string> pathsOfImagesToConvert = convParams.pathsOfImagesToConvert;
             string selectedFormat = convParams.format;
             int gifRepeatTimes = convParams.gifRepeatTimes;
+            resizingWidth = convParams.resizeDimensions.width;
+            resizingHeight = convParams.resizeDimensions.height;
+            resize = convParams.resize;
             //Results of the conversion(s) with the corresponding image: if the conversion was sucessful or not
             var conversionsResults = new Dictionary<string, bool>();
             #endregion
@@ -69,7 +87,7 @@ namespace ImageConverter
                     conversionsResults.Add(imageToConvertPath, false);
             });
 
-            //Start the conversion of each image and, if wanted by the user, add thecompression task for that image
+            //Start the conversion of each image and, if wanted by the user, add the compression task for that image
             foreach (var pathOfImgToConvert in pathsOfImagesToConvert)
             {
                 /*If the conversion result of an image isn't already "false" convert it. The conversion result of 
@@ -324,10 +342,10 @@ namespace ImageConverter
         /// Asynchronously converts an image to a PNG image and saves it in the specified directory
         /// </summary>
         /// <param name="pathOfImageToConvert"></param>
-        /// <param name="savePath"></param>
+        /// <param name="saveDir"></param>
         /// <returns>Bool conversionResult: specifies wether the conversion has been successful or not <br/>
         /// String convertedImagePath: path to the converted image</returns>
-        private async Task<(bool conversionResult, string convertedImagePath)> ConvertToPngAndSaveAsync(string pathOfImageToConvert, string savePath)
+        private async Task<(bool conversionResult, string convertedImagePath)> ConvertToPngAndSaveAsync(string pathOfImageToConvert, string saveDir)
         {
             #region  set up image infos to convert etc.
             string imageToConvertName = Path.GetFileNameWithoutExtension(pathOfImageToConvert);
@@ -348,8 +366,12 @@ namespace ImageConverter
                 st.Close();
             }
 
-            #region Saves the image and checks whether it was saved correctly
-            convertedImagePath = $"{savePath}\\{imageToConvertName}_png.png";
+            #region Saves the image, resizes it if necessary and checks whether it was saved correctly
+            if (resize) //if it needs to be resized, set the converted image path in temp folder
+                convertedImagePath = $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_png.png";
+            else //otherwise set its path to final destination
+                convertedImagePath = $"{saveDir}\\{imageToConvertName}_png.png";
+
             //Save the image
             using (Stream st = File.Create(convertedImagePath))
             {
@@ -357,10 +379,16 @@ namespace ImageConverter
                 st.Close();
             }
 
-            conversionResult = await CheckIfExists(convertedImagePath);
+            string finalImagePath;
+            if (resize)
+                finalImagePath = ResizeImage(convertedImagePath, resizingWidth, resizingHeight, savePath: $"{saveDir}\\{imageToConvertName}_png.png");
+            else
+                finalImagePath = convertedImagePath;
+
+            conversionResult = await CheckIfExists(finalImagePath);
 
             #endregion
-            return (conversionResult, convertedImagePath);
+            return (conversionResult, finalImagePath);
         }
 
         /// <summary>
@@ -412,14 +440,24 @@ namespace ImageConverter
                 st.Close();
             }
 
-            #region Saves the image and checks whether it was saved correctly
-            convertedImagePath = $"{saveDir}\\{imageToConvertName}_{format}.{format}";
+            #region Saves the image, resizes it if necessary and checks whether it was saved correctly
+            if (resize) //if it needs to be resized, set the converted image path in temp folder
+                convertedImagePath = $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_{format}.{format}";
+            else //otherwise set its path to final destination
+                convertedImagePath = $"{saveDir}\\{imageToConvertName}_{format}.{format}";
+
             //Save the image
             using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
+
+            string finalImagePath;
+            if (resize)
+                finalImagePath = ResizeImage(convertedImagePath, resizingWidth, resizingHeight, savePath: $"{saveDir}\\{imageToConvertName}_{format}.{format}");
+            else
+                finalImagePath = convertedImagePath;
 
             conversionResult = await CheckIfExists(convertedImagePath);
             #endregion
@@ -474,13 +512,23 @@ namespace ImageConverter
             }
 
             #region Saves the image and checks whether it was saved correctly
-            convertedImagePath = $"{saveDir}\\{imageToConvertName}_bmp.bmp";
+            if (resize) //if it needs to be resized, set the converted image path in temp folder
+                convertedImagePath = $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_bmp.bmp";
+            else //otherwise set its path to final destination
+                convertedImagePath = $"{saveDir}\\{imageToConvertName}_bmp.bmp";
+
             //Save the image
             using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
+
+            string finalImagePath;
+            if (resize)
+                finalImagePath = ResizeImage(convertedImagePath, resizingWidth, resizingHeight, savePath: $"{saveDir}\\{imageToConvertName}_bmp.bmp");
+            else
+                finalImagePath = convertedImagePath;
 
             conversionResult = await CheckIfExists(convertedImagePath);
             #endregion
@@ -967,13 +1015,24 @@ namespace ImageConverter
                     break;
             }
 
-            #region Saves the image and checks whether it was saved correctly, return result
-            convertedImagePath = $"{saveDir}\\{imageToConvertName}_tiff.tiff";
+            #region Saves the image, resizes it if necessary and checks whether it was saved correctly
+            if (resize) //if it needs to be resized, set the converted image path in temp folder
+                convertedImagePath = $"{Settings.Default.TempFolderPath}\\{imageToConvertName}_tiff.tiff";
+            else //otherwise set its path to final destination
+                convertedImagePath = $"{saveDir}\\{imageToConvertName}_tiff.tiff";
+
+            //Save the image
             using (Stream st = File.Create(convertedImagePath))
             {
                 imageEncoder.Save(st);
                 st.Close();
             }
+            string finalImagePath;
+            if (resize)
+                finalImagePath = ResizeImage(convertedImagePath, resizingWidth, resizingHeight, savePath: $"{saveDir}\\{imageToConvertName}_tiff.tiff");
+            else
+                finalImagePath = convertedImagePath;
+
             conversionResult = await CheckIfExists(convertedImagePath);
             #endregion
 
@@ -1069,8 +1128,8 @@ namespace ImageConverter
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="saveDirectory">Path to the folder where the image will be saved</param>
-        /// <returns></returns>
-        private string ResizeImage(string pathOfImgToResize, int width, int height, string saveDirectory)
+        /// <returns>Returns the path to the resized image</returns>
+        private string ResizeImage(string pathOfImgToResize, int width, int height, string saveDirectory = "", string savePath = "")
         {
             Bitmap imgToResize;
             using (Stream st = File.OpenRead(pathOfImgToResize))
@@ -1113,9 +1172,20 @@ namespace ImageConverter
                 }
                 graphics.Dispose();
             }
-            var filesInSavePath = Directory.GetFiles(saveDirectory).Length;
-            string savedImgPath = $"{saveDirectory}\\ResizedImage{filesInSavePath}.{imgToResizeFormat}";
-            resizedImg.Save(savedImgPath, imgFormat);
+
+            //If only a saveDirectory is provided, use default name to save
+            string savedImgPath;
+            if (saveDirectory != "")
+            {
+                var filesInSavePath = Directory.GetFiles(saveDirectory).Length;
+                savedImgPath = $"{saveDirectory}\\ResizedImage{filesInSavePath}.{imgToResizeFormat}";
+                resizedImg.Save(savedImgPath, imgFormat);
+            }
+            else
+            {
+                resizedImg.Save(savePath);
+                savedImgPath = savePath;
+            }
 
             imgToResize.Dispose();
             resizedImg.Dispose();

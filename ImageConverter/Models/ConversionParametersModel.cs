@@ -116,6 +116,16 @@ namespace ImageConverter
         /// </summary>
         public int qualityLevel { get; set; }
 
+        /// <summary>
+        /// Dimensions for the resized image
+        /// </summary>
+        public (int width, int height) resizeDimensions { get; set; }
+
+        /// <summary>
+        /// Whether the user wants to resize the converted image or not
+        /// </summary>
+        public bool resize { get; set; }
+
         private string _saveDirectory;
         /// <summary>
         /// Path where the image(s) will be saved, the default save path is the one of the first image to convert
