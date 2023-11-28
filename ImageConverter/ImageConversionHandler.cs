@@ -1183,7 +1183,7 @@ namespace ImageConverter
             }
             else
             {
-                resizedImg.Save(savePath, imgFormat);//u
+                resizedImg.Save(savePath, imgFormat);
                 savedImgPath = savePath;
             }
 
