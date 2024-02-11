@@ -5,6 +5,7 @@ A very customizable program to convert images to different image formats: jpeg, 
 - [ ] Modify the metadata of the image to convert
 - Fix conversion to gif, sometimes the final gifs are buggy
 - Option to set a transparency color(chroma keying) when converting 24bpp BMPs to ICO
+- Extract individual GIF frames when converting to other formats
 
 
 ## Minimum PC requirements:
